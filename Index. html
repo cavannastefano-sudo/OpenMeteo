@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Storico Meteo Piacenza</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
+        table { border-collapse: collapse; width: 100%; background: white; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #2c3e50; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>Storico Temperature Massime - Piacenza</h1>
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Temp. Max (°C)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- I dati verranno inseriti qui -->
+        </tbody>
+    </table>
+
+    <script>
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=2026-01-01&end_date=2026-07-14&daily=temperature_2m_max&timezone=auto";
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById("weatherTable").querySelector("tbody");
+                const times = data.daily.time;
+                const temps = data.daily.temperature_2m_max;
+
+                for (let i = 0; i < times.length; i++) {
+                    let row = `<tr>
+                        <td>${times[i]}</td>
+                        <td>${temps[i] !== null ? temps[i] + '°C' : 'N/D'}</td>
+                    </tr>`;
+                    tbody.innerHTML += row;
+                }
+            })
+            .catch(error => console.error("Errore nel caricamento dati:", error));
+    </script>
+</body>
+</html>
