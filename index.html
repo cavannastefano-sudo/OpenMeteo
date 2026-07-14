@@ -5,45 +5,47 @@
     <title>Storico Meteo Piacenza</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
-        table { border-collapse: collapse; width: 100%; background: white; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #2c3e50; color: white; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 12px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+        th { background-color: #2c3e50; color: white; position: sticky; top: 0; }
     </style>
 </head>
 <body>
 
-    <h1>Storico Temperature Massime - Piacenza</h1>
+    <h1>Storico Temperature Piacenza (2000-2026)</h1>
     <table id="weatherTable">
         <thead>
             <tr>
                 <th>Data</th>
                 <th>Temp. Max (°C)</th>
+                <th>Temp. Min (°C)</th>
             </tr>
         </thead>
-        <tbody>
-            <!-- I dati verranno inseriti qui -->
-        </tbody>
+        <tbody></tbody>
     </table>
 
     <script>
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=2026-01-01&end_date=2026-07-14&daily=temperature_2m_max&timezone=auto";
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=2000-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min&timezone=auto";
 
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 const tbody = document.getElementById("weatherTable").querySelector("tbody");
                 const times = data.daily.time;
-                const temps = data.daily.temperature_2m_max;
+                const maxTemps = data.daily.temperature_2m_max;
+                const minTemps = data.daily.temperature_2m_min;
 
+                let htmlRows = "";
                 for (let i = 0; i < times.length; i++) {
-                    let row = `<tr>
+                    htmlRows += `<tr>
                         <td>${times[i]}</td>
-                        <td>${temps[i] !== null ? temps[i] + '°C' : 'N/D'}</td>
+                        <td>${maxTemps[i] ?? '-'}°C</td>
+                        <td>${minTemps[i] ?? '-'}°C</td>
                     </tr>`;
-                    tbody.innerHTML += row;
                 }
+                tbody.innerHTML = htmlRows;
             })
-            .catch(error => console.error("Errore nel caricamento dati:", error));
+            .catch(error => console.error("Errore:", error));
     </script>
 </body>
 </html>
