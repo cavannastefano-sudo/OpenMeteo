@@ -36,8 +36,7 @@
                 <th>Min</th>
                 <th>Umidità</th>
                 <th>Pressione</th>
-                <th>Precip. (mm)</th>
-                <th>Neve (cm)</th>
+                <th>Pioggia (mm)</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -57,19 +56,19 @@
         async function loadData() {
             const year = document.getElementById("yearSelect").value;
             const tbody = document.querySelector("#weatherTable tbody");
-            tbody.innerHTML = "<tr><td colspan='9'>Caricamento in corso...</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='8'>Caricamento in corso...</td></tr>";
 
             const endDate = (year === "2026") ? "2026-07-14" : `${year}-12-31`;
 
-            // URL senza Vento
-            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${year}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum&timezone=auto`;
+            // URL senza Vento e senza Neve
+            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${year}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum&timezone=auto`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 
                 if (!data || !data.daily) {
-                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili.</td></tr>";
+                    tbody.innerHTML = "<tr><td colspan='8'>Dati non disponibili.</td></tr>";
                     return;
                 }
                 
@@ -86,12 +85,11 @@
                         <td>${d.relative_humidity_2m_mean[i] ?? '-'}%</td>
                         <td>${d.pressure_msl_mean[i] ?? '-'} hPa</td>
                         <td>${d.precipitation_sum[i] ?? '0'} mm</td>
-                        <td>${d.snowfall_sum[i] ?? '0'} cm</td>
                     </tr>`;
                 }
                 tbody.innerHTML = htmlRows;
             } catch (error) {
-                tbody.innerHTML = "<tr><td colspan='9'>Errore nel caricamento.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='8'>Errore nel caricamento.</td></tr>";
             }
         }
 
