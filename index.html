@@ -59,22 +59,25 @@
             const tbody = document.querySelector("#weatherTable tbody");
             tbody.innerHTML = "<tr><td colspan='9'>Caricamento in corso...</td></tr>";
 
-            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${year}-01-01&end_date=${year}-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto`;
+            // Gestione date: dinamica per l'anno corrente, fissa per gli anni passati
+            const isCurrentYear = (year === "2026");
+            const endDate = isCurrentYear ? "2026-07-14" : `${year}-12-31`;
+
+            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${year}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto`;
 
             try {
                 const response = await fetch(url);
                 const data = await response.json();
                 
-                if (!data.daily) {
-                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili per quest'anno.</td></tr>";
+                if (!data || !data.daily) {
+                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili per questo anno.</td></tr>";
                     return;
                 }
-
+                
                 const d = data.daily;
                 let htmlRows = "";
                 
                 for (let i = d.time.length - 1; i >= 0; i--) {
-                    // Controllo sicuro per i valori di neve e pioggia
                     let rain = d.precipitation_sum[i] || 0;
                     let snow = d.snowfall_sum[i] || 0;
                     
@@ -99,10 +102,11 @@
                 }
                 tbody.innerHTML = htmlRows;
             } catch (error) {
-                tbody.innerHTML = "<tr><td colspan='9'>Errore di sistema nel caricamento.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='9'>Errore nel caricamento.</td></tr>";
             }
         }
 
+        // Carica automaticamente l'anno corrente
         loadData();
     </script>
 </body>
