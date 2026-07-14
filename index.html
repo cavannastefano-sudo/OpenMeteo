@@ -5,8 +5,8 @@
     <title>Storico Meteo Piacenza</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
-        table { border-collapse: collapse; width: 100%; background: white; font-size: 12px; }
-        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; }
+        th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
         th { background-color: #2c3e50; color: white; position: sticky; top: 0; }
     </style>
 </head>
@@ -18,32 +18,29 @@
             <tr>
                 <th>Data</th>
                 <th>Condizione</th>
-                <th>Max (°C)</th>
-                <th>Min (°C)</th>
-                <th>Pressione (hPa)</th>
+                <th>Max</th>
+                <th>Percepita</th>
+                <th>Min</th>
+                <th>Umidità</th>
+                <th>Pressione</th>
+                <th>Pioggia</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
     <script>
-        function getSymbol(code) {
-            if (code <= 1) return "☀️";
-            if (code <= 3) return "⛅";
-            if (code <= 55) return "🌧️";
-            if (code <= 77) return "❄️";
-            if (code <= 82) return "🌦️";
-            return "☁️";
+        function getTextCondition(code) {
+            if (code <= 1) return "Sereno";
+            if (code <= 3) return "Nuvoloso";
+            if (code <= 55) return "Pioggia";
+            if (code <= 77) return "Neve";
+            if (code <= 82) return "Rovesci";
+            return "Variabile";
         }
 
-        function getToday() {
-            const date = new Date();
-            return date.toISOString().split('T')[0];
-        }
-
-        const today = getToday();
-        // start_date impostato a 1980-01-01
-        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min,pressure_msl_mean,weather_code&timezone=auto`;
+        // Ho aggiunto precipitation_sum alla lista dei parametri
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum&timezone=auto";
 
         fetch(url)
             .then(response => response.json())
@@ -52,19 +49,20 @@
                 const d = data.daily;
                 let htmlRows = "";
                 
-                // Ciclo invertito per mostrare i dati più recenti in alto
                 for (let i = d.time.length - 1; i >= 0; i--) {
                     htmlRows += `<tr>
                         <td>${d.time[i]}</td>
-                        <td>${getSymbol(d.weather_code[i])}</td>
-                        <td>${d.temperature_2m_max[i] ?? '-'}°C</td>
-                        <td>${d.temperature_2m_min[i] ?? '-'}°C</td>
-                        <td>${d.pressure_msl_mean[i] ?? '-'}</td>
+                        <td>${getTextCondition(d.weather_code[i])}</td>
+                        <td>${d.temperature_2m_max[i]}°C</td>
+                        <td>${d.apparent_temperature_max[i]}°C</td>
+                        <td>${d.temperature_2m_min[i]}°C</td>
+                        <td>${d.relative_humidity_2m_mean[i]}%</td>
+                        <td>${d.pressure_msl_mean[i]} hPa</td>
+                        <td>${d.precipitation_sum[i]} mm</td>
                     </tr>`;
                 }
                 tbody.innerHTML = htmlRows;
-            })
-            .catch(error => console.error("Errore:", error));
+            });
     </script>
 </body>
 </html>
