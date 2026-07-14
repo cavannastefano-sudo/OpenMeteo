@@ -5,63 +5,60 @@
     <title>Storico Meteo Piacenza</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
-        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; margin-bottom: 20px; }
         th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
         th { background-color: #2c3e50; color: white; position: sticky; top: 0; }
+        h2 { background: #34495e; color: white; padding: 5px; margin-top: 30px; }
     </style>
 </head>
 <body>
 
     <h1>Storico Meteo Piacenza (1980-Oggi)</h1>
-    <table id="weatherTable">
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Condizione</th>
-                <th>Max</th>
-                <th>Percepita</th>
-                <th>Min</th>
-                <th>Umidità</th>
-                <th>Pressione</th>
-                <th>Pioggia</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+    <div id="weatherContainer"></div>
 
     <script>
-        function getTextCondition(code) {
-            if (code <= 1) return "Sereno";
-            if (code <= 3) return "Nuvoloso";
-            if (code <= 55) return "Pioggia";
-            if (code <= 77) return "Neve";
-            if (code <= 82) return "Rovesci";
-            return "Variabile";
+        function getConditionInfo(code) {
+            if (code <= 1) return { text: "Sereno", icon: "☀️" };
+            if (code <= 3) return { text: "Nuvoloso", icon: "☁️" };
+            if (code <= 55) return { text: "Pioggia", icon: "🌧️" };
+            if (code <= 77) return { text: "Neve", icon: "❄️" };
+            if (code <= 82) return { text: "Rovesci", icon: "⛈️" };
+            return { text: "Variabile", icon: "⛅" };
         }
 
-        // Ho aggiunto precipitation_sum alla lista dei parametri
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum&timezone=auto";
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weather_code&timezone=auto";
 
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const tbody = document.getElementById("weatherTable").querySelector("tbody");
+                const container = document.getElementById("weatherContainer");
                 const d = data.daily;
-                let htmlRows = "";
-                
+                let currentYear = "";
+                let tableHtml = "";
+
                 for (let i = d.time.length - 1; i >= 0; i--) {
-                    htmlRows += `<tr>
+                    const year = d.time[i].split("-")[0];
+                    const cond = getConditionInfo(d.weather_code[i]);
+
+                    if (year !== currentYear) {
+                        if (currentYear !== "") tableHtml += "</tbody></table>";
+                        currentYear = year;
+                        tableHtml += `<h2>Anno ${currentYear}</h2>
+                            <table><thead><tr>
+                                <th>Data</th><th>Condizione</th><th>Max</th><th>Percepita</th><th>Min</th>
+                            </tr></thead><tbody>`;
+                    }
+
+                    tableHtml += `<tr>
                         <td>${d.time[i]}</td>
-                        <td>${getTextCondition(d.weather_code[i])}</td>
+                        <td>${cond.icon} ${cond.text}</td>
                         <td>${d.temperature_2m_max[i]}°C</td>
                         <td>${d.apparent_temperature_max[i]}°C</td>
                         <td>${d.temperature_2m_min[i]}°C</td>
-                        <td>${d.relative_humidity_2m_mean[i]}%</td>
-                        <td>${d.pressure_msl_mean[i]} hPa</td>
-                        <td>${d.precipitation_sum[i]} mm</td>
                     </tr>`;
                 }
-                tbody.innerHTML = htmlRows;
+                tableHtml += "</tbody></table>";
+                container.innerHTML = tableHtml;
             });
     </script>
 </body>
