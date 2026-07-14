@@ -5,14 +5,28 @@
     <title>Storico Meteo Piacenza</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
-        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
-        th { background-color: #2c3e50; color: white; position: sticky; top: 0; }
+        th { background-color: #2c3e50; color: white; }
+        .controls { margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <h1>Storico Meteo Piacenza (1980-Oggi)</h1>
+    <h1>Storico Meteo Piacenza</h1>
+    
+    <div class="controls">
+        <label>Seleziona Anno: </label>
+        <select id="yearSelect" onchange="loadData()">
+            <!-- Generiamo gli anni dal 2026 al 1940 -->
+            <script>
+                for(let y = 2026; y >= 1940; y--) {
+                    document.write(`<option value="${y}">${y}</option>`);
+                }
+            </script>
+        </select>
+    </div>
+
     <table id="weatherTable">
         <thead>
             <tr>
@@ -24,7 +38,7 @@
                 <th>Umidità</th>
                 <th>Pressione</th>
                 <th>Vento</th>
-                <th>Precipitazioni</th>
+                <th>Precip.</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -40,22 +54,22 @@
             return "Variabile";
         }
 
-        // URL aggiornato con wind_speed_10m_max, wind_direction_10m_dominant e snowfall_sum
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto";
+        async function loadData() {
+            const year = document.getElementById("yearSelect").value;
+            const tbody = document.querySelector("#weatherTable tbody");
+            tbody.innerHTML = "<tr><td colspan='9'>Caricamento in corso...</td></tr>";
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.getElementById("weatherTable").querySelector("tbody");
+            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${year}-01-01&end_date=${year}-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
                 const d = data.daily;
                 let htmlRows = "";
                 
                 for (let i = d.time.length - 1; i >= 0; i--) {
-                    // Logica neve/pioggia
                     let precipDisplay = d.precipitation_sum[i] > 0 ? d.precipitation_sum[i] + " mm" : "-";
-                    if (d.snowfall_sum[i] > 0) {
-                        precipDisplay = d.snowfall_sum[i] + " cm (neve)";
-                    }
+                    if (d.snowfall_sum[i] > 0) precipDisplay = d.snowfall_sum[i] + " cm (neve)";
 
                     htmlRows += `<tr>
                         <td>${d.time[i]}</td>
@@ -70,7 +84,13 @@
                     </tr>`;
                 }
                 tbody.innerHTML = htmlRows;
-            });
+            } catch (error) {
+                tbody.innerHTML = "<tr><td colspan='9'>Errore nel caricamento.</td></tr>";
+            }
+        }
+
+        // Carica automaticamente l'anno corrente all'apertura
+        loadData();
     </script>
 </body>
 </html>
