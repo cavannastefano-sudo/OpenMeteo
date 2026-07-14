@@ -63,11 +63,10 @@
 
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Errore rete');
                 const data = await response.json();
                 
                 if (!data.daily) {
-                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili.</td></tr>";
+                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili per quest'anno.</td></tr>";
                     return;
                 }
 
@@ -75,8 +74,16 @@
                 let htmlRows = "";
                 
                 for (let i = d.time.length - 1; i >= 0; i--) {
-                    let precipDisplay = (d.precipitation_sum[i] != null && d.precipitation_sum[i] > 0) ? d.precipitation_sum[i] + " mm" : "-";
-                    if (d.snowfall_sum[i] != null && d.snowfall_sum[i] > 0) precipDisplay = d.snowfall_sum[i] + " cm (neve)";
+                    // Controllo sicuro per i valori di neve e pioggia
+                    let rain = d.precipitation_sum[i] || 0;
+                    let snow = d.snowfall_sum[i] || 0;
+                    
+                    let precipDisplay = "-";
+                    if (snow > 0) {
+                        precipDisplay = snow.toFixed(1) + " cm (neve)";
+                    } else if (rain > 0) {
+                        precipDisplay = rain.toFixed(1) + " mm";
+                    }
 
                     htmlRows += `<tr>
                         <td>${d.time[i]}</td>
@@ -92,7 +99,7 @@
                 }
                 tbody.innerHTML = htmlRows;
             } catch (error) {
-                tbody.innerHTML = "<tr><td colspan='9'>Errore nel caricamento.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='9'>Errore di sistema nel caricamento.</td></tr>";
             }
         }
 
