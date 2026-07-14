@@ -23,7 +23,8 @@
                 <th>Min</th>
                 <th>Umidità</th>
                 <th>Pressione</th>
-                <th>Pioggia</th>
+                <th>Vento</th>
+                <th>Precipitazioni</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -39,8 +40,8 @@
             return "Variabile";
         }
 
-        // Ho aggiunto precipitation_sum alla lista dei parametri
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum&timezone=auto";
+        // URL aggiornato con wind_speed_10m_max, wind_direction_10m_dominant e snowfall_sum
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto";
 
         fetch(url)
             .then(response => response.json())
@@ -50,6 +51,12 @@
                 let htmlRows = "";
                 
                 for (let i = d.time.length - 1; i >= 0; i--) {
+                    // Logica neve/pioggia
+                    let precipDisplay = d.precipitation_sum[i] > 0 ? d.precipitation_sum[i] + " mm" : "-";
+                    if (d.snowfall_sum[i] > 0) {
+                        precipDisplay = d.snowfall_sum[i] + " cm (neve)";
+                    }
+
                     htmlRows += `<tr>
                         <td>${d.time[i]}</td>
                         <td>${getTextCondition(d.weather_code[i])}</td>
@@ -58,7 +65,8 @@
                         <td>${d.temperature_2m_min[i]}°C</td>
                         <td>${d.relative_humidity_2m_mean[i]}%</td>
                         <td>${d.pressure_msl_mean[i]} hPa</td>
-                        <td>${d.precipitation_sum[i]} mm</td>
+                        <td>${d.wind_speed_10m_max[i]} km/h (${d.wind_direction_10m_dominant[i]}°)</td>
+                        <td>${precipDisplay}</td>
                     </tr>`;
                 }
                 tbody.innerHTML = htmlRows;
