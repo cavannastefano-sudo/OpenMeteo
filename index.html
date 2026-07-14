@@ -1,19 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Storico Meteo Piacenza</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
+        th { background-color: #2c3e50; color: white; position: sticky; top: 0; }
+        .controls { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <h1>Storico Meteo Piacenza</h1>
+    
+    <div class="controls">
+        <label>Seleziona Anno: </label>
+        <select id="yearSelect" onchange="loadData()">
+            <script>
+                for(let y = 2026; y >= 1940; y--) {
+                    document.write(`<option value="${y}">${y}</option>`);
+                }
+            </script>
+        </select>
+    </div>
+
+    <table id="weatherTable">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Condizione</th>
+                <th>Max</th>
+                <th>Percepita</th>
+                <th>Min</th>
+                <th>Umidità</th>
+                <th>Pressione</th>
+                <th>Vento</th>
+                <th>Precip.</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        function getTextCondition(code) {
+            if (code == null) return "-";
+            if (code <= 1) return "Sereno";
+            if (code <= 3) return "Nuvoloso";
+            if (code <= 55) return "Pioggia";
+            if (code <= 77) return "Neve";
+            if (code <= 82) return "Rovesci";
+            return "Variabile";
+        }
+
         async function loadData() {
             const year = document.getElementById("yearSelect").value;
             const tbody = document.querySelector("#weatherTable tbody");
             tbody.innerHTML = "<tr><td colspan='9'>Caricamento in corso...</td></tr>";
 
-            // URL con parametri corretti e controllo date
             const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${year}-01-01&end_date=${year}-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto`;
 
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
+                if (!response.ok) throw new Error('Errore rete');
                 const data = await response.json();
                 
-                // Se i dati daily non esistono (possibile in anni molto vecchi)
                 if (!data.daily) {
-                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili per questo anno.</td></tr>";
+                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili.</td></tr>";
                     return;
                 }
 
@@ -38,7 +92,11 @@
                 }
                 tbody.innerHTML = htmlRows;
             } catch (error) {
-                console.error(error);
-                tbody.innerHTML = "<tr><td colspan='9'>Errore nel caricamento. Riprova.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='9'>Errore nel caricamento.</td></tr>";
             }
         }
+
+        loadData();
+    </script>
+</body>
+</html>
