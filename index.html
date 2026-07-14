@@ -5,14 +5,27 @@
     <title>Storico Meteo Piacenza</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
-        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 4px; text-align: center; }
         th { background-color: #2c3e50; color: white; position: sticky; top: 0; }
+        .controls { margin-bottom: 15px; font-size: 16px; }
     </style>
 </head>
 <body>
 
-    <h1>Storico Meteo Piacenza (1940-Oggi)</h1>
+    <h1>Storico Meteo Piacenza</h1>
+    
+    <div class="controls">
+        <label>Seleziona Anno: </label>
+        <select id="yearSelect" onchange="loadData()">
+            <script>
+                for(let y = 2026; y >= 1940; y--) {
+                    document.write(`<option value="${y}">${y}</option>`);
+                }
+            </script>
+        </select>
+    </div>
+
     <table id="weatherTable">
         <thead>
             <tr>
@@ -24,7 +37,7 @@
                 <th>Umidità</th>
                 <th>Pressione</th>
                 <th>Vento</th>
-                <th>Precipitazioni</th>
+                <th>Precip.</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -32,6 +45,7 @@
 
     <script>
         function getTextCondition(code) {
+            if (code == null) return "-";
             if (code <= 1) return "Sereno";
             if (code <= 3) return "Nuvoloso";
             if (code <= 55) return "Pioggia";
@@ -40,33 +54,54 @@
             return "Variabile";
         }
 
-        // URL aggiornato con start_date=1940-01-01
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1940-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto";
+        async function loadData() {
+            const year = document.getElementById("yearSelect").value;
+            const tbody = document.querySelector("#weatherTable tbody");
+            tbody.innerHTML = "<tr><td colspan='9'>Caricamento in corso...</td></tr>";
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const tbody = document.getElementById("weatherTable").querySelector("tbody");
+            // Se l'anno è il 2026, finisce a oggi, altrimenti al 31 dicembre
+            const endDate = (year === "2026") ? "2026-07-14" : `${year}-12-31`;
+
+            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${year}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,relative_humidity_2m_mean,pressure_msl_mean,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,wind_direction_10m_dominant&timezone=auto`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (!data || !data.daily) {
+                    tbody.innerHTML = "<tr><td colspan='9'>Dati non disponibili per questo anno.</td></tr>";
+                    return;
+                }
+                
                 const d = data.daily;
                 let htmlRows = "";
                 
                 for (let i = d.time.length - 1; i >= 0; i--) {
-                    let precipDisplay = (d.snowfall_sum[i] > 0) ? d.snowfall_sum[i] + " cm (neve)" : (d.precipitation_sum[i] + " mm");
+                    // Logica neve (cm) vs pioggia (mm)
+                    let rain = d.precipitation_sum[i] || 0;
+                    let snow = d.snowfall_sum[i] || 0;
+                    let precipDisplay = (snow > 0) ? snow.toFixed(1) + " cm (neve)" : (rain.toFixed(1) + " mm");
 
                     htmlRows += `<tr>
                         <td>${d.time[i]}</td>
                         <td>${getTextCondition(d.weather_code[i])}</td>
-                        <td>${d.temperature_2m_max[i]}°C</td>
-                        <td>${d.apparent_temperature_max[i]}°C</td>
-                        <td>${d.temperature_2m_min[i]}°C</td>
-                        <td>${d.relative_humidity_2m_mean[i]}%</td>
-                        <td>${d.pressure_msl_mean[i]} hPa</td>
-                        <td>${d.wind_speed_10m_max[i]} km/h (${d.wind_direction_10m_dominant[i]}°)</td>
+                        <td>${d.temperature_2m_max[i] ?? '-'}°C</td>
+                        <td>${d.apparent_temperature_max[i] ?? '-'}°C</td>
+                        <td>${d.temperature_2m_min[i] ?? '-'}°C</td>
+                        <td>${d.relative_humidity_2m_mean[i] ?? '-'}%</td>
+                        <td>${d.pressure_msl_mean[i] ?? '-'} hPa</td>
+                        <td>${d.wind_speed_10m_max[i] ?? '-'} km/h (${d.wind_direction_10m_dominant[i] ?? '-'}°)</td>
                         <td>${precipDisplay}</td>
                     </tr>`;
                 }
                 tbody.innerHTML = htmlRows;
-            });
+            } catch (error) {
+                tbody.innerHTML = "<tr><td colspan='9'>Errore nel caricamento.</td></tr>";
+            }
+        }
+
+        // Carica automaticamente l'anno corrente all'apertura
+        loadData();
     </script>
 </body>
 </html>
