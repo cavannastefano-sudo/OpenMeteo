@@ -12,7 +12,7 @@
 </head>
 <body>
 
-    <h1>Storico Meteo Piacenza (1950-Oggi)</h1>
+    <h1>Storico Meteo Piacenza (1980-Oggi)</h1>
     <table id="weatherTable">
         <thead>
             <tr>
@@ -27,7 +27,6 @@
     </table>
 
     <script>
-        // Funzione per tradurre il codice meteo in simboli
         function getSymbol(code) {
             if (code <= 1) return "☀️";
             if (code <= 3) return "⛅";
@@ -43,7 +42,8 @@
         }
 
         const today = getToday();
-        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1950-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min,pressure_msl_mean,weather_code&timezone=auto`;
+        // start_date impostato a 1980-01-01
+        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min,pressure_msl_mean,weather_code&timezone=auto`;
 
         fetch(url)
             .then(response => response.json())
@@ -52,6 +52,7 @@
                 const d = data.daily;
                 let htmlRows = "";
                 
+                // Ciclo invertito per mostrare i dati più recenti in alto
                 for (let i = d.time.length - 1; i >= 0; i--) {
                     htmlRows += `<tr>
                         <td>${d.time[i]}</td>
@@ -62,7 +63,8 @@
                     </tr>`;
                 }
                 tbody.innerHTML = htmlRows;
-            });
+            })
+            .catch(error => console.error("Errore:", error));
     </script>
 </body>
 </html>
