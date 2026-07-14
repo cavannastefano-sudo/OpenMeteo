@@ -12,50 +12,57 @@
 </head>
 <body>
 
-    <h1>Storico Temperature Piacenza (Dal 1950 ad oggi)</h1>
+    <h1>Storico Meteo Piacenza (1950-Oggi)</h1>
     <table id="weatherTable">
         <thead>
             <tr>
                 <th>Data</th>
-                <th>Temp. Max (°C)</th>
-                <th>Temp. Min (°C)</th>
+                <th>Condizione</th>
+                <th>Max (°C)</th>
+                <th>Min (°C)</th>
+                <th>Pressione (hPa)</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
     <script>
+        // Funzione per tradurre il codice meteo in simboli
+        function getSymbol(code) {
+            if (code <= 1) return "☀️";
+            if (code <= 3) return "⛅";
+            if (code <= 55) return "🌧️";
+            if (code <= 77) return "❄️";
+            if (code <= 82) return "🌦️";
+            return "☁️";
+        }
+
         function getToday() {
             const date = new Date();
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            return date.toISOString().split('T')[0];
         }
 
         const today = getToday();
-        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1950-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1950-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min,pressure_msl_mean,weather_code&timezone=auto`;
 
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 const tbody = document.getElementById("weatherTable").querySelector("tbody");
-                const times = data.daily.time;
-                const maxTemps = data.daily.temperature_2m_max;
-                const minTemps = data.daily.temperature_2m_min;
-
+                const d = data.daily;
                 let htmlRows = "";
-                // Ciclo invertito: dall'ultimo giorno al primo
-                for (let i = times.length - 1; i >= 0; i--) {
+                
+                for (let i = d.time.length - 1; i >= 0; i--) {
                     htmlRows += `<tr>
-                        <td>${times[i]}</td>
-                        <td>${maxTemps[i] ?? '-'}°C</td>
-                        <td>${minTemps[i] ?? '-'}°C</td>
+                        <td>${d.time[i]}</td>
+                        <td>${getSymbol(d.weather_code[i])}</td>
+                        <td>${d.temperature_2m_max[i] ?? '-'}°C</td>
+                        <td>${d.temperature_2m_min[i] ?? '-'}°C</td>
+                        <td>${d.pressure_msl_mean[i] ?? '-'}</td>
                     </tr>`;
                 }
                 tbody.innerHTML = htmlRows;
-            })
-            .catch(error => console.error("Errore:", error));
+            });
     </script>
 </body>
 </html>
