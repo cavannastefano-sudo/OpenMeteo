@@ -40,7 +40,7 @@
 const today = new Date().toISOString().split('T')[0];
 
 // Inseriamo 'today' nell'URL
-const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1940-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1970-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
 
 // ... (resto del codice)
         fetch(url)
