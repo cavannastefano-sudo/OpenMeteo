@@ -33,7 +33,15 @@
     <script>
         let weatherData = null;
 
-        function getConditionInfo(code) {
+        function getConditionInfo(code, dateString) {
+            const month = parseInt(dateString.split("-")[1]);
+            const isSummer = (month >= 6 && month <= 8);
+
+            // Filtro anomalie: se è estate ed è segnato neve, correggiamo in Variabile
+            if (isSummer && code >= 71 && code <= 77) {
+                return { text: "Variabile", icon: "⛅" };
+            }
+
             if (code <= 1) return { text: "Sereno", icon: "☀️" };
             if (code <= 3) return { text: "Nuvoloso", icon: "☁️" };
             if (code <= 55) return { text: "Pioggia", icon: "🌧️" };
@@ -42,7 +50,6 @@
             return { text: "Variabile", icon: "⛅" };
         }
 
-        // Aggiornato start_date a 1940-01-01
         const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1940-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weather_code,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,precipitation_sum&timezone=auto";
 
         fetch(url)
@@ -70,7 +77,9 @@
             
             for (let i = weatherData.time.length - 1; i >= 0; i--) {
                 if (weatherData.time[i].startsWith(selectedYear)) {
-                    const cond = getConditionInfo(weatherData.weather_code[i]);
+                    // Passiamo anche la data alla funzione per gestire il filtro estivo
+                    const cond = getConditionInfo(weatherData.weather_code[i], weatherData.time[i]);
+                    
                     tbody.innerHTML += `<tr>
                         <td>${weatherData.time[i]}</td>
                         <td>${cond.icon} ${cond.text}</td>
