@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Storico Meteo Piacenza per Anno</title>
+    <title>Storico Meteo Piacenza (1940-Oggi)</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
         table { border-collapse: collapse; width: 100%; background: white; font-size: 11px; margin-top: 20px; }
@@ -24,6 +24,7 @@
         <thead>
             <tr>
                 <th>Data</th><th>Condizione</th><th>Max</th><th>Percepita</th><th>Min</th>
+                <th>Pressione</th><th>Vento</th><th>Direzione</th><th>Pioggia</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -41,7 +42,8 @@
             return { text: "Variabile", icon: "⛅" };
         }
 
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1980-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weather_code&timezone=auto";
+        // Aggiornato start_date a 1940-01-01
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1940-01-01&end_date=2026-07-14&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,weather_code,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,precipitation_sum&timezone=auto";
 
         fetch(url)
             .then(response => response.json())
@@ -58,7 +60,7 @@
                 });
 
                 yearSelect.onchange = updateTable;
-                updateTable(); // Carica l'anno più recente al primo avvio
+                updateTable(); 
             });
 
         function updateTable() {
@@ -75,6 +77,10 @@
                         <td>${weatherData.temperature_2m_max[i]}°C</td>
                         <td>${weatherData.apparent_temperature_max[i]}°C</td>
                         <td>${weatherData.temperature_2m_min[i]}°C</td>
+                        <td>${weatherData.pressure_msl_mean[i]} hPa</td>
+                        <td>${weatherData.wind_speed_10m_max[i]} km/h</td>
+                        <td>${weatherData.wind_direction_10m_dominant[i]}°</td>
+                        <td>${weatherData.precipitation_sum[i]} mm</td>
                     </tr>`;
                 }
             }
