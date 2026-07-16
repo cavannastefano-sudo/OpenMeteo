@@ -1,12 +1,38 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Archivio Meteo Piacenza - Home</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; background-color: #f4f4f9; text-align: center; }
+        h1 { color: #2c3e50; }
+        .menu { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+        a { 
+            font-size: 20px; 
+            padding: 15px; 
+            background-color: #2c3e50; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            max-width: 300px; 
+            margin: 0 auto;
+            width: 100%;
+        }
+        a:hover { background-color: #34495e; }
+    </style>
+</head>
 <body>
-    <nav style="margin-bottom: 20px; font-size: 16px;">
-        <a href="index.html">Home</a> | 
-        <a href="storico1.html">1940-1956</a> | 
-        <a href="storico2.html">1957-1973</a> | 
-        <a href="storico3.html">1974-1990</a> | 
-        <a href="storico4.html">1991-2007</a> | 
-        <a href="storico5.html">2008-Oggi</a>
-    </nav>
 
-    <h1>Storico Meteo Piacenza</h1>
-    ...
+    <h1>Archivio Storico Meteo Piacenza</h1>
+    <p>Seleziona il periodo di tuo interesse:</p>
+
+    <div class="menu">
+        <a href="storico1.html">1940 - 1956</a>
+        <a href="storico2.html">1957 - 1973</a>
+        <a href="storico3.html">1974 - 1990</a>
+        <a href="storico4.html">1991 - 2007</a>
+        <a href="storico5.html">2008 - Oggi</a>
+    </div>
+
+</body>
+</html>
