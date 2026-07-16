@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Storico Meteo Piacenza</title>
+    <title>Storico Meteo Piacenza(2008-Oggi)<</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 20px; }
@@ -53,7 +53,7 @@
         }
 
         const today = new Date().toISOString().split('T')[0];
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1940-01-01&end_date=" + today + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto";
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=2008-01-01&end_date=" + today + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto";
 
         fetch(url)
             .then(response => response.json())
