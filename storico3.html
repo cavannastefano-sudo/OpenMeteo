@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Storico Meteo Piacenza (1981-2000)</title>
+    <title>Storico Meteo Piacenza (1974-1990)</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 20px; }
@@ -24,7 +24,7 @@
         <a href="storico5.html">2008-Oggi</a>
     </nav>
 
-    <h1>Storico Meteo Piacenza (1981-2000)</h1>
+    <h1>Storico Meteo Piacenza (1974-1990)</h1>
     
     <div class="controls">
         <label for="yearSelect">Seleziona Anno: </label>
@@ -52,7 +52,7 @@
             return sectors[parseInt(degrees / 45)];
         }
 
-        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1981-01-01&end_date=2000-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto";
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1974-01-01&end_date=1990-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto";
 
         fetch(url)
             .then(response => {
