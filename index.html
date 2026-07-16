@@ -10,9 +10,19 @@
         th { background-color: #2c3e50; color: white; font-size: 16px; }
         .controls { margin-bottom: 20px; font-size: 18px; }
         select { font-size: 16px; padding: 5px; }
+        nav { margin-bottom: 20px; font-size: 16px; }
     </style>
 </head>
 <body>
+
+    <nav>
+        <a href="index.html">Home</a> | 
+        <a href="storico1.html">1940-1956</a> | 
+        <a href="storico2.html">1957-1973</a> | 
+        <a href="storico3.html">1974-1990</a> | 
+        <a href="storico4.html">1991-2007</a> | 
+        <a href="storico5.html">2008-Oggi</a>
+    </nav>
 
     <h1>Storico Meteo Piacenza</h1>
     
@@ -34,7 +44,6 @@
     <script>
         let weatherData = null;
 
-        // Funzione per convertire i gradi in punti cardinali
         function getWindDirection(degrees) {
             const sectors = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
             degrees += 22.5;
@@ -44,8 +53,7 @@
         }
 
         const today = new Date().toISOString().split('T')[0];
-        // Raggiunta la direzione del vento nell'API
-        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1940-01-01&end_date=${today}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+        const url = "https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=1940-01-01&end_date=" + today + "&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto";
 
         fetch(url)
             .then(response => {
@@ -71,26 +79,22 @@
 
         function updateTable() {
             if (!weatherData) return;
-            
             const selectedYear = document.getElementById("yearSelect").value;
             const tbody = document.querySelector("#weatherTable tbody");
             tbody.innerHTML = "";
-            
             for (let i = weatherData.time.length - 1; i >= 0; i--) {
                 if (weatherData.time[i].startsWith(selectedYear)) {
-                    // Conversione direzione
                     const dir = getWindDirection(weatherData.wind_direction_10m_dominant[i]);
-                    
-                    tbody.innerHTML += `<tr>
-                        <td>${weatherData.time[i]}</td>
-                        <td>${weatherData.temperature_2m_max[i]}°C</td>
-                        <td>${weatherData.apparent_temperature_max[i]}°C</td>
-                        <td>${weatherData.temperature_2m_min[i]}°C</td>
-                        <td>${weatherData.pressure_msl_mean[i]} hPa</td>
-                        <td>${weatherData.wind_speed_10m_max[i]} km/h ${dir}</td>
-                        <td>${weatherData.relative_humidity_2m_mean[i]}%</td>
-                        <td>${weatherData.precipitation_sum[i]} mm</td>
-                    </tr>`;
+                    tbody.innerHTML += "<tr>" +
+                        "<td>" + weatherData.time[i] + "</td>" +
+                        "<td>" + weatherData.temperature_2m_max[i] + "°C</td>" +
+                        "<td>" + weatherData.apparent_temperature_max[i] + "°C</td>" +
+                        "<td>" + weatherData.temperature_2m_min[i] + "°C</td>" +
+                        "<td>" + weatherData.pressure_msl_mean[i] + " hPa</td>" +
+                        "<td>" + weatherData.wind_speed_10m_max[i] + " km/h " + dir + "</td>" +
+                        "<td>" + weatherData.relative_humidity_2m_mean[i] + "%</td>" +
+                        "<td>" + weatherData.precipitation_sum[i] + " mm</td>" +
+                        "</tr>";
                 }
             }
         }
