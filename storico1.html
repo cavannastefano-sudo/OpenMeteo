@@ -5,36 +5,18 @@
     <title id="pageTitle">Archivio Storico Meteo Piacenza 1940-Oggi</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
-        table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 10px; margin-bottom: 30px; }
+        table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #2c3e50; color: white; font-size: 16px; }
         .controls { margin-bottom: 20px; font-size: 18px; }
         select { font-size: 16px; padding: 5px; }
         .loading { font-size: 16px; color: #e67e22; font-weight: bold; margin-left: 15px; }
-        .current-section { background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #cbd5e1; }
-        h2 { color: #2c3e50; margin-top: 0; }
     </style>
 </head>
 <body>
 
     <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
     
-    <!-- Sezione Dati Attuali / Oggi -->
-    <div class="current-section">
-        <h2>Meteo Attuale / Oggi</h2>
-        <table id="currentWeatherTable">
-            <thead>
-                <tr>
-                    <th>Data</th><th>Max</th><th>Percepita</th><th>Min</th>
-                    <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="8">Caricamento dati attuali in corso...</td></tr>
-            </tbody>
-        </table>
-    </div>
-
     <div class="controls">
         <label for="yearSelect">Seleziona Anno: </label>
         <select id="yearSelect">
@@ -57,7 +39,6 @@
 
     <script>
         const currentYear = new Date().getFullYear();
-        const todayStr = new Date().toISOString().split("T")[0];
 
         const yearSelect = document.getElementById("yearSelect");
         for (let y = currentYear; y >= 1940; y--) {
@@ -75,45 +56,6 @@
             else degrees = degrees % 360;
             return sectors[parseInt(degrees / 45)];
         }
-
-        // Carica automaticamente i dati di oggi in cima alla pagina
-        function loadCurrentWeather() {
-            const currentTbody = document.querySelector("#currentWeatherTable tbody");
-            const urlCurrent = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${todayStr}&end_date=${todayStr}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
-
-            fetch(urlCurrent)
-                .then(response => {
-                    if (!response.ok) throw new Error("Errore nel caricamento dati attuali");
-                    return response.json();
-                })
-                .then(data => {
-                    const weatherData = data.daily;
-                    if (!weatherData || !weatherData.time || weatherData.time.length === 0) {
-                        currentTbody.innerHTML = '<tr><td colspan="8" style="color: orange;">Dati attuali non ancora disponibili nell\'archivio (richiedono qualche giorno di consolidamento).</td></tr>';
-                        return;
-                    }
-
-                    const i = 0;
-                    const dir = getWindDirection(weatherData.wind_direction_10m_dominant[i]);
-                    
-                    currentTbody.innerHTML = `<tr>
-                        <td>${weatherData.time[i]} (Oggi)</td>
-                        <td>${weatherData.temperature_2m_max[i] !== undefined && weatherData.temperature_2m_max[i] !== null ? weatherData.temperature_2m_max[i] + '°C' : 'N/D'}</td>
-                        <td>${weatherData.apparent_temperature_max[i] !== undefined && weatherData.apparent_temperature_max[i] !== null ? weatherData.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
-                        <td>${weatherData.temperature_2m_min[i] !== undefined && weatherData.temperature_2m_min[i] !== null ? weatherData.temperature_2m_min[i] + '°C' : 'N/D'}</td>
-                        <td>${weatherData.pressure_msl_mean[i] !== undefined && weatherData.pressure_msl_mean[i] !== null ? weatherData.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
-                        <td>${weatherData.wind_speed_10m_max[i] !== undefined && weatherData.wind_speed_10m_max[i] !== null ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
-                        <td>${weatherData.relative_humidity_2m_mean[i] !== undefined && weatherData.relative_humidity_2m_mean[i] !== null ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
-                        <td>${weatherData.precipitation_sum[i] !== undefined && weatherData.precipitation_sum[i] !== null ? weatherData.precipitation_sum[i] + ' mm' : 'N/D'}</td>
-                    </tr>`;
-                })
-                .catch(err => {
-                    console.error("Errore:", err);
-                    currentTbody.innerHTML = '<tr><td colspan="8" style="color: red;">Impossibile caricare i dati attuali.</td></tr>';
-                });
-        }
-
-        loadCurrentWeather();
 
         const loadingStatus = document.getElementById("loadingStatus");
         const tbody = document.querySelector("#weatherTable tbody");
