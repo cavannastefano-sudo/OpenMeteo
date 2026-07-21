@@ -16,8 +16,9 @@
         .current-temp { color: #e74c3c; font-weight: bold; }
         .current-apparent { color: #008b8b; font-weight: bold; }
         .current-sub { color: #008b8b; font-weight: bold; font-size: 13px; display: block; margin-top: 4px; }
-        .legend { font-size: 13px; color: #555; margin-bottom: 30px; font-style: italic; }
+        .legend { font-size: 13px; color: #555; margin-bottom: 30px; line-height: 1.6; font-style: italic; }
         .legend-color { color: #008b8b; font-weight: bold; }
+        .legend-temp { color: #e74c3c; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -38,7 +39,12 @@
                 <tr><td colspan="11">Caricamento dati attuali in corso...</td></tr>
             </tbody>
         </table>
-        <div class="legend">ℹ️ I valori scritti in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali.</div>
+        <div class="legend">
+            ℹ️ <strong>Legenda:</strong><br>
+            • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span>.<br>
+            • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali (percepita, pressione, vento e umidità).<br>
+            • Per la colonna pioggia/neve, i valori sono espressi in millimetri (**mm**) per la pioggia o in centimetri (**cm**) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.
+        </div>
     </div>
 
     <div class="controls">
