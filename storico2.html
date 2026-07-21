@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title id="pageTitle">Storico Meteo Piacenza (1940-2025)</title>
+    <title id="pageTitle">Storico Meteo Piacenza (1940-2026)</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 20px; }
@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <h1 id="mainTitle">Storico Meteo Piacenza (1940-2025)</h1>
+    <h1 id="mainTitle">Storico Meteo Piacenza (1940-2026)</h1>
     
     <div class="controls">
         <label for="yearSelect">Seleziona Anno: </label>
@@ -38,9 +38,16 @@
     </table>
 
     <script>
-        // Genera automaticamente gli anni dal 2025 al 1940 nel menu a tendina
+        // Rileva automaticamente l'anno corrente in modo dinamico
+        const currentYear = new Date().getFullYear();
+
+        // Aggiorna l'intestazione e il titolo della pagina con l'intervallo dinamico fino all'anno corrente
+        document.getElementById("pageTitle").textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
+        document.getElementById("mainTitle").textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
+
+        // Genera automaticamente gli anni nel menu a tendina dall'anno corrente fino al 1940
         const yearSelect = document.getElementById("yearSelect");
-        for (let y = 2025; y >= 1940; y--) {
+        for (let y = currentYear; y >= 1940; y--) {
             const opt = document.createElement("option");
             opt.value = y;
             opt.textContent = y;
@@ -64,8 +71,8 @@
             const selectedYear = yearSelect.value;
             if (!selectedYear) {
                 tbody.innerHTML = '<tr><td colspan="8">Seleziona un anno dal menu per visualizzare i dati.</td></tr>';
-                pageTitle.textContent = "Storico Meteo Piacenza (1940-2025)";
-                mainTitle.textContent = "Storico Meteo Piacenza (1940-2025)";
+                pageTitle.textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
+                mainTitle.textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
                 return;
             }
 
