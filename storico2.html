@@ -80,15 +80,13 @@
             loadingStatus.style.display = "inline";
             tbody.innerHTML = "";
 
-            // Gestione intelligente dell'URL: se è l'anno corrente (2026), usa l'endpoint di forecast/storico recente, altrimenti l'archivio classico
             let url = "";
-            const todayStr = new Date().toISOString().split("T")[0]; // Data odierna YYYY-MM-DD
+            const todayStr = new Date().toISOString().split("T")[0];
 
             if (selectedYear == currentYear) {
-                // Per l'anno in corso usiamo l'endpoint che copre fino ad oggi
-                url = `https://api.open-meteo.com/v1/forecast?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${todayStr}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+                // Per il 2026 usiamo l'endpoint archive che ora supporta i dati consolidati recenti (fino a ieri)
+                url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${todayStr}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
             } else {
-                // Per gli anni passati usa l'archivio storico
                 url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${selectedYear}-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
             }
 
@@ -111,13 +109,13 @@
                         
                         tbody.innerHTML += `<tr>
                             <td>${weatherData.time[i]}</td>
-                            <td>${weatherData.temperature_2m_max[i] !== undefined ? weatherData.temperature_2m_max[i] + '°C' : 'N/D'}</td>
-                            <td>${weatherData.apparent_temperature_max[i] !== undefined ? weatherData.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
-                            <td>${weatherData.temperature_2m_min[i] !== undefined ? weatherData.temperature_2m_min[i] + '°C' : 'N/D'}</td>
-                            <td>${weatherData.pressure_msl_mean[i] !== undefined ? weatherData.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
-                            <td>${weatherData.wind_speed_10m_max[i] !== undefined ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
-                            <td>${weatherData.relative_humidity_2m_mean[i] !== undefined ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
-                            <td>${weatherData.precipitation_sum[i] !== undefined ? weatherData.precipitation_sum[i] + ' mm' : 'N/D'}</td>
+                            <td>${weatherData.temperature_2m_max[i] !== undefined && weatherData.temperature_2m_max[i] !== null ? weatherData.temperature_2m_max[i] + '°C' : 'N/D'}</td>
+                            <td>${weatherData.apparent_temperature_max[i] !== undefined && weatherData.apparent_temperature_max[i] !== null ? weatherData.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
+                            <td>${weatherData.temperature_2m_min[i] !== undefined && weatherData.temperature_2m_min[i] !== null ? weatherData.temperature_2m_min[i] + '°C' : 'N/D'}</td>
+                            <td>${weatherData.pressure_msl_mean[i] !== undefined && weatherData.pressure_msl_mean[i] !== null ? weatherData.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
+                            <td>${weatherData.wind_speed_10m_max[i] !== undefined && weatherData.wind_speed_10m_max[i] !== null ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
+                            <td>${weatherData.relative_humidity_2m_mean[i] !== undefined && weatherData.relative_humidity_2m_mean[i] !== null ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
+                            <td>${weatherData.precipitation_sum[i] !== undefined && weatherData.precipitation_sum[i] !== null ? weatherData.precipitation_sum[i] + ' mm' : 'N/D'}</td>
                         </tr>`;
                     }
                 })
