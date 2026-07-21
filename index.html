@@ -14,7 +14,7 @@
         .current-section { background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #cbd5e1; }
         h2 { color: #2c3e50; margin-top: 0; }
         .current-temp { color: #e74c3c; font-weight: bold; }
-        .current-apparent { color: #008b8b; font-weight: bold; }
+        .current-sub { color: #008b8b; font-weight: bold; font-size: 13px; display: block; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -80,11 +80,8 @@
 
         function formatTimeWithSeconds(isoString) {
             if (!isoString) return "N/D";
-            // Se la stringa contiene già i secondi (es. 2026-07-21T05:45:30), li estraiamo completamente
             const timePart = isoString.split("T")[1];
             if (!timePart) return "N/D";
-            
-            // Se la stringa è nel formato HH:mm senza secondi, aggiungiamo ":00"
             let cleanTime = timePart.replace("Z", "");
             let parts = cleanTime.split(":");
             if (parts.length === 2) {
@@ -127,7 +124,20 @@
                     const i = 0;
                     const currentTemp = (current && current.temperature_2m !== undefined && current.temperature_2m !== null) ? current.temperature_2m + '°C' : 'N/D';
                     const currentApparent = (current && current.apparent_temperature !== undefined && current.apparent_temperature !== null) ? current.apparent_temperature + '°C' : 'N/D';
-                    const dir = getWindDirection(daily.wind_direction_10m_dominant[i]);
+                    
+                    const currentPressure = (current && current.pressure_msl !== undefined && current.pressure_msl !== null) ? current.pressure_msl + ' hPa' : 'N/D';
+                    const dailyPressure = (daily.pressure_msl_mean[i] !== undefined && daily.pressure_msl_mean[i] !== null) ? daily.pressure_msl_mean[i] + ' hPa' : 'N/D';
+
+                    const currWindSpeed = (current && current.wind_speed_10m !== undefined && current.wind_speed_10m !== null) ? current.wind_speed_10m : null;
+                    const currWindDirDeg = (current && current.wind_direction_10m !== undefined && current.wind_direction_10m !== null) ? current.wind_direction_10m : null;
+                    const currDirStr = getWindDirection(currWindDirDeg);
+                    const currentWind = currWindSpeed !== null ? `${currWindSpeed} km/h ${currDirStr}` : 'N/D';
+                    const dailyDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
+                    const dailyWind = (daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null) ? daily.wind_speed_10m_max[i] + ' km/h ' + dailyDir : 'N/D';
+
+                    const currentHum = (current && current.relative_humidity_2m !== undefined && current.relative_humidity_2m !== null) ? current.relative_humidity_2m + '%' : 'N/D';
+                    const dailyHum = (daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null) ? daily.relative_humidity_2m_mean[i] + '%' : 'N/D';
+
                     const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
                     const sunset = formatTimeWithSeconds(daily.sunset[i]);
                     const precipText = formatPrecipitation(
@@ -143,9 +153,9 @@
                         <td>${daily.temperature_2m_max[i] !== undefined && daily.temperature_2m_max[i] !== null ? daily.temperature_2m_max[i] + '°C' : 'N/D'}</td>
                         <td>${daily.apparent_temperature_max[i] !== undefined && daily.apparent_temperature_max[i] !== null ? daily.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
                         <td>${daily.temperature_2m_min[i] !== undefined && daily.temperature_2m_min[i] !== null ? daily.temperature_2m_min[i] + '°C' : 'N/D'}</td>
-                        <td>${daily.pressure_msl_mean[i] !== undefined && daily.pressure_msl_mean[i] !== null ? daily.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
-                        <td>${daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null ? daily.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
-                        <td>${daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null ? daily.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
+                        <td>${dailyPressure}<span class="current-sub">${currentPressure}</span></td>
+                        <td>${dailyWind}<span class="current-sub">${currentWind}</span></td>
+                        <td>${dailyHum}<span class="current-sub">${currentHum}</span></td>
                         <td>${precipText}</td>
                         <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                     </tr>`;
