@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title id="pageTitle">Storico Meteo Piacenza</title>
+    <title id="pageTitle">Archivio Storico Meteo Piacenza 1940-Oggi</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 20px; }
@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <h1 id="mainTitle">Storico Meteo Piacenza</h1>
+    <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
     
     <div class="controls">
         <label for="yearSelect">Seleziona Anno: </label>
@@ -39,9 +39,6 @@
 
     <script>
         const currentYear = new Date().getFullYear();
-
-        document.getElementById("pageTitle").textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
-        document.getElementById("mainTitle").textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
 
         const yearSelect = document.getElementById("yearSelect");
         for (let y = currentYear; y >= 1940; y--) {
@@ -69,20 +66,19 @@
             const selectedYear = yearSelect.value;
             if (!selectedYear) {
                 tbody.innerHTML = '<tr><td colspan="8">Seleziona un anno dal menu per visualizzare i dati.</td></tr>';
-                pageTitle.textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
-                mainTitle.textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
+                pageTitle.textContent = "Archivio Storico Meteo Piacenza 1940-Oggi";
+                mainTitle.textContent = "Archivio Storico Meteo Piacenza 1940-Oggi";
                 return;
             }
 
-            pageTitle.textContent = `Storico Meteo Piacenza (${selectedYear})`;
-            mainTitle.textContent = `Storico Meteo Piacenza (${selectedYear})`;
+            pageTitle.textContent = `Archivio Storico Meteo Piacenza (${selectedYear})`;
+            mainTitle.textContent = `Archivio Storico Meteo Piacenza (${selectedYear})`;
 
             loadingStatus.style.display = "inline";
             tbody.innerHTML = "";
 
             let endDate = `${selectedYear}-12-31`;
 
-            // Se l'anno selezionato è quello corrente (2026), calcoliamo la data di ieri per evitare errori di archivio
             if (selectedYear == currentYear) {
                 const yesterday = new Date();
                 yesterday.setDate(yesterday.getDate() - 1);
