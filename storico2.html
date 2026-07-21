@@ -25,8 +25,8 @@
         <table id="currentWeatherTable">
             <thead>
                 <tr>
-                    <th>Data</th><th>Alba / Tramonto</th><th>Max</th><th>Percepita</th><th>Min</th>
-                    <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th>
+                    <th>Data</th><th>Max</th><th>Percepita</th><th>Min</th>
+                    <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th><th>Alba / Tramonto</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,8 +46,8 @@
     <table id="weatherTable">
         <thead>
             <tr>
-                <th>Data</th><th>Alba / Tramonto</th><th>Max</th><th>Percepita</th><th>Min</th>
-                <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th>
+                <th>Data</th><th>Max</th><th>Percepita</th><th>Min</th>
+                <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th><th>Alba / Tramonto</th>
             </tr>
         </thead>
         <tbody>
@@ -124,7 +124,6 @@
                     
                     currentTbody.innerHTML = `<tr>
                         <td>${daily.time[i]} (Oggi)</td>
-                        <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                         <td>${daily.temperature_2m_max[i] !== undefined && daily.temperature_2m_max[i] !== null ? daily.temperature_2m_max[i] + '°C' : 'N/D'}</td>
                         <td>${daily.apparent_temperature_max[i] !== undefined && daily.apparent_temperature_max[i] !== null ? daily.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
                         <td>${daily.temperature_2m_min[i] !== undefined && daily.temperature_2m_min[i] !== null ? daily.temperature_2m_min[i] + '°C' : 'N/D'}</td>
@@ -132,6 +131,7 @@
                         <td>${daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null ? daily.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
                         <td>${daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null ? daily.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
                         <td>${precipText}</td>
+                        <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                     </tr>`;
                 })
                 .catch(err => {
@@ -198,7 +198,6 @@
                         
                         tbody.innerHTML += `<tr>
                             <td>${weatherData.time[i]}</td>
-                            <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                             <td>${weatherData.temperature_2m_max[i] !== undefined && weatherData.temperature_2m_max[i] !== null ? weatherData.temperature_2m_max[i] + '°C' : 'N/D'}</td>
                             <td>${weatherData.apparent_temperature_max[i] !== undefined && weatherData.apparent_temperature_max[i] !== null ? weatherData.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
                             <td>${weatherData.temperature_2m_min[i] !== undefined && weatherData.temperature_2m_min[i] !== null ? weatherData.temperature_2m_min[i] + '°C' : 'N/D'}</td>
@@ -206,6 +205,7 @@
                             <td>${weatherData.wind_speed_10m_max[i] !== undefined && weatherData.wind_speed_10m_max[i] !== null ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
                             <td>${weatherData.relative_humidity_2m_mean[i] !== undefined && weatherData.relative_humidity_2m_mean[i] !== null ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
                             <td>${precipText}</td>
+                            <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                         </tr>`;
                     }
                 })
