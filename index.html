@@ -26,11 +26,11 @@
             <thead>
                 <tr>
                     <th>Data</th><th>Max</th><th>Percepita</th><th>Min</th>
-                    <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia</th>
+                    <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th><th>Alba / Tramonto</th>
                 </tr>
             </thead>
             <tbody>
-                <tr><td colspan="8">Caricamento dati attuali in corso...</td></tr>
+                <tr><td colspan="9">Caricamento dati attuali in corso...</td></tr>
             </tbody>
         </table>
     </div>
@@ -47,11 +47,11 @@
         <thead>
             <tr>
                 <th>Data</th><th>Max</th><th>Percepita</th><th>Min</th>
-                <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia</th>
+                <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th><th>Alba / Tramonto</th>
             </tr>
         </thead>
         <tbody>
-            <tr><td colspan="8">Seleziona un anno dal menu per visualizzare i dati.</td></tr>
+            <tr><td colspan="9">Seleziona un anno dal menu per visualizzare i dati.</td></tr>
         </tbody>
     </table>
 
@@ -76,10 +76,29 @@
             return sectors[parseInt(degrees / 45)];
         }
 
-        // Carica automaticamente i dati di oggi in cima alla pagina
+        function formatTime(isoString) {
+            if (!isoString) return "N/D";
+            const timePart = isoString.split("T")[1];
+            return timePart ? timePart.substring(0, 5) : "N/D";
+        }
+
+        function formatPrecipitation(precip, snowfall, minTemp) {
+            let p = (precip !== undefined && precip !== null) ? precip : 0;
+            let s = (snowfall !== undefined && snowfall !== null) ? snowfall : 0;
+
+            if (s > 0) {
+                return `❄️ ${s} cm`;
+            } else if (p > 0 && minTemp !== undefined && minTemp !== null && minTemp <= 1.5) {
+                let estimatedSnow = (p * 1.0).toFixed(1);
+                return `❄️ ~${estimatedSnow} cm (neve)`;
+            } else {
+                return `${p} mm`;
+            }
+        }
+
         function loadCurrentWeather() {
             const currentTbody = document.querySelector("#currentWeatherTable tbody");
-            const urlCurrent = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${todayStr}&end_date=${todayStr}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+            const urlCurrent = `https://api.open-meteo.com/v1/forecast?latitude=45.0483&longitude=9.6953&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
 
             fetch(urlCurrent)
                 .then(response => {
@@ -87,29 +106,37 @@
                     return response.json();
                 })
                 .then(data => {
-                    const weatherData = data.daily;
-                    if (!weatherData || !weatherData.time || weatherData.time.length === 0) {
-                        currentTbody.innerHTML = '<tr><td colspan="8" style="color: orange;">Dati attuali non ancora disponibili nell\'archivio (richiedono qualche giorno di consolidamento).</td></tr>';
+                    const daily = data.daily;
+                    if (!daily || !daily.time || daily.time.length === 0) {
+                        currentTbody.innerHTML = '<tr><td colspan="9" style="color: orange;">Dati attuali non disponibili.</td></tr>';
                         return;
                     }
 
                     const i = 0;
-                    const dir = getWindDirection(weatherData.wind_direction_10m_dominant[i]);
+                    const dir = getWindDirection(daily.wind_direction_10m_dominant[i]);
+                    const sunrise = formatTime(daily.sunrise[i]);
+                    const sunset = formatTime(daily.sunset[i]);
+                    const precipText = formatPrecipitation(
+                        daily.precipitation_sum[i], 
+                        daily.snowfall_sum ? daily.snowfall_sum[i] : 0, 
+                        daily.temperature_2m_min[i]
+                    );
                     
                     currentTbody.innerHTML = `<tr>
-                        <td>${weatherData.time[i]} (Oggi)</td>
-                        <td>${weatherData.temperature_2m_max[i] !== undefined && weatherData.temperature_2m_max[i] !== null ? weatherData.temperature_2m_max[i] + '°C' : 'N/D'}</td>
-                        <td>${weatherData.apparent_temperature_max[i] !== undefined && weatherData.apparent_temperature_max[i] !== null ? weatherData.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
-                        <td>${weatherData.temperature_2m_min[i] !== undefined && weatherData.temperature_2m_min[i] !== null ? weatherData.temperature_2m_min[i] + '°C' : 'N/D'}</td>
-                        <td>${weatherData.pressure_msl_mean[i] !== undefined && weatherData.pressure_msl_mean[i] !== null ? weatherData.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
-                        <td>${weatherData.wind_speed_10m_max[i] !== undefined && weatherData.wind_speed_10m_max[i] !== null ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
-                        <td>${weatherData.relative_humidity_2m_mean[i] !== undefined && weatherData.relative_humidity_2m_mean[i] !== null ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
-                        <td>${weatherData.precipitation_sum[i] !== undefined && weatherData.precipitation_sum[i] !== null ? weatherData.precipitation_sum[i] + ' mm' : 'N/D'}</td>
+                        <td>${daily.time[i]} (Oggi)</td>
+                        <td>${daily.temperature_2m_max[i] !== undefined && daily.temperature_2m_max[i] !== null ? daily.temperature_2m_max[i] + '°C' : 'N/D'}</td>
+                        <td>${daily.apparent_temperature_max[i] !== undefined && daily.apparent_temperature_max[i] !== null ? daily.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
+                        <td>${daily.temperature_2m_min[i] !== undefined && daily.temperature_2m_min[i] !== null ? daily.temperature_2m_min[i] + '°C' : 'N/D'}</td>
+                        <td>${daily.pressure_msl_mean[i] !== undefined && daily.pressure_msl_mean[i] !== null ? daily.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
+                        <td>${daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null ? daily.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
+                        <td>${daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null ? daily.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
+                        <td>${precipText}</td>
+                        <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                     </tr>`;
                 })
                 .catch(err => {
                     console.error("Errore:", err);
-                    currentTbody.innerHTML = '<tr><td colspan="8" style="color: red;">Impossibile caricare i dati attuali.</td></tr>';
+                    currentTbody.innerHTML = '<tr><td colspan="9" style="color: red;">Impossibile caricare i dati attuali.</td></tr>';
                 });
         }
 
@@ -123,7 +150,7 @@
         yearSelect.onchange = function() {
             const selectedYear = yearSelect.value;
             if (!selectedYear) {
-                tbody.innerHTML = '<tr><td colspan="8">Seleziona un anno dal menu per visualizzare i dati.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9">Seleziona un anno dal menu per visualizzare i dati.</td></tr>';
                 pageTitle.textContent = "Archivio Storico Meteo Piacenza 1940-Oggi";
                 mainTitle.textContent = "Archivio Storico Meteo Piacenza 1940-Oggi";
                 return;
@@ -143,7 +170,7 @@
                 endDate = yesterday.toISOString().split("T")[0];
             }
 
-            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
 
             fetch(url)
                 .then(response => {
@@ -155,12 +182,19 @@
                     const weatherData = data.daily;
                     
                     if (!weatherData || !weatherData.time || weatherData.time.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="8" style="color: orange;">Nessun dato disponibile per questo periodo.</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="9" style="color: orange;">Nessun dato disponibile per questo periodo.</td></tr>';
                         return;
                     }
 
                     for (let i = weatherData.time.length - 1; i >= 0; i--) {
                         const dir = getWindDirection(weatherData.wind_direction_10m_dominant[i]);
+                        const sunrise = formatTime(weatherData.sunrise[i]);
+                        const sunset = formatTime(weatherData.sunset[i]);
+                        const precipText = formatPrecipitation(
+                            weatherData.precipitation_sum[i], 
+                            weatherData.snowfall_sum ? weatherData.snowfall_sum[i] : 0, 
+                            weatherData.temperature_2m_min[i]
+                        );
                         
                         tbody.innerHTML += `<tr>
                             <td>${weatherData.time[i]}</td>
@@ -170,14 +204,15 @@
                             <td>${weatherData.pressure_msl_mean[i] !== undefined && weatherData.pressure_msl_mean[i] !== null ? weatherData.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
                             <td>${weatherData.wind_speed_10m_max[i] !== undefined && weatherData.wind_speed_10m_max[i] !== null ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
                             <td>${weatherData.relative_humidity_2m_mean[i] !== undefined && weatherData.relative_humidity_2m_mean[i] !== null ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
-                            <td>${weatherData.precipitation_sum[i] !== undefined && weatherData.precipitation_sum[i] !== null ? weatherData.precipitation_sum[i] + ' mm' : 'N/D'}</td>
+                            <td>${precipText}</td>
+                            <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                         </tr>`;
                     }
                 })
                 .catch(err => {
                     loadingStatus.style.display = "none";
                     console.error("Errore:", err);
-                    tbody.innerHTML = '<tr><td colspan="8" style="color: red;">Errore durante il caricamento dei dati per questo anno.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="9" style="color: red;">Errore durante il caricamento dei dati per questo anno.</td></tr>';
                 });
         };
     </script>
