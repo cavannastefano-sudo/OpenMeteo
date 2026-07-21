@@ -80,15 +80,16 @@
             loadingStatus.style.display = "inline";
             tbody.innerHTML = "";
 
-            let url = "";
-            const todayStr = new Date().toISOString().split("T")[0];
+            let endDate = `${selectedYear}-12-31`;
 
+            // Se l'anno selezionato è quello corrente (2026), calcoliamo la data di ieri per evitare errori di archivio
             if (selectedYear == currentYear) {
-                // Per il 2026 usiamo l'endpoint archive che ora supporta i dati consolidati recenti (fino a ieri)
-                url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${todayStr}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
-            } else {
-                url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${selectedYear}-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                endDate = yesterday.toISOString().split("T")[0];
             }
+
+            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
 
             fetch(url)
                 .then(response => {
