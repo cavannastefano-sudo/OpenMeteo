@@ -142,13 +142,24 @@
                     const currentHum = (current && current.relative_humidity_2m !== undefined && current.relative_humidity_2m !== null) ? current.relative_humidity_2m + '%' : 'N/D';
                     const dailyHum = (daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null) ? daily.relative_humidity_2m_mean[i] + '%' : 'N/D';
 
-                    const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
-                    const sunset = formatTimeWithSeconds(daily.sunset[i]);
-                    const precipText = formatPrecipitation(
+                    const currentPrecip = (current && current.precipitation !== undefined && current.precipitation !== null) ? current.precipitation : 0;
+                    const currentSnowfall = (daily.snowfall_sum && daily.snowfall_sum[i] !== undefined && daily.snowfall_sum[i] !== null) ? daily.snowfall_sum[i] : 0;
+                    
+                    let currentPrecipText = `${currentPrecip} mm`;
+                    if (currentPrecip > 0 && current.temperature_2m !== undefined && current.temperature_2m <= 1.5) {
+                        currentPrecipText = `❄️ ~${(currentPrecip * 1.0).toFixed(1)} cm (neve)`;
+                    } else if (currentSnowfall > 0) {
+                        currentPrecipText = `❄️ ${currentSnowfall} cm`;
+                    }
+
+                    const dailyPrecip = formatPrecipitation(
                         daily.precipitation_sum[i], 
                         daily.snowfall_sum ? daily.snowfall_sum[i] : 0, 
                         daily.temperature_2m_min[i]
                     );
+
+                    const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
+                    const sunset = formatTimeWithSeconds(daily.sunset[i]);
                     
                     currentTbody.innerHTML = `<tr>
                         <td>${daily.time[i]} (Oggi)</td>
@@ -160,7 +171,7 @@
                         <td>${dailyPressure}<span class="current-sub">${currentPressure}</span></td>
                         <td>${dailyWind}<span class="current-sub">${currentWind}</span></td>
                         <td>${dailyHum}<span class="current-sub">${currentHum}</span></td>
-                        <td>${precipText}</td>
+                        <td>${dailyPrecip}<span class="current-sub">${currentPrecipText}</span></td>
                         <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                     </tr>`;
                 })
