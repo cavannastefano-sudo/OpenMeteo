@@ -79,7 +79,7 @@
         function formatTime(isoString) {
             if (!isoString) return "N/D";
             const timePart = isoString.split("T")[1];
-            return timePart ? timePart.substring(0, 5) : "N/D";
+            return timePart ? timePart.substring(0, 8) : "N/D";
         }
 
         function formatPrecipitation(precip, snowfall, minTemp) {
