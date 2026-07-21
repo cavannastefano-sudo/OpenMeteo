@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title id="pageTitle">Storico Meteo Piacenza (1940-2026)</title>
+    <title id="pageTitle">Storico Meteo Piacenza</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 20px; }
@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <h1 id="mainTitle">Storico Meteo Piacenza (1940-2026)</h1>
+    <h1 id="mainTitle">Storico Meteo Piacenza</h1>
     
     <div class="controls">
         <label for="yearSelect">Seleziona Anno: </label>
@@ -38,14 +38,11 @@
     </table>
 
     <script>
-        // Rileva automaticamente l'anno corrente in modo dinamico
         const currentYear = new Date().getFullYear();
 
-        // Aggiorna l'intestazione e il titolo della pagina con l'intervallo dinamico fino all'anno corrente
         document.getElementById("pageTitle").textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
         document.getElementById("mainTitle").textContent = `Storico Meteo Piacenza (1940-${currentYear})`;
 
-        // Genera automaticamente gli anni nel menu a tendina dall'anno corrente fino al 1940
         const yearSelect = document.getElementById("yearSelect");
         for (let y = currentYear; y >= 1940; y--) {
             const opt = document.createElement("option");
@@ -55,6 +52,7 @@
         }
 
         function getWindDirection(degrees) {
+            if (degrees === undefined || degrees === null) return "N/D";
             const sectors = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
             degrees += 22.5;
             if (degrees < 0) degrees = 360 - (Math.abs(degrees) % 360);
@@ -76,14 +74,23 @@
                 return;
             }
 
-            // Aggiorna i titoli con l'anno scelto
             pageTitle.textContent = `Storico Meteo Piacenza (${selectedYear})`;
             mainTitle.textContent = `Storico Meteo Piacenza (${selectedYear})`;
 
             loadingStatus.style.display = "inline";
             tbody.innerHTML = "";
 
-            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${selectedYear}-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+            // Gestione intelligente dell'URL: se è l'anno corrente (2026), usa l'endpoint di forecast/storico recente, altrimenti l'archivio classico
+            let url = "";
+            const todayStr = new Date().toISOString().split("T")[0]; // Data odierna YYYY-MM-DD
+
+            if (selectedYear == currentYear) {
+                // Per l'anno in corso usiamo l'endpoint che copre fino ad oggi
+                url = `https://api.open-meteo.com/v1/forecast?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${todayStr}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+            } else {
+                // Per gli anni passati usa l'archivio storico
+                url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${selectedYear}-01-01&end_date=${selectedYear}-12-31&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+            }
 
             fetch(url)
                 .then(response => {
@@ -94,18 +101,23 @@
                     loadingStatus.style.display = "none";
                     const weatherData = data.daily;
                     
+                    if (!weatherData || !weatherData.time || weatherData.time.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="8" style="color: orange;">Nessun dato disponibile per questo periodo.</td></tr>';
+                        return;
+                    }
+
                     for (let i = weatherData.time.length - 1; i >= 0; i--) {
                         const dir = getWindDirection(weatherData.wind_direction_10m_dominant[i]);
                         
                         tbody.innerHTML += `<tr>
                             <td>${weatherData.time[i]}</td>
-                            <td>${weatherData.temperature_2m_max[i]}°C</td>
-                            <td>${weatherData.apparent_temperature_max[i]}°C</td>
-                            <td>${weatherData.temperature_2m_min[i]}°C</td>
-                            <td>${weatherData.pressure_msl_mean[i]} hPa</td>
-                            <td>${weatherData.wind_speed_10m_max[i]} km/h ${dir}</td>
-                            <td>${weatherData.relative_humidity_2m_mean[i]}%</td>
-                            <td>${weatherData.precipitation_sum[i]} mm</td>
+                            <td>${weatherData.temperature_2m_max[i] !== undefined ? weatherData.temperature_2m_max[i] + '°C' : 'N/D'}</td>
+                            <td>${weatherData.apparent_temperature_max[i] !== undefined ? weatherData.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
+                            <td>${weatherData.temperature_2m_min[i] !== undefined ? weatherData.temperature_2m_min[i] + '°C' : 'N/D'}</td>
+                            <td>${weatherData.pressure_msl_mean[i] !== undefined ? weatherData.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
+                            <td>${weatherData.wind_speed_10m_max[i] !== undefined ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
+                            <td>${weatherData.relative_humidity_2m_mean[i] !== undefined ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
+                            <td>${weatherData.precipitation_sum[i] !== undefined ? weatherData.precipitation_sum[i] + ' mm' : 'N/D'}</td>
                         </tr>`;
                     }
                 })
