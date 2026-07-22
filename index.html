@@ -48,9 +48,9 @@
         </table>
         <div class="legend">
             ℹ️ <strong>Legenda:</strong><br>
-            • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span>.<br>
-            • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali (percepita, pressione, vento e umidità).<br>
-            • Per la colonna pioggia/neve, i valori sono espressi in millimetri (**mm**) per la pioggia o in centimetri (**cm**) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.
+            • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span> con l'orario di rilevazione.<br>
+            • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).<br>
+            • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.
         </div>
     </div>
 
@@ -107,6 +107,12 @@
             return cleanTime.substring(0, 8);
         }
 
+        function formatHourOnly(isoString) {
+            if (!isoString) return "";
+            const timePart = isoString.split("T")[1];
+            return timePart ? ` (${timePart.substring(0, 5)})` : "";
+        }
+
         function formatPrecipitation(precip, snowfall, minTemp) {
             let p = (precip !== undefined && precip !== null) ? precip : 0;
             let s = (snowfall !== undefined && snowfall !== null) ? snowfall : 0;
@@ -139,30 +145,32 @@
                     }
 
                     const i = 0;
-                    const currentTemp = (current && current.temperature_2m !== undefined && current.temperature_2m !== null) ? current.temperature_2m + '°C' : 'N/D';
-                    const currentApparent = (current && current.apparent_temperature !== undefined && current.apparent_temperature !== null) ? current.apparent_temperature + '°C' : 'N/D';
+                    const currTimeStr = formatHourOnly(current ? current.time : null);
+
+                    const currentTemp = (current && current.temperature_2m !== undefined && current.temperature_2m !== null) ? current.temperature_2m + '°C' + currTimeStr : 'N/D';
+                    const currentApparent = (current && current.apparent_temperature !== undefined && current.apparent_temperature !== null) ? current.apparent_temperature + '°C' + currTimeStr : 'N/D';
                     
-                    const currentPressure = (current && current.pressure_msl !== undefined && current.pressure_msl !== null) ? current.pressure_msl + ' hPa' : 'N/D';
+                    const currentPressure = (current && current.pressure_msl !== undefined && current.pressure_msl !== null) ? current.pressure_msl + ' hPa' + currTimeStr : 'N/D';
                     const dailyPressure = (daily.pressure_msl_mean[i] !== undefined && daily.pressure_msl_mean[i] !== null) ? daily.pressure_msl_mean[i] + ' hPa' : 'N/D';
 
                     const currWindSpeed = (current && current.wind_speed_10m !== undefined && current.wind_speed_10m !== null) ? current.wind_speed_10m : null;
                     const currWindDirDeg = (current && current.wind_direction_10m !== undefined && current.wind_direction_10m !== null) ? current.wind_direction_10m : null;
                     const currDirStr = getWindDirection(currWindDirDeg);
-                    const currentWind = currWindSpeed !== null ? `${currWindSpeed} km/h ${currDirStr}` : 'N/D';
+                    const currentWind = currWindSpeed !== null ? `${currWindSpeed} km/h ${currDirStr}${currTimeStr}` : 'N/D';
                     const dailyDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
                     const dailyWind = (daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null) ? daily.wind_speed_10m_max[i] + ' km/h ' + dailyDir : 'N/D';
 
-                    const currentHum = (current && current.relative_humidity_2m !== undefined && current.relative_humidity_2m !== null) ? current.relative_humidity_2m + '%' : 'N/D';
+                    const currentHum = (current && current.relative_humidity_2m !== undefined && current.relative_humidity_2m !== null) ? current.relative_humidity_2m + '%' + currTimeStr : 'N/D';
                     const dailyHum = (daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null) ? daily.relative_humidity_2m_mean[i] + '%' : 'N/D';
 
                     const currentPrecip = (current && current.precipitation !== undefined && current.precipitation !== null) ? current.precipitation : 0;
                     const currentSnowfall = (daily.snowfall_sum && daily.snowfall_sum[i] !== undefined && daily.snowfall_sum[i] !== null) ? daily.snowfall_sum[i] : 0;
                     
-                    let currentPrecipText = `${currentPrecip} mm`;
+                    let currentPrecipText = `${currentPrecip} mm${currTimeStr}`;
                     if (currentPrecip > 0 && current.temperature_2m !== undefined && current.temperature_2m <= 1.5) {
-                        currentPrecipText = `❄️ ~${(currentPrecip * 1.0).toFixed(1)} cm (neve)`;
+                        currentPrecipText = `❄️ ~${(currentPrecip * 1.0).toFixed(1)} cm (neve)${currTimeStr}`;
                     } else if (currentSnowfall > 0) {
-                        currentPrecipText = `❄️ ${currentSnowfall} cm`;
+                        currentPrecipText = `❄️ ${currentSnowfall} cm${currTimeStr}`;
                     }
 
                     const dailyPrecip = formatPrecipitation(
