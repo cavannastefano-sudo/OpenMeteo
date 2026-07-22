@@ -5,6 +5,10 @@
     <title id="pageTitle">Archivio Storico Meteo Piacenza 1940-Oggi</title>
     <style>
         body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
+        .top-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        h1 { margin: 0; }
+        .refresh-btn { background-color: #2c3e50; color: white; border: none; padding: 10px 15px; font-size: 16px; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .refresh-btn:hover { background-color: #34495e; }
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; margin-top: 10px; margin-bottom: 10px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #2c3e50; color: white; font-size: 16px; }
@@ -23,7 +27,10 @@
 </head>
 <body>
 
-    <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
+    <div class="top-bar">
+        <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
+        <h1 id="mainTitle" style="display:inline;">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
+    </div>
     
     <!-- Sezione Dati Attuali / Oggi -->
     <div class="current-section">
