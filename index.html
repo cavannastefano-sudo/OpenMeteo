@@ -104,6 +104,12 @@
             yearSelect.appendChild(opt);
         }
 
+        // Funzione per formattare i numeri con 1 decimale e la virgola
+        function formatVal(val, decimals = 1) {
+            if (val === undefined || val === null || isNaN(val)) return "N/D";
+            return Number(val).toFixed(decimals).replace('.', ',');
+        }
+
         function getWindDirection(degrees) {
             if (degrees === undefined || degrees === null) return "N/D";
             const sectors = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
@@ -136,12 +142,12 @@
             let s = (snowfall !== undefined && snowfall !== null) ? snowfall : 0;
 
             if (s > 0) {
-                return `❄️ ${s} cm`;
+                return `❄️ ${formatVal(s)} cm`;
             } else if (p > 0 && minTemp !== undefined && minTemp !== null && minTemp <= 1.5) {
-                let estimatedSnow = (p * 1.0).toFixed(1);
+                let estimatedSnow = formatVal(p * 1.0);
                 return `❄️ ~${estimatedSnow} cm (neve)`;
             } else {
-                return `${p} mm`;
+                return `${formatVal(p)} mm`;
             }
         }
 
@@ -165,30 +171,30 @@
                     const i = 0;
                     const currTimeStr = formatHourOnly(current ? current.time : null);
 
-                    const currentTemp = (current && current.temperature_2m !== undefined && current.temperature_2m !== null) ? current.temperature_2m + '°C' + currTimeStr : 'N/D';
-                    const currentApparent = (current && current.apparent_temperature !== undefined && current.apparent_temperature !== null) ? current.apparent_temperature + '°C' + currTimeStr : 'N/D';
+                    const currentTemp = (current && current.temperature_2m !== undefined && current.temperature_2m !== null) ? formatVal(current.temperature_2m) + '°C' + currTimeStr : 'N/D';
+                    const currentApparent = (current && current.apparent_temperature !== undefined && current.apparent_temperature !== null) ? formatVal(current.apparent_temperature) + '°C' + currTimeStr : 'N/D';
                     
-                    const currentPressure = (current && current.pressure_msl !== undefined && current.pressure_msl !== null) ? current.pressure_msl + ' hPa' + currTimeStr : 'N/D';
-                    const dailyPressure = (daily.pressure_msl_mean[i] !== undefined && daily.pressure_msl_mean[i] !== null) ? daily.pressure_msl_mean[i] + ' hPa' : 'N/D';
+                    const currentPressure = (current && current.pressure_msl !== undefined && current.pressure_msl !== null) ? formatVal(current.pressure_msl, 1) + ' hPa' + currTimeStr : 'N/D';
+                    const dailyPressure = (daily.pressure_msl_mean[i] !== undefined && daily.pressure_msl_mean[i] !== null) ? formatVal(daily.pressure_msl_mean[i], 1) + ' hPa' : 'N/D';
 
                     const currWindSpeed = (current && current.wind_speed_10m !== undefined && current.wind_speed_10m !== null) ? current.wind_speed_10m : null;
                     const currWindDirDeg = (current && current.wind_direction_10m !== undefined && current.wind_direction_10m !== null) ? current.wind_direction_10m : null;
                     const currDirStr = getWindDirection(currWindDirDeg);
-                    const currentWind = currWindSpeed !== null ? `${currWindSpeed} km/h ${currDirStr}${currTimeStr}` : 'N/D';
+                    const currentWind = currWindSpeed !== null ? `${formatVal(currWindSpeed)} km/h ${currDirStr}${currTimeStr}` : 'N/D';
                     const dailyDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
-                    const dailyWind = (daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null) ? daily.wind_speed_10m_max[i] + ' km/h ' + dailyDir : 'N/D';
+                    const dailyWind = (daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null) ? formatVal(daily.wind_speed_10m_max[i]) + ' km/h ' + dailyDir : 'N/D';
 
-                    const currentHum = (current && current.relative_humidity_2m !== undefined && current.relative_humidity_2m !== null) ? current.relative_humidity_2m + '%' + currTimeStr : 'N/D';
-                    const dailyHum = (daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null) ? daily.relative_humidity_2m_mean[i] + '%' : 'N/D';
+                    const currentHum = (current && current.relative_humidity_2m !== undefined && current.relative_humidity_2m !== null) ? formatVal(current.relative_humidity_2m) + '%' + currTimeStr : 'N/D';
+                    const dailyHum = (daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null) ? formatVal(daily.relative_humidity_2m_mean[i]) + '%' : 'N/D';
 
                     const currentPrecip = (current && current.precipitation !== undefined && current.precipitation !== null) ? current.precipitation : 0;
                     const currentSnowfall = (daily.snowfall_sum && daily.snowfall_sum[i] !== undefined && daily.snowfall_sum[i] !== null) ? daily.snowfall_sum[i] : 0;
                     
-                    let currentPrecipText = `${currentPrecip} mm${currTimeStr}`;
+                    let currentPrecipText = `${formatVal(currentPrecip)} mm${currTimeStr}`;
                     if (currentPrecip > 0 && current.temperature_2m !== undefined && current.temperature_2m <= 1.5) {
-                        currentPrecipText = `❄️ ~${(currentPrecip * 1.0).toFixed(1)} cm (neve)${currTimeStr}`;
+                        currentPrecipText = `❄️ ~${formatVal(currentPrecip)} cm (neve)${currTimeStr}`;
                     } else if (currentSnowfall > 0) {
-                        currentPrecipText = `❄️ ${currentSnowfall} cm${currTimeStr}`;
+                        currentPrecipText = `❄️ ${formatVal(currentSnowfall)} cm${currTimeStr}`;
                     }
 
                     const dailyPrecip = formatPrecipitation(
@@ -204,9 +210,9 @@
                         <td>${daily.time[i]} (Oggi)</td>
                         <td><span class="current-temp">${currentTemp}</span></td>
                         <td><span class="current-apparent">${currentApparent}</span></td>
-                        <td>${daily.temperature_2m_max[i] !== undefined && daily.temperature_2m_max[i] !== null ? daily.temperature_2m_max[i] + '°C' : 'N/D'}</td>
-                        <td>${daily.apparent_temperature_max[i] !== undefined && daily.apparent_temperature_max[i] !== null ? daily.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
-                        <td>${daily.temperature_2m_min[i] !== undefined && daily.temperature_2m_min[i] !== null ? daily.temperature_2m_min[i] + '°C' : 'N/D'}</td>
+                        <td>${formatVal(daily.temperature_2m_max[i])}°C</td>
+                        <td>${formatVal(daily.apparent_temperature_max[i])}°C</td>
+                        <td>${formatVal(daily.temperature_2m_min[i])}°C</td>
                         <td>${dailyPressure}<span class="current-sub">${currentPressure}</span></td>
                         <td>${dailyWind}<span class="current-sub">${currentWind}</span></td>
                         <td>${dailyHum}<span class="current-sub">${currentHum}</span></td>
@@ -278,12 +284,12 @@
                         
                         tbody.innerHTML += `<tr>
                             <td>${weatherData.time[i]}</td>
-                            <td>${weatherData.temperature_2m_max[i] !== undefined && weatherData.temperature_2m_max[i] !== null ? weatherData.temperature_2m_max[i] + '°C' : 'N/D'}</td>
-                            <td>${weatherData.apparent_temperature_max[i] !== undefined && weatherData.apparent_temperature_max[i] !== null ? weatherData.apparent_temperature_max[i] + '°C' : 'N/D'}</td>
-                            <td>${weatherData.temperature_2m_min[i] !== undefined && weatherData.temperature_2m_min[i] !== null ? weatherData.temperature_2m_min[i] + '°C' : 'N/D'}</td>
-                            <td>${weatherData.pressure_msl_mean[i] !== undefined && weatherData.pressure_msl_mean[i] !== null ? weatherData.pressure_msl_mean[i] + ' hPa' : 'N/D'}</td>
-                            <td>${weatherData.wind_speed_10m_max[i] !== undefined && weatherData.wind_speed_10m_max[i] !== null ? weatherData.wind_speed_10m_max[i] + ' km/h' : 'N/D'} ${dir}</td>
-                            <td>${weatherData.relative_humidity_2m_mean[i] !== undefined && weatherData.relative_humidity_2m_mean[i] !== null ? weatherData.relative_humidity_2m_mean[i] + '%' : 'N/D'}</td>
+                            <td>${formatVal(weatherData.temperature_2m_max[i])}°C</td>
+                            <td>${formatVal(weatherData.apparent_temperature_max[i])}°C</td>
+                            <td>${formatVal(weatherData.temperature_2m_min[i])}°C</td>
+                            <td>${formatVal(weatherData.pressure_msl_mean[i], 1)} hPa</td>
+                            <td>${formatVal(weatherData.wind_speed_10m_max[i])} km/h ${dir}</td>
+                            <td>${formatVal(weatherData.relative_humidity_2m_mean[i])}%</td>
                             <td>${precipText}</td>
                             <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
                         </tr>`;
