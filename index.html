@@ -35,19 +35,19 @@
         .legend-color { color: #008b8b; font-weight: bold; }
         .legend-temp { color: #e74c3c; font-weight: bold; }
 
-        /* Finestra Modale (Zoom Giornaliero) */
+        /* Finestra Modale (Zoom Giornaliero) ingrandita */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
-        .modal-content { background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
-        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 20px; }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 30px; border-radius: 10px; width: 95%; max-width: 750px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; }
+        .close-btn { color: #aaa; float: right; font-size: 32px; font-weight: bold; cursor: pointer; line-height: 20px; }
         .close-btn:hover { color: #000; }
-        .modal-title { color: #2c3e50; margin-top: 0; font-size: 20px; border-bottom: 2px solid #2c3e50; padding-bottom: 8px; }
-        .detail-table { width: 100%; border-collapse: collapse; margin-top: 15px; white-space: normal; }
-        .detail-table th, .detail-table td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }
-        .detail-table th { background-color: #2c3e50; color: white; width: 45%; }
+        .modal-title { color: #2c3e50; margin-top: 0; font-size: 24px; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
+        .detail-table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: normal; font-size: 16px; }
+        .detail-table th, .detail-table td { padding: 12px 15px; text-align: left; border: 1px solid #ddd; }
+        .detail-table th { background-color: #2c3e50; color: white; width: 40%; font-size: 16px; }
 
-        /* Classi colori specifici per i dati attuali nella modale */
-        .modal-temp-current { color: #e74c3c; font-weight: bold; }
-        .modal-sub-current { color: #008b8b; font-weight: bold; }
+        .modal-temp-current { color: #e74c3c; font-weight: bold; font-size: 18px; }
+        .modal-sub-current { color: #008b8b; font-weight: bold; font-size: 18px; }
+        .modal-normal-val { font-size: 18px; font-weight: bold; }
 
         @media screen and (max-width: 768px) {
             body { margin: 10px; }
@@ -55,7 +55,10 @@
             .current-section { padding: 10px; }
             th, td { padding: 8px; font-size: 13px; }
             .current-temp, .current-apparent, .current-sub { font-size: 14px; }
-            .modal-content { margin: 20% auto; width: 95%; }
+            .modal-content { margin: 10% auto; width: 95%; padding: 15px; }
+            .detail-table { font-size: 14px; }
+            .detail-table th, .detail-table td { padding: 10px; }
+            .modal-temp-current, .modal-sub-current, .modal-normal-val { font-size: 15px; }
         }
     </style>
 </head>
@@ -87,7 +90,7 @@
             • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span> con l'orario di rilevazione.<br>
             • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).<br>
             • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.<br>
-            • <em>Suggerimento:</em> Clicca sulla <strong>data</strong> (sia nei dati attuali in alto che nell'archivio storico) per aprire la finestra di zoom con i dettagli verticali.
+            • <em>Suggerimento:</em> Clicca sulla <strong>data</strong> (formato GG-MM-AAAA) per aprire la finestra di zoom con i dettagli verticali.
         </div>
     </div>
 
@@ -377,30 +380,30 @@
             const dateIT = formatDateIT(daily.time[i]) + " (Oggi)";
             const tCurr = `<span class="modal-temp-current">${formatVal(current.temperature_2m)}°C${formatHourOnly(current.time)}</span>`;
             const tAppCurr = `<span class="modal-sub-current">${formatVal(current.apparent_temperature)}°C${formatHourOnly(current.time)}</span>`;
-            const tMax = formatVal(daily.temperature_2m_max[i]) + '°C';
-            const tAppMax = formatVal(daily.apparent_temperature_max[i]) + '°C';
-            const tMin = formatVal(daily.temperature_2m_min[i]) + '°C';
+            const tMax = `<span class="modal-normal-val">${formatVal(daily.temperature_2m_max[i])}°C</span>`;
+            const tAppMax = `<span class="modal-normal-val">${formatVal(daily.apparent_temperature_max[i])}°C</span>`;
+            const tMin = `<span class="modal-normal-val">${formatVal(daily.temperature_2m_min[i])}°C</span>`;
             
             const pressCurr = `<span class="modal-sub-current">${formatVal(current.pressure_msl, 1)} hPa${formatHourOnly(current.time)}</span>`;
-            const pressMean = formatVal(daily.pressure_msl_mean[i], 1) + ' hPa (Media giorno)';
+            const pressMean = `<span class="modal-normal-val">${formatVal(daily.pressure_msl_mean[i], 1)} hPa (Media giorno)</span>`;
             
             const windCurr = `<span class="modal-sub-current">${formatVal(current.wind_speed_10m)} km/h (${getWindDirection(current.wind_direction_10m)})${formatHourOnly(current.time)}</span>`;
-            const windMax = formatVal(daily.wind_speed_10m_max[i]) + ` km/h (${getWindDirection(daily.wind_direction_10m_dominant[i])}) (Max giorno)`;
+            const windMax = `<span class="modal-normal-val">${formatVal(daily.wind_speed_10m_max[i])} km/h (${getWindDirection(daily.wind_direction_10m_dominant[i])}) (Max giorno)</span>`;
             
             const humCurr = `<span class="modal-sub-current">${formatVal(current.relative_humidity_2m)}%${formatHourOnly(current.time)}</span>`;
-            const humMean = formatVal(daily.relative_humidity_2m_mean[i]) + '% (Media giorno)';
+            const humMean = `<span class="modal-normal-val">${formatVal(daily.relative_humidity_2m_mean[i])}% (Media giorno)</span>`;
             
             let precipCurrText = `<span class="modal-sub-current">${formatVal(current.precipitation)} mm${formatHourOnly(current.time)}</span>`;
-            const precipDaily = formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i]);
+            const precipDaily = `<span class="modal-normal-val">${formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i])}</span>`;
 
-            const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
-            const sunset = formatTimeWithSeconds(daily.sunset[i]);
+            const sunrise = `<span class="modal-normal-val">🌅 ${formatTimeWithSeconds(daily.sunrise[i])}</span>`;
+            const sunset = `<span class="modal-normal-val">🌇 ${formatTimeWithSeconds(daily.sunset[i])}</span>`;
 
             document.getElementById("modalTitle").textContent = `Dettaglio Meteo Attuale - ${dateIT}`;
             
             const detailTbody = document.querySelector("#modalDetailTable tbody");
             detailTbody.innerHTML = `
-                <tr><th>Data</th><td>${dateIT}</td></tr>
+                <tr><th>Data</th><td><span class="modal-normal-val">${dateIT}</span></td></tr>
                 <tr><th>Temperatura Attuale</th><td>${tCurr}</td></tr>
                 <tr><th>Percepita Attuale</th><td>${tAppCurr}</td></tr>
                 <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
@@ -410,8 +413,8 @@
                 <tr><th>Vento (Attuale / Max)</th><td>${windCurr} / ${windMax}</td></tr>
                 <tr><th>Umidità (Attuale / Media)</th><td>${humCurr} / ${humMean}</td></tr>
                 <tr><th>Pioggia (Attuale / Totale)</th><td>${precipCurrText} / ${precipDaily}</td></tr>
-                <tr><th>Alba</th><td>🌅 ${sunrise}</td></tr>
-                <tr><th>Tramonto</th><td>🌇 ${sunset}</td></tr>
+                <tr><th>Alba</th><td>${sunrise}</td></tr>
+                <tr><th>Tramonto</th><td>${sunset}</td></tr>
             `;
 
             document.getElementById("dayModal").style.display = "block";
@@ -420,27 +423,27 @@
         function openDayModal(index) {
             if (!cachedYearData) return;
             const dateIT = formatDateIT(cachedYearData.time[index]);
-            const tMax = formatVal(cachedYearData.temperature_2m_max[index]) + '°C';
-            const tApp = formatVal(cachedYearData.apparent_temperature_max[index]) + '°C';
-            const tMin = formatVal(cachedYearData.temperature_2m_min[index]) + '°C';
-            const pressure = formatVal(cachedYearData.pressure_msl_mean[index], 1) + ' hPa';
+            const tMax = `<span class="modal-normal-val">${formatVal(cachedYearData.temperature_2m_max[index])}°C</span>`;
+            const tApp = `<span class="modal-normal-val">${formatVal(cachedYearData.apparent_temperature_max[index])}°C</span>`;
+            const tMin = `<span class="modal-normal-val">${formatVal(cachedYearData.temperature_2m_min[index])}°C</span>`;
+            const pressure = `<span class="modal-normal-val">${formatVal(cachedYearData.pressure_msl_mean[index], 1)} hPa</span>`;
             const windDeg = cachedYearData.wind_direction_10m_dominant[index];
             const windDirStr = getWindDirection(windDeg);
-            const windSpeed = formatVal(cachedYearData.wind_speed_10m_max[index]) + ` km/h (${windDirStr})`;
-            const humidity = formatVal(cachedYearData.relative_humidity_2m_mean[index]) + '%';
-            const precip = formatPrecipitation(
+            const windSpeed = `<span class="modal-normal-val">${formatVal(cachedYearData.wind_speed_10m_max[index])} km/h (${windDirStr})</span>`;
+            const humidity = `<span class="modal-normal-val">${formatVal(cachedYearData.relative_humidity_2m_mean[index])}%</span>`;
+            const precip = `<span class="modal-normal-val">${formatPrecipitation(
                 cachedYearData.precipitation_sum[index], 
                 cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[index] : 0, 
                 cachedYearData.temperature_2m_min[index]
-            );
-            const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[index]);
-            const sunset = formatTimeWithSeconds(cachedYearData.sunset[index]);
+            )}</span>`;
+            const sunrise = `<span class="modal-normal-val">🌅 ${formatTimeWithSeconds(cachedYearData.sunrise[index])}</span>`;
+            const sunset = `<span class="modal-normal-val">🌇 ${formatTimeWithSeconds(cachedYearData.sunset[index])}</span>`;
 
             document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${dateIT}`;
             
             const detailTbody = document.querySelector("#modalDetailTable tbody");
             detailTbody.innerHTML = `
-                <tr><th>Data</th><td>${dateIT}</td></tr>
+                <tr><th>Data</th><td><span class="modal-normal-val">${dateIT}</span></td></tr>
                 <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
                 <tr><th>Temperatura Percepita</th><td>${tApp}</td></tr>
                 <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
@@ -448,8 +451,8 @@
                 <tr><th>Vento Massimo</th><td>${windSpeed}</td></tr>
                 <tr><th>Umidità Media</th><td>${humidity}</td></tr>
                 <tr><th>Pioggia / Neve</th><td>${precip}</td></tr>
-                <tr><th>Alba</th><td>🌅 ${sunrise}</td></tr>
-                <tr><th>Tramonto</th><td>🌇 ${sunset}</td></tr>
+                <tr><th>Alba</th><td>${sunrise}</td></tr>
+                <tr><th>Tramonto</th><td>${sunset}</td></tr>
             `;
 
             document.getElementById("dayModal").style.display = "block";
@@ -462,7 +465,7 @@
         window.onclick = function(event) {
             const modal = document.getElementById("dayModal");
             if (event.target === modal) {
-                modal.style.display = "none";
+                closeModal();
             }
         }
 
