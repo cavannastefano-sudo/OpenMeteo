@@ -14,12 +14,16 @@
         .export-btn:hover { background-color: #219653; }
         .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
         
-        /* Contenitore per rendere le tabelle scorrevoli su mobile */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
 
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; white-space: nowrap; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #2c3e50; color: white; font-size: 15px; }
+        
+        /* Stile riga cliccabile */
+        #weatherTable tbody tr { cursor: pointer; transition: background-color 0.2s; }
+        #weatherTable tbody tr:hover { background-color: #e2e8f0; }
+
         .controls { margin-bottom: 20px; font-size: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
         select { font-size: 16px; padding: 6px; }
         .loading { font-size: 16px; color: #e67e22; font-weight: bold; }
@@ -32,13 +36,23 @@
         .legend-color { color: #008b8b; font-weight: bold; }
         .legend-temp { color: #e74c3c; font-weight: bold; }
 
-        /* Regole specifiche per schermi piccoli (smartphone) */
+        /* Finestra Modale (Zoom Giornaliero) */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
+        .modal-content { background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
+        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 20px; }
+        .close-btn:hover { color: #000; }
+        .modal-title { color: #2c3e50; margin-top: 0; font-size: 20px; border-bottom: 2px solid #2c3e50; padding-bottom: 8px; }
+        .detail-table { width: 100%; border-collapse: collapse; margin-top: 15px; white-space: normal; }
+        .detail-table th, .detail-table td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }
+        .detail-table th { background-color: #2c3e50; color: white; width: 45%; }
+
         @media screen and (max-width: 768px) {
             body { margin: 10px; }
             h1 { font-size: 18px; }
             .current-section { padding: 10px; }
             th, td { padding: 8px; font-size: 13px; }
             .current-temp, .current-apparent, .current-sub { font-size: 14px; }
+            .modal-content { margin: 20% auto; width: 95%; }
         }
     </style>
 </head>
@@ -69,7 +83,8 @@
             ℹ️ <strong>Legenda:</strong><br>
             • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span> con l'orario di rilevazione.<br>
             • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).<br>
-            • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.
+            • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.<br>
+            • <em>Suggerimento:</em> Clicca su qualsiasi riga dell'archivio storico per aprire la finestra di zoom con i dettagli verticali del giorno.
         </div>
     </div>
 
@@ -97,9 +112,24 @@
         </table>
     </div>
 
+    <!-- Finestra Modale Zoom Giornaliero -->
+    <div id="dayModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 id="modalTitle" class="modal-title">Dettaglio Giorno</h3>
+            <div class="table-responsive">
+                <table class="detail-table" id="modalDetailTable">
+                    <tbody>
+                        <!-- I dati verticali verranno inseriti qui via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <script>
         const currentYear = new Date().getFullYear();
-        let cachedYearData = null; // Memoria per i dati dell'anno selezionato
+        let cachedYearData = null;
 
         const yearSelect = document.getElementById("yearSelect");
         for (let y = currentYear; y >= 1940; y--) {
@@ -276,14 +306,13 @@
                 })
                 .then(data => {
                     loadingStatus.style.display = "none";
-                    cachedYearData = data.daily; // Salviamo i dati per l'esportazione
+                    cachedYearData = data.daily;
                     
                     if (!cachedYearData || !cachedYearData.time || cachedYearData.time.length === 0) {
                         tbody.innerHTML = '<tr><td colspan="9" style="color: orange;">Nessun dato disponibile per questo periodo.</td></tr>';
                         return;
                     }
 
-                    // Mostriamo i pulsanti di esportazione
                     exportCsvBtn.style.display = "inline-flex";
                     exportTxtBtn.style.display = "inline-flex";
 
@@ -309,7 +338,8 @@
                     cachedYearData.temperature_2m_min[i]
                 );
                 
-                tbody.innerHTML += `<tr>
+                // Aggiunto l'evento onclick per aprire il modale con i dati verticali dell'indice i
+                tbody.innerHTML += `<tr onclick="openDayModal(${i})">
                     <td>${cachedYearData.time[i]}</td>
                     <td>${formatVal(cachedYearData.temperature_2m_max[i])}°C</td>
                     <td>${formatVal(cachedYearData.apparent_temperature_max[i])}°C</td>
@@ -323,6 +353,57 @@
             }
         }
 
+        // Funzioni per la finestra modale (Zoom Giornaliero)
+        function openDayModal(index) {
+            if (!cachedYearData) return;
+            const date = cachedYearData.time[index];
+            const tMax = formatVal(cachedYearData.temperature_2m_max[index]) + '°C';
+            const tApp = formatVal(cachedYearData.apparent_temperature_max[index]) + '°C';
+            const tMin = formatVal(cachedYearData.temperature_2m_min[index]) + '°C';
+            const pressure = formatVal(cachedYearData.pressure_msl_mean[index], 1) + ' hPa';
+            const windDeg = cachedYearData.wind_direction_10m_dominant[index];
+            const windDirStr = getWindDirection(windDeg);
+            const windSpeed = formatVal(cachedYearData.wind_speed_10m_max[index]) + ` km/h (${windDirStr})`;
+            const humidity = formatVal(cachedYearData.relative_humidity_2m_mean[index]) + '%';
+            const precip = formatPrecipitation(
+                cachedYearData.precipitation_sum[index], 
+                cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[index] : 0, 
+                cachedYearData.temperature_2m_min[index]
+            );
+            const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[index]);
+            const sunset = formatTimeWithSeconds(cachedYearData.sunset[index]);
+
+            document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${date}`;
+            
+            const detailTbody = document.querySelector("#modalDetailTable tbody");
+            detailTbody.innerHTML = `
+                <tr><th>Data</th><td>${date}</td></tr>
+                <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
+                <tr><th>Temperatura Percepita</th><td>${tApp}</td></tr>
+                <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
+                <tr><th>Pressione Media</th><td>${pressure}</td></tr>
+                <tr><th>Vento Massimo</th><td>${windSpeed}</td></tr>
+                <tr><th>Umidità Media</th><td>${humidity}</td></tr>
+                <tr><th>Pioggia / Neve</th><td>${precip}</td></tr>
+                <tr><th>Alba</th><td>🌅 ${sunrise}</td></tr>
+                <tr><th>Tramonto</th><td>🌇 ${sunset}</td></tr>
+            `;
+
+            document.getElementById("dayModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("dayModal").style.display = "none";
+        }
+
+        // Chiude la finestra modale cliccando fuori dal contenuto
+        window.onclick = function(event) {
+            const modal = document.getElementById("dayModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+
         function exportData(format) {
             if (!cachedYearData || !cachedYearData.time) return;
             const selectedYear = yearSelect.value;
@@ -330,7 +411,6 @@
             let separator = format === 'csv' ? ';' : '\t';
             let fileExtension = format === 'csv' ? 'csv' : 'txt';
             
-            // Intestazioni
             let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
 
             for (let i = 0; i < cachedYearData.time.length; i++) {
@@ -343,7 +423,6 @@
                 const windDir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
                 const hum = formatVal(cachedYearData.relative_humidity_2m_mean[i]);
                 
-                // Testo pulito per pioggia/neve senza emoji per i file di testo/csv
                 let p = cachedYearData.precipitation_sum[i] || 0;
                 let s = cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[i] : 0;
                 let precipStr = `${formatVal(p)} mm`;
@@ -361,7 +440,6 @@
 
             let fileContent = rows.map(e => e.join(separator)).join("\n");
             
-            // Creazione e download del file
             const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
