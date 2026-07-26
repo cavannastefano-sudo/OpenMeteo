@@ -45,6 +45,10 @@
         .detail-table th, .detail-table td { padding: 8px 12px; text-align: left; border: 1px solid #ddd; }
         .detail-table th { background-color: #2c3e50; color: white; width: 45%; }
 
+        /* Classi colori specifici per i dati attuali nella modale */
+        .modal-temp-current { color: #e74c3c; font-weight: bold; }
+        .modal-sub-current { color: #008b8b; font-weight: bold; }
+
         @media screen and (max-width: 768px) {
             body { margin: 10px; }
             h1 { font-size: 18px; }
@@ -83,7 +87,7 @@
             • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span> con l'orario di rilevazione.<br>
             • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).<br>
             • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.<br>
-            • <em>Suggerimento:</em> Clicca esclusivamente sulla <strong>data</strong> (sia nei dati attuali in alto che nell'archivio storico) per aprire la finestra di zoom con i dettagli verticali.
+            • <em>Suggerimento:</em> Clicca sulla <strong>data</strong> (sia nei dati attuali in alto che nell'archivio storico) per aprire la finestra di zoom con i dettagli verticali.
         </div>
     </div>
 
@@ -371,19 +375,22 @@
             const i = 0;
 
             const dateIT = formatDateIT(daily.time[i]) + " (Oggi)";
-            const tCurr = formatVal(current.temperature_2m) + '°C' + formatHourOnly(current.time);
-            const tAppCurr = formatVal(current.apparent_temperature) + '°C' + formatHourOnly(current.time);
+            const tCurr = `<span class="modal-temp-current">${formatVal(current.temperature_2m)}°C${formatHourOnly(current.time)}</span>`;
+            const tAppCurr = `<span class="modal-sub-current">${formatVal(current.apparent_temperature)}°C${formatHourOnly(current.time)}</span>`;
             const tMax = formatVal(daily.temperature_2m_max[i]) + '°C';
             const tAppMax = formatVal(daily.apparent_temperature_max[i]) + '°C';
             const tMin = formatVal(daily.temperature_2m_min[i]) + '°C';
-            const pressCurr = formatVal(current.pressure_msl, 1) + ' hPa' + formatHourOnly(current.time);
+            
+            const pressCurr = `<span class="modal-sub-current">${formatVal(current.pressure_msl, 1)} hPa${formatHourOnly(current.time)}</span>`;
             const pressMean = formatVal(daily.pressure_msl_mean[i], 1) + ' hPa (Media giorno)';
-            const windCurr = formatVal(current.wind_speed_10m) + ` km/h (${getWindDirection(current.wind_direction_10m)})` + formatHourOnly(current.time);
+            
+            const windCurr = `<span class="modal-sub-current">${formatVal(current.wind_speed_10m)} km/h (${getWindDirection(current.wind_direction_10m)})${formatHourOnly(current.time)}</span>`;
             const windMax = formatVal(daily.wind_speed_10m_max[i]) + ` km/h (${getWindDirection(daily.wind_direction_10m_dominant[i])}) (Max giorno)`;
-            const humCurr = formatVal(current.relative_humidity_2m) + '%' + formatHourOnly(current.time);
+            
+            const humCurr = `<span class="modal-sub-current">${formatVal(current.relative_humidity_2m)}%${formatHourOnly(current.time)}</span>`;
             const humMean = formatVal(daily.relative_humidity_2m_mean[i]) + '% (Media giorno)';
             
-            let precipCurrText = `${formatVal(current.precipitation)} mm` + formatHourOnly(current.time);
+            let precipCurrText = `<span class="modal-sub-current">${formatVal(current.precipitation)} mm${formatHourOnly(current.time)}</span>`;
             const precipDaily = formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i]);
 
             const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
