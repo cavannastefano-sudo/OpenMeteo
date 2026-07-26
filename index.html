@@ -20,9 +20,8 @@
         th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         th { background-color: #2c3e50; color: white; font-size: 15px; }
         
-        /* Stile riga cliccabile */
-        #weatherTable tbody tr { cursor: pointer; transition: background-color 0.2s; }
-        #weatherTable tbody tr:hover { background-color: #e2e8f0; }
+        .clickable-date { color: #2980b9; font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .clickable-date:hover { color: #1c5980; }
 
         .controls { margin-bottom: 20px; font-size: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
         select { font-size: 16px; padding: 6px; }
@@ -84,7 +83,7 @@
             • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span> con l'orario di rilevazione.<br>
             • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).<br>
             • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.<br>
-            • <em>Suggerimento:</em> Clicca su qualsiasi riga dell'archivio storico per aprire la finestra di zoom con i dettagli verticali del giorno.
+            • <em>Suggerimento:</em> Clicca sulla <strong>data</strong> (formato GG-MM-AAAA) per aprire la finestra di zoom con i dettagli verticali.
         </div>
     </div>
 
@@ -130,6 +129,7 @@
     <script>
         const currentYear = new Date().getFullYear();
         let cachedYearData = null;
+        let cachedCurrentData = null;
 
         const yearSelect = document.getElementById("yearSelect");
         for (let y = currentYear; y >= 1940; y--) {
@@ -137,6 +137,16 @@
             opt.value = y;
             opt.textContent = y;
             yearSelect.appendChild(opt);
+        }
+
+        // Funzione per invertire la data da AAAA-MM-GG a GG-MM-AAAA
+        function formatDateIT(isoDateStr) {
+            if (!isoDateStr) return "";
+            const parts = isoDateStr.split("-");
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+            return isoDateStr;
         }
 
         function formatVal(val, decimals = 1) {
@@ -195,6 +205,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    cachedCurrentData = data;
                     const current = data.current;
                     const daily = data.daily;
                     if (!daily || !daily.time || daily.time.length === 0) {
@@ -204,6 +215,7 @@
 
                     const i = 0;
                     const currTimeStr = formatHourOnly(current ? current.time : null);
+                    const formattedDateIT = formatDateIT(daily.time[i]);
 
                     const currentTemp = (current && current.temperature_2m !== undefined && current.temperature_2m !== null) ? formatVal(current.temperature_2m) + '°C' + currTimeStr : 'N/D';
                     const currentApparent = (current && current.apparent_temperature !== undefined && current.apparent_temperature !== null) ? formatVal(current.apparent_temperature) + '°C' + currTimeStr : 'N/D';
@@ -241,7 +253,7 @@
                     const sunset = formatTimeWithSeconds(daily.sunset[i]);
                     
                     currentTbody.innerHTML = `<tr>
-                        <td>${daily.time[i]} (Oggi)</td>
+                        <td><span class="clickable-date" onclick="openCurrentModal()">${formattedDateIT} (Oggi)</span></td>
                         <td><span class="current-temp">${currentTemp}</span></td>
                         <td><span class="current-apparent">${currentApparent}</span></td>
                         <td>${formatVal(daily.temperature_2m_max[i])}°C</td>
@@ -329,6 +341,7 @@
             if (!cachedYearData) return;
             tbody.innerHTML = "";
             for (let i = cachedYearData.time.length - 1; i >= 0; i--) {
+                const dateIT = formatDateIT(cachedYearData.time[i]);
                 const dir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
                 const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[i]);
                 const sunset = formatTimeWithSeconds(cachedYearData.sunset[i]);
@@ -338,9 +351,8 @@
                     cachedYearData.temperature_2m_min[i]
                 );
                 
-                // Aggiunto l'evento onclick per aprire il modale con i dati verticali dell'indice i
-                tbody.innerHTML += `<tr onclick="openDayModal(${i})">
-                    <td>${cachedYearData.time[i]}</td>
+                tbody.innerHTML += `<tr>
+                    <td><span class="clickable-date" onclick="openDayModal(${i})">${dateIT}</span></td>
                     <td>${formatVal(cachedYearData.temperature_2m_max[i])}°C</td>
                     <td>${formatVal(cachedYearData.apparent_temperature_max[i])}°C</td>
                     <td>${formatVal(cachedYearData.temperature_2m_min[i])}°C</td>
@@ -353,10 +365,55 @@
             }
         }
 
-        // Funzioni per la finestra modale (Zoom Giornaliero)
+        function openCurrentModal() {
+            if (!cachedCurrentData) return;
+            const current = cachedCurrentData.current;
+            const daily = cachedCurrentData.daily;
+            const i = 0;
+
+            const dateIT = formatDateIT(daily.time[i]) + " (Oggi)";
+            const tCurr = formatVal(current.temperature_2m) + '°C' + formatHourOnly(current.time);
+            const tAppCurr = formatVal(current.apparent_temperature) + '°C' + formatHourOnly(current.time);
+            const tMax = formatVal(daily.temperature_2m_max[i]) + '°C';
+            const tAppMax = formatVal(daily.apparent_temperature_max[i]) + '°C';
+            const tMin = formatVal(daily.temperature_2m_min[i]) + '°C';
+            const pressCurr = formatVal(current.pressure_msl, 1) + ' hPa' + formatHourOnly(current.time);
+            const pressMean = formatVal(daily.pressure_msl_mean[i], 1) + ' hPa (Media giorno)';
+            const windCurr = formatVal(current.wind_speed_10m) + ` km/h (${getWindDirection(current.wind_direction_10m)})` + formatHourOnly(current.time);
+            const windMax = formatVal(daily.wind_speed_10m_max[i]) + ` km/h (${getWindDirection(daily.wind_direction_10m_dominant[i])}) (Max giorno)`;
+            const humCurr = formatVal(current.relative_humidity_2m) + '%' + formatHourOnly(current.time);
+            const humMean = formatVal(daily.relative_humidity_2m_mean[i]) + '% (Media giorno)';
+            
+            let precipCurrText = `${formatVal(current.precipitation)} mm` + formatHourOnly(current.time);
+            const precipDaily = formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i]);
+
+            const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
+            const sunset = formatTimeWithSeconds(daily.sunset[i]);
+
+            document.getElementById("modalTitle").textContent = `Dettaglio Meteo Attuale - ${dateIT}`;
+            
+            const detailTbody = document.querySelector("#modalDetailTable tbody");
+            detailTbody.innerHTML = `
+                <tr><th>Data</th><td>${dateIT}</td></tr>
+                <tr><th>Temperatura Attuale</th><td>${tCurr}</td></tr>
+                <tr><th>Percepita Attuale</th><td>${tAppCurr}</td></tr>
+                <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
+                <tr><th>Percepita Max</th><td>${tAppMax}</td></tr>
+                <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
+                <tr><th>Pressione (Attuale / Media)</th><td>${pressCurr} / ${pressMean}</td></tr>
+                <tr><th>Vento (Attuale / Max)</th><td>${windCurr} / ${windMax}</td></tr>
+                <tr><th>Umidità (Attuale / Media)</th><td>${humCurr} / ${humMean}</td></tr>
+                <tr><th>Pioggia (Attuale / Totale)</th><td>${precipCurrText} / ${precipDaily}</td></tr>
+                <tr><th>Alba</th><td>🌅 ${sunrise}</td></tr>
+                <tr><th>Tramonto</th><td>🌇 ${sunset}</td></tr>
+            `;
+
+            document.getElementById("dayModal").style.display = "block";
+        }
+
         function openDayModal(index) {
             if (!cachedYearData) return;
-            const date = cachedYearData.time[index];
+            const dateIT = formatDateIT(cachedYearData.time[index]);
             const tMax = formatVal(cachedYearData.temperature_2m_max[index]) + '°C';
             const tApp = formatVal(cachedYearData.apparent_temperature_max[index]) + '°C';
             const tMin = formatVal(cachedYearData.temperature_2m_min[index]) + '°C';
@@ -373,11 +430,11 @@
             const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[index]);
             const sunset = formatTimeWithSeconds(cachedYearData.sunset[index]);
 
-            document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${date}`;
+            document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${dateIT}`;
             
             const detailTbody = document.querySelector("#modalDetailTable tbody");
             detailTbody.innerHTML = `
-                <tr><th>Data</th><td>${date}</td></tr>
+                <tr><th>Data</th><td>${dateIT}</td></tr>
                 <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
                 <tr><th>Temperatura Percepita</th><td>${tApp}</td></tr>
                 <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
@@ -396,7 +453,6 @@
             document.getElementById("dayModal").style.display = "none";
         }
 
-        // Chiude la finestra modale cliccando fuori dal contenuto
         window.onclick = function(event) {
             const modal = document.getElementById("dayModal");
             if (event.target === modal) {
@@ -414,7 +470,7 @@
             let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
 
             for (let i = 0; i < cachedYearData.time.length; i++) {
-                const date = cachedYearData.time[i];
+                const dateIT = formatDateIT(cachedYearData.time[i]);
                 const tMax = formatVal(cachedYearData.temperature_2m_max[i]);
                 const tApp = formatVal(cachedYearData.apparent_temperature_max[i]);
                 const tMin = formatVal(cachedYearData.temperature_2m_min[i]);
@@ -435,7 +491,7 @@
                 const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[i]);
                 const sunset = formatTimeWithSeconds(cachedYearData.sunset[i]);
 
-                rows.push([date, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]);
+                rows.push([dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]);
             }
 
             let fileContent = rows.map(e => e.join(separator)).join("\n");
