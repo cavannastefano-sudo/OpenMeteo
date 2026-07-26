@@ -83,7 +83,7 @@
             • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span> con l'orario di rilevazione.<br>
             • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).<br>
             • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.<br>
-            • <em>Suggerimento:</em> Clicca sulla <strong>data</strong> (formato GG-MM-AAAA) per aprire la finestra di zoom con i dettagli verticali.
+            • <em>Suggerimento:</em> Clicca esclusivamente sulla <strong>data</strong> (sia nei dati attuali in alto che nell'archivio storico) per aprire la finestra di zoom con i dettagli verticali.
         </div>
     </div>
 
@@ -139,7 +139,6 @@
             yearSelect.appendChild(opt);
         }
 
-        // Funzione per invertire la data da AAAA-MM-GG a GG-MM-AAAA
         function formatDateIT(isoDateStr) {
             if (!isoDateStr) return "";
             const parts = isoDateStr.split("-");
