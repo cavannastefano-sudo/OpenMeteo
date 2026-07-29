@@ -14,7 +14,7 @@
         .export-btn:hover { background-color: #219653; }
         .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
         
-        /* Stile per il logo cliccabile di CavanWeb con l'immagine bitmap originale */
+        /* Stile per il logo cliccabile di CavanWeb con il nuovo file immagine locale */
         .logo-link {
             display: inline-block;
             width: 45px;
@@ -87,7 +87,7 @@
 
     <div class="top-bar">
         <a href="https://www.cavanweb.com/" target="_blank" class="logo-link" title="Visita CavanWeb">
-            <img src="data:image/gif;base64,R0lGODlhIAAgAPAAAP///wAAACH5BAEAAAAALAAAAAAgACAAAAJ0hI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8c1LNf2jff6zvvO8//wCIOJcDhEMp/SKXRKqVwui8Wp0Wq1ar1as9vucgshg8EitUqv2u32u12y2+57/L7f8/v+DwwOECg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0trW3uLm6u7y9vr+wscLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Ono6enr6u3r7O3u7+Dx+v/8//w==" alt="CavanWeb Logo">
+            <img src="SfondoN-512.png" alt="CavanWeb Logo">
         </a>
         <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
         <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
@@ -507,7 +507,6 @@
                 const tMax = formatVal(cachedYearData.temperature_2m_max[i]);
                 const tApp = formatVal(cachedYearData.apparent_temperature_max[i]);
                 const tMin = formatVal(cachedYearData.temperature_2m_min[i]);
-                5.
                 const press = formatVal(cachedYearData.pressure_msl_mean[i], 1);
                 const windSpd = formatVal(cachedYearData.wind_speed_10m_max[i]);
                 const windDir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
