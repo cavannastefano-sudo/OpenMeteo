@@ -14,7 +14,7 @@
         .export-btn:hover { background-color: #219653; }
         .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
         
-        /* Stile per il logo vettoriale di CavanWeb */
+        /* Stile per il logo cliccabile di CavanWeb con l'immagine bitmap originale */
         .logo-link {
             display: inline-block;
             width: 45px;
@@ -24,10 +24,15 @@
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: transform 0.2s;
-            background-color: #ff6b5b;
         }
         .logo-link:hover {
             transform: scale(1.05);
+        }
+        .logo-link img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
         
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
@@ -82,15 +87,7 @@
 
     <div class="top-bar">
         <a href="https://www.cavanweb.com/" target="_blank" class="logo-link" title="Visita CavanWeb">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
-                <!-- Sfondo rosso-corallo chiaro -->
-                <rect width="100" height="100" fill="#ff6b5b"/>
-                <!-- Sagoma centrale bordeaux scuro -->
-                <path d="M15,0 C35,0 30,35 25,50 C20,65 22,85 40,95 L0,100 L0,0 Z" fill="#5a1827"/>
-                <path d="M25,0 C45,15 35,50 42,75 C48,95 38,98 60,100 L100,100 L100,0 Z" fill="#5a1827"/>
-                <!-- Forma in alto a destra fucsia/viola -->
-                <path d="M55,0 C55,25 70,35 100,20 L100,0 Z" fill="#c724b1"/>
-            </svg>
+            <img src="data:image/gif;base64,R0lGODlhIAAgAPAAAP///wAAACH5BAEAAAAALAAAAAAgACAAAAJ0hI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8c1LNf2jff6zvvO8//wCIOJcDhEMp/SKXRKqVwui8Wp0Wq1ar1as9vucgshg8EitUqv2u32u12y2+57/L7f8/v+DwwOECg4SFhoeIiYqLjI2Oj4CBkpOUlZaXmJmam5ydnp+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0trW3uLm6u7y9vr+wscLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Ono6enr6u3r7O3u7+Dx+v/8//w==" alt="CavanWeb Logo">
         </a>
         <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
         <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
@@ -510,6 +507,7 @@
                 const tMax = formatVal(cachedYearData.temperature_2m_max[i]);
                 const tApp = formatVal(cachedYearData.apparent_temperature_max[i]);
                 const tMin = formatVal(cachedYearData.temperature_2m_min[i]);
+                5.
                 const press = formatVal(cachedYearData.pressure_msl_mean[i], 1);
                 const windSpd = formatVal(cachedYearData.wind_speed_10m_max[i]);
                 const windDir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
