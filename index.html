@@ -14,6 +14,11 @@
         .export-btn:hover { background-color: #219653; }
         .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
         
+        /* Stile per il logo/link a fianco del tasto aggiorna */
+        .logo-link { display: inline-flex; align-items: center; text-decoration: none; }
+        .logo-img { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; transition: transform 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .logo-img:hover { transform: scale(1.05); }
+
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
 
         table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; white-space: nowrap; }
@@ -66,6 +71,9 @@
 
     <div class="top-bar">
         <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
+        <a href="https://www.cavanweb.com" target="_blank" class="logo-link" title="Visita CavanWeb">
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-original="1000112656.gif" alt="CavanWeb" class="logo-img" onerror="this.src='https://www.cavanweb.com/favicon.ico'">
+        </a>
         <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
     </div>
     
@@ -491,7 +499,7 @@
                 let p = cachedYearData.precipitation_sum[i] || 0;
                 let s = cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[i] : 0;
                 let precipStr = `${formatVal(p)} mm`;
-                if (s > 0) {
+                if s > 0 {
                     precipStr = `${formatVal(s)} cm neve`;
                 } else if (p > 0 && cachedYearData.temperature_2m_min[i] <= 1.5) {
                     precipStr = `~${formatVal(p)} cm neve (stima)`;
