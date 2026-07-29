@@ -499,7 +499,7 @@
                 let p = cachedYearData.precipitation_sum[i] || 0;
                 let s = cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[i] : 0;
                 let precipStr = `${formatVal(p)} mm`;
-                if s > 0 {
+                if (s > 0) {
                     precipStr = `${formatVal(s)} cm neve`;
                 } else if (p > 0 && cachedYearData.temperature_2m_min[i] <= 1.5) {
                     precipStr = `~${formatVal(p)} cm neve (stima)`;
