@@ -1,40 +1,3 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Archivio Storico Meteo Piacenza 1940-Oggi</title>
-    <style>
-        body { font-family: sans-serif; margin: 15px; background-color: #f4f4f9; color: #333; }
-        .top-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-        h1 { margin: 0; font-size: 22px; }
-        .refresh-btn, .export-btn { background-color: #2c3e50; color: white; border: none; padding: 10px 15px; font-size: 16px; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-        .refresh-btn:hover, .export-btn:hover { background-color: #34495e; }
-        .export-btn { background-color: #27ae60; }
-        .export-btn:hover { background-color: #219653; }
-        .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
-        .export-multi-btn { background-color: #2980b9; }
-        .export-multi-btn:hover { background-color: #1c5980; }
-        
-        /* Stile per il logo cliccabile di CavanWeb con l'immagine locale SfondoN-512.png */
-        .logo-link {
-            display: inline-block;
-            width: 45px;
-            height: 45px;
-            flex-shrink: 0;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-        .logo-link:hover {
-            transform: scale(1.05);
-        }
-        .logo-link img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
         }
         
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
@@ -672,7 +635,6 @@
             mainTitle.textContent = `Archivio Storico Meteo Piacenza (${startVal}-${endVal})`;
 
             try {
-                // Raccogliamo i dati partendo dall'anno più recente verso il più vecchio
                 for (let y = endVal; y >= startVal; y--) {
                     btn.textContent = `Caricamento ${y}...`;
                     let endDate = `${y}-12-31`;
@@ -690,7 +652,6 @@
                     const daily = data.daily;
 
                     if (daily && daily.time) {
-                        // Per ogni anno, ordiniamo i giorni da dicembre a gennaio (dal più recente al più vecchio)
                         let yearRows = [];
                         for (let i = 0; i < daily.time.length; i++) {
                             yearRows.push({
@@ -709,14 +670,12 @@
                                 sunset: formatTimeWithSeconds(daily.sunset[i])
                             });
                         }
-                        // Ordinamento decrescente all'interno dell'anno (dalla fine all'inizio)
                         yearRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
                         cachedMultiData.push(...yearRows);
                     }
                     await new Promise(resolve => setTimeout(resolve, 200));
                 }
 
-                // Ordinamento globale finale decrescente (da oggi/fine intervallo andando indietro nel tempo)
                 cachedMultiData.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
 
                 if (cachedMultiData.length > 0) {
@@ -806,7 +765,6 @@
                     await new Promise(resolve => setTimeout(resolve, 200));
                 }
 
-                // Ordinamento cronologico inverso (dal più recente al più vecchio) anche per il file scaricato
                 tempDownloadRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
 
                 let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
