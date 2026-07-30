@@ -58,6 +58,10 @@
         .legend-color { color: #008b8b; font-weight: bold; }
         .legend-temp { color: #e74c3c; font-weight: bold; }
 
+        /* Pannello Download Multiplo Avanzato */
+        .multi-download-box { background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #cbd5e1; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; }
+        .multi-download-box label { font-weight: bold; color: #2c3e50; }
+
         /* Finestra Modale (Zoom Giornaliero) ingrandita */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
         .modal-content { background-color: #fff; margin: 5% auto; padding: 30px; border-radius: 10px; width: 95%; max-width: 750px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; }
@@ -82,6 +86,7 @@
             .detail-table { font-size: 14px; }
             .detail-table th, .detail-table td { padding: 10px; }
             .modal-temp-current, .modal-sub-current, .modal-normal-val { font-size: 15px; }
+            .multi-download-box { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -120,16 +125,32 @@
         </div>
     </div>
 
+    <!-- Pannello Selezione Anno Singolo -->
     <div class="controls">
-        <label for="yearSelect">Seleziona Anno: </label>
+        <label for="yearSelect">Seleziona Anno Singolo: </label>
         <select id="yearSelect">
             <option value="">-- Seleziona un anno --</option>
         </select>
         <span id="loadingStatus" class="loading" style="display: none;">Caricamento in corso...</span>
-        <button id="exportCsvBtn" class="export-btn" style="display: none;" onclick="exportData('csv')">📥 Scarica CSV</button>
-        <button id="exportTxtBtn" class="export-btn" style="display: none;" onclick="exportData('txt')">📥 Scarica TXT</button>
-        <!-- Pulsante opzionale per il download multiplo di più anni (es. 2015-2024) -->
-        <button id="exportMultiBtn" class="export-btn export-multi-btn" onclick="exportMultipleYears(2015, 2024)">📥 Scarica Anni 2015-2024 (CSV)</button>
+        <button id="exportCsvBtn" class="export-btn" style="display: none;" onclick="exportData('csv')">📥 Scarica Anno (CSV)</button>
+        <button id="exportTxtBtn" class="export-btn" style="display: none;" onclick="exportData('txt')">📥 Scarica Anno (TXT)</button>
+    </div>
+
+    <!-- Pannello Selezione Intervallo Multiplo Personalizzato -->
+    <div class="multi-download-box">
+        <div>
+            <label for="startYearSelect">Da Anno:</label>
+            <select id="startYearSelect">
+                <option value="">-- Inizio --</option>
+            </select>
+        </div>
+        <div>
+            <label for="endYearSelect">A Anno:</label>
+            <select id="endYearSelect">
+                <option value="">-- Fine --</option>
+            </select>
+        </div>
+        <button id="exportMultiBtn" class="export-btn export-multi-btn" onclick="exportCustomRange()">📥 Scarica Intervallo Selezionato (CSV)</button>
     </div>
 
     <div class="table-responsive">
@@ -167,11 +188,24 @@
         let cachedCurrentData = null;
 
         const yearSelect = document.getElementById("yearSelect");
+        const startYearSelect = document.getElementById("startYearSelect");
+        const endYearSelect = document.getElementById("endYearSelect");
+
         for (let y = currentYear; y >= 1940; y--) {
-            const opt = document.createElement("option");
-            opt.value = y;
-            opt.textContent = y;
-            yearSelect.appendChild(opt);
+            const opt1 = document.createElement("option");
+            opt1.value = y;
+            opt1.textContent = y;
+            yearSelect.appendChild(opt1);
+
+            const opt2 = document.createElement("option");
+            opt2.value = y;
+            opt2.textContent = y;
+            startYearSelect.appendChild(opt2);
+
+            const opt3 = document.createElement("option");
+            opt3.value = y;
+            opt3.textContent = y;
+            endYearSelect.appendChild(opt3);
         }
 
         function formatDateIT(isoDateStr) {
@@ -543,7 +577,20 @@
             document.body.removeChild(link);
         }
 
-        async function exportMultipleYears(startYear, endYear) {
+        async function exportCustomRange() {
+            const startVal = parseInt(startYearSelect.value);
+            const endVal = parseInt(endYearSelect.value);
+
+            if (!startVal || !endVal) {
+                alert("Seleziona sia l'anno di inizio che l'anno di fine per il download multiplo.");
+                return;
+            }
+
+            if (startVal > endVal) {
+                alert("L'anno di inizio non può essere successivo all'anno di fine.");
+                return;
+            }
+
             const btn = document.getElementById("exportMultiBtn");
             btn.disabled = true;
             const originalText = btn.textContent;
@@ -553,9 +600,16 @@
             allRows.push(header);
 
             try {
-                for (let y = endYear; y >= startYear; y--) {
+                // Cicla dall'anno finale a quello iniziale (o viceversa)
+                for (let y = endVal; y >= startVal; y--) {
                     btn.textContent = `Scaricamento ${y}...`;
                     let endDate = `${y}-12-31`;
+                    if (y === currentYear) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        endDate = yesterday.toISOString().split("T")[0];
+                    }
+
                     const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
 
                     const response = await fetch(url);
@@ -597,13 +651,13 @@
                 const link = document.createElement("a");
                 const urlObj = URL.createObjectURL(blob);
                 link.setAttribute("href", urlObj);
-                link.setAttribute("download", `meteo_piacenza_${startYear}_${endYear}.csv`);
+                link.setAttribute("download", `meteo_piacenza_${startVal}_${endVal}.csv`);
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
 
             } catch (err) {
-                console.error("Errore durante il download multiplo:", err);
+                console.error("Errore durante il download personalizzato:", err);
                 alert("Si è verificato un errore durante il download dei dati.");
             } finally {
                 btn.disabled = false;
