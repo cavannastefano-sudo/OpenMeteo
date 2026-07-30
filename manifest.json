@@ -1,7 +1,8 @@
 {
-  "name": "Archivio Meteo Piacenza",
+  "name": "Archivio Storico Meteo Piacenza",
   "short_name": "Meteo Piacenza",
-  "start_url": "index.html",
+  "description": "Archivio meteorologico storico e dati attuali di Piacenza",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f4f4f9",
   "theme_color": "#2c3e50",
@@ -9,7 +10,8 @@
     {
       "src": "SfondoN-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
