@@ -13,8 +13,10 @@
         .export-btn { background-color: #27ae60; }
         .export-btn:hover { background-color: #219653; }
         .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
+        .export-multi-btn { background-color: #2980b9; }
+        .export-multi-btn:hover { background-color: #1c5980; }
         
-        /* Stile per il logo cliccabile di CavanWeb con il nuovo file immagine locale */
+        /* Stile per il logo cliccabile di CavanWeb con l'immagine locale SfondoN-512.png */
         .logo-link {
             display: inline-block;
             width: 45px;
@@ -126,6 +128,8 @@
         <span id="loadingStatus" class="loading" style="display: none;">Caricamento in corso...</span>
         <button id="exportCsvBtn" class="export-btn" style="display: none;" onclick="exportData('csv')">📥 Scarica CSV</button>
         <button id="exportTxtBtn" class="export-btn" style="display: none;" onclick="exportData('txt')">📥 Scarica TXT</button>
+        <!-- Pulsante opzionale per il download multiplo di più anni (es. 2015-2024) -->
+        <button id="exportMultiBtn" class="export-btn export-multi-btn" onclick="exportMultipleYears(2015, 2024)">📥 Scarica Anni 2015-2024 (CSV)</button>
     </div>
 
     <div class="table-responsive">
@@ -537,6 +541,74 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        async function exportMultipleYears(startYear, endYear) {
+            const btn = document.getElementById("exportMultiBtn");
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            
+            let allRows = [];
+            let header = ["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"];
+            allRows.push(header);
+
+            try {
+                for (let y = endYear; y >= startYear; y--) {
+                    btn.textContent = `Scaricamento ${y}...`;
+                    let endDate = `${y}-12-31`;
+                    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
+
+                    const response = await fetch(url);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const daily = data.daily;
+
+                    if (daily && daily.time) {
+                        for (let i = 0; i < daily.time.length; i++) {
+                            const dateIT = formatDateIT(daily.time[i]);
+                            const tMax = formatVal(daily.temperature_2m_max[i]);
+                            const tApp = formatVal(daily.apparent_temperature_max[i]);
+                            const tMin = formatVal(daily.temperature_2m_min[i]);
+                            const press = formatVal(daily.pressure_msl_mean[i], 1);
+                            const windSpd = formatVal(daily.wind_speed_10m_max[i]);
+                            const windDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
+                            const hum = formatVal(daily.relative_humidity_2m_mean[i]);
+                            
+                            let p = daily.precipitation_sum[i] || 0;
+                            let s = daily.snowfall_sum ? daily.snowfall_sum[i] : 0;
+                            let precipStr = `${formatVal(p)} mm`;
+                            if (s > 0) {
+                                precipStr = `${formatVal(s)} cm neve`;
+                            } else if (p > 0 && daily.temperature_2m_min[i] <= 1.5) {
+                                precipStr = `~${formatVal(p)} cm neve (stima)`;
+                            }
+
+                            const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
+                            const sunset = formatTimeWithSeconds(daily.sunset[i]);
+
+                            allRows.push([dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]);
+                        }
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                let fileContent = allRows.map(e => e.join(';')).join("\n");
+                const blob = new Blob([fileContent], { type: `text/csv;charset=utf-8;` });
+                const link = document.createElement("a");
+                const urlObj = URL.createObjectURL(blob);
+                link.setAttribute("href", urlObj);
+                link.setAttribute("download", `meteo_piacenza_${startYear}_${endYear}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (err) {
+                console.error("Errore durante il download multiplo:", err);
+                alert("Si è verificato un errore durante il download dei dati.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
         }
     </script>
 </body>
