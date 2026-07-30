@@ -136,7 +136,7 @@
         <button id="exportTxtBtn" class="export-btn" style="display: none;" onclick="exportData('txt')">📥 Scarica Anno (TXT)</button>
     </div>
 
-    <!-- Pannello Selezione Intervallo Multiplo con Pulsanti di Visualizzazione e Download sempre visibili -->
+    <!-- Pannello Selezione Intervallo Multiplo -->
     <div class="multi-download-box">
         <div>
             <label for="startYearSelect">Da Anno:</label>
@@ -445,7 +445,7 @@
         function renderMultiTableData() {
             if (!cachedMultiData || cachedMultiData.length === 0) return;
             tbody.innerHTML = "";
-            for (let i = cachedMultiData.length - 1; i >= 0; i--) {
+            for (let i = 0; i < cachedMultiData.length; i++) {
                 const row = cachedMultiData[i];
                 const dir = getWindDirection(row.windDirDeg);
                 const precipText = formatPrecipitation(row.precip, row.snow, row.tMin);
@@ -672,6 +672,7 @@
             mainTitle.textContent = `Archivio Storico Meteo Piacenza (${startVal}-${endVal})`;
 
             try {
+                // Raccogliamo i dati partendo dall'anno più recente verso il più vecchio
                 for (let y = endVal; y >= startVal; y--) {
                     btn.textContent = `Caricamento ${y}...`;
                     let endDate = `${y}-12-31`;
@@ -689,9 +690,12 @@
                     const daily = data.daily;
 
                     if (daily && daily.time) {
+                        // Per ogni anno, ordiniamo i giorni da dicembre a gennaio (dal più recente al più vecchio)
+                        let yearRows = [];
                         for (let i = 0; i < daily.time.length; i++) {
-                            cachedMultiData.push({
+                            yearRows.push({
                                 dateIT: formatDateIT(daily.time[i]),
+                                rawDate: daily.time[i],
                                 tMax: daily.temperature_2m_max[i],
                                 tApp: daily.apparent_temperature_max[i],
                                 tMin: daily.temperature_2m_min[i],
@@ -705,9 +709,15 @@
                                 sunset: formatTimeWithSeconds(daily.sunset[i])
                             });
                         }
+                        // Ordinamento decrescente all'interno dell'anno (dalla fine all'inizio)
+                        yearRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
+                        cachedMultiData.push(...yearRows);
                     }
                     await new Promise(resolve => setTimeout(resolve, 200));
                 }
+
+                // Ordinamento globale finale decrescente (da oggi/fine intervallo andando indietro nel tempo)
+                cachedMultiData.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
 
                 if (cachedMultiData.length > 0) {
                     renderMultiTableData();
@@ -745,9 +755,7 @@
             btn.disabled = true;
             loadingMultiStatus.style.display = "inline";
 
-            let downloadRows = [];
-            let header = ["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"];
-            downloadRows.push(header);
+            let tempDownloadRows = [];
 
             try {
                 for (let y = endVal; y >= startVal; y--) {
@@ -789,20 +797,29 @@
                             const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
                             const sunset = formatTimeWithSeconds(daily.sunset[i]);
 
-                            downloadRows.push([dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]);
+                            tempDownloadRows.push({
+                                rawDate: daily.time[i],
+                                cols: [dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]
+                            });
                         }
                     }
                     await new Promise(resolve => setTimeout(resolve, 200));
                 }
 
+                // Ordinamento cronologico inverso (dal più recente al più vecchio) anche per il file scaricato
+                tempDownloadRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
+
+                let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
+                tempDownloadRows.forEach(item => rows.push(item.cols));
+
                 let separator = format === 'csv' ? ';' : '\t';
                 let fileExtension = format === 'csv' ? 'csv' : 'txt';
-                let fileContent = downloadRows.map(e => e.join(separator)).join("\n");
+                let fileContent = rows.map(e => e.join(separator)).join("\n");
                 
                 const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
                 const link = document.createElement("a");
-                const urlObj = URL.createObjectURL(blob);
-                link.setAttribute("href", urlObj);
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
                 link.setAttribute("download", `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`);
                 document.body.appendChild(link);
                 link.click();
