@@ -136,7 +136,7 @@
         <button id="exportTxtBtn" class="export-btn" style="display: none;" onclick="exportData('txt')">📥 Scarica Anno (TXT)</button>
     </div>
 
-    <!-- Pannello Selezione Intervallo Multiplo con Pulsanti di Scaricamento che appaiono dopo il caricamento -->
+    <!-- Pannello Selezione Intervallo Multiplo con Pulsanti di Visualizzazione e Download sempre visibili -->
     <div class="multi-download-box">
         <div>
             <label for="startYearSelect">Da Anno:</label>
@@ -151,9 +151,9 @@
             </select>
         </div>
         <button id="viewMultiBtn" class="export-btn export-multi-btn" onclick="viewCustomRange()">👁️ Visualizza Intervallo in Tabella</button>
-        <span id="loadingMultiStatus" class="loading" style="display: none;">Caricamento intervallo...</span>
-        <button id="exportMultiCsvBtn" class="export-btn" style="display: none;" onclick="exportCustomRange('csv')">📥 Scarica Intervallo (CSV)</button>
-        <button id="exportMultiTxtBtn" class="export-btn" style="display: none;" onclick="exportCustomRange('txt')">📥 Scarica Intervallo (TXT)</button>
+        <span id="loadingMultiStatus" class="loading" style="display: none;">Elaborazione...</span>
+        <button id="exportMultiCsvBtn" class="export-btn" onclick="directDownloadCustomRange('csv')">📥 Scarica Intervallo (CSV)</button>
+        <button id="exportMultiTxtBtn" class="export-btn" onclick="directDownloadCustomRange('txt')">📥 Scarica Intervallo (TXT)</button>
     </div>
 
     <div class="table-responsive">
@@ -353,8 +353,6 @@
         const mainTitle = document.getElementById("mainTitle");
         const exportCsvBtn = document.getElementById("exportCsvBtn");
         const exportTxtBtn = document.getElementById("exportTxtBtn");
-        const exportMultiCsvBtn = document.getElementById("exportMultiCsvBtn");
-        const exportMultiTxtBtn = document.getElementById("exportMultiTxtBtn");
 
         yearSelect.onchange = function() {
             const selectedYear = yearSelect.value;
@@ -368,10 +366,7 @@
                 return;
             }
 
-            // Resetta i campi multipli
             cachedMultiData = [];
-            exportMultiCsvBtn.style.display = "none";
-            exportMultiTxtBtn.style.display = "none";
             startYearSelect.value = "";
             endYearSelect.value = "";
 
@@ -664,15 +659,10 @@
             btn.disabled = true;
             const originalText = btn.textContent;
             loadingMultiStatus.style.display = "inline";
-            
-            // Nascondi i pulsanti di scaricamento multiplo finché carica
-            exportMultiCsvBtn.style.display = "none";
-            exportMultiTxtBtn.style.display = "none";
 
             cachedMultiData = [];
             tbody.innerHTML = '<tr><td colspan="9" style="color: #e67e22; font-weight: bold;">Caricamento dati intervallo in corso...</td></tr>';
             
-            // Resetta selezione anno singolo
             yearSelect.value = "";
             exportCsvBtn.style.display = "none";
             exportTxtBtn.style.display = "none";
@@ -721,9 +711,6 @@
 
                 if (cachedMultiData.length > 0) {
                     renderMultiTableData();
-                    // I pulsanti di download appaiono dopo che i dati sono stati caricati e visualizzati
-                    exportMultiCsvBtn.style.display = "inline-flex";
-                    exportMultiTxtBtn.style.display = "inline-flex";
                 } else {
                     tbody.innerHTML = '<tr><td colspan="9" style="color: orange;">Nessun dato trovato per l\'intervallo selezionato.</td></tr>';
                 }
@@ -738,46 +725,97 @@
             }
         }
 
-        function exportCustomRange(format) {
-            if (!cachedMultiData || cachedMultiData.length === 0) return;
-            const startVal = startYearSelect.value;
-            const endVal = endYearSelect.value;
+        async function directDownloadCustomRange(format) {
+            const startVal = parseInt(startYearSelect.value);
+            const endVal = parseInt(endYearSelect.value);
 
-            let separator = format === 'csv' ? ';' : '\t';
-            let fileExtension = format === 'csv' ? 'csv' : 'txt';
-            
-            let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
-
-            for (let i = 0; i < cachedMultiData.length; i++) {
-                const row = cachedMultiData[i];
-                const tMax = formatVal(row.tMax);
-                const tApp = formatVal(row.tApp);
-                const tMin = formatVal(row.tMin);
-                const press = formatVal(row.press, 1);
-                const windSpd = formatVal(row.windSpd);
-                const windDir = getWindDirection(row.windDirDeg);
-                const hum = formatVal(row.hum);
-                
-                let precipStr = `${formatVal(row.precip)} mm`;
-                if (row.snow > 0) {
-                    precipStr = `${formatVal(row.snow)} cm neve`;
-                } else if (row.precip > 0 && row.tMin <= 1.5) {
-                    precipStr = `~${formatVal(row.precip)} cm neve (stima)`;
-                }
-
-                rows.push([row.dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, row.sunrise, row.sunset]);
+            if (!startVal || !endVal) {
+                alert("Seleziona sia l'anno di inizio che l'anno di fine per il download.");
+                return;
             }
 
-            let fileContent = rows.map(e => e.join(separator)).join("\n");
-            
-            const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            if (startVal > endVal) {
+                alert("L'anno di inizio non può essere successivo all'anno di fine.");
+                return;
+            }
+
+            const downloadBtnId = format === 'csv' ? 'exportMultiCsvBtn' : 'exportMultiTxtBtn';
+            const btn = document.getElementById(downloadBtnId);
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            loadingMultiStatus.style.display = "inline";
+
+            let downloadRows = [];
+            let header = ["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"];
+            downloadRows.push(header);
+
+            try {
+                for (let y = endVal; y >= startVal; y--) {
+                    btn.textContent = `Scaricando ${y}...`;
+                    let endDate = `${y}-12-31`;
+                    if (y === currentYear) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        endDate = yesterday.toISOString().split("T")[0];
+                    }
+
+                    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
+
+                    const response = await fetch(url);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const daily = data.daily;
+
+                    if (daily && daily.time) {
+                        for (let i = 0; i < daily.time.length; i++) {
+                            const dateIT = formatDateIT(daily.time[i]);
+                            const tMax = formatVal(daily.temperature_2m_max[i]);
+                            const tApp = formatVal(daily.apparent_temperature_max[i]);
+                            const tMin = formatVal(daily.temperature_2m_min[i]);
+                            const press = formatVal(daily.pressure_msl_mean[i], 1);
+                            const windSpd = formatVal(daily.wind_speed_10m_max[i]);
+                            const windDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
+                            const hum = formatVal(daily.relative_humidity_2m_mean[i]);
+                            
+                            let p = daily.precipitation_sum[i] || 0;
+                            let s = daily.snowfall_sum ? daily.snowfall_sum[i] : 0;
+                            let precipStr = `${formatVal(p)} mm`;
+                            if (s > 0) {
+                                precipStr = `${formatVal(s)} cm neve`;
+                            } else if (p > 0 && daily.temperature_2m_min[i] <= 1.5) {
+                                precipStr = `~${formatVal(p)} cm neve (stima)`;
+                            }
+
+                            const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
+                            const sunset = formatTimeWithSeconds(daily.sunset[i]);
+
+                            downloadRows.push([dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]);
+                        }
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                let separator = format === 'csv' ? ';' : '\t';
+                let fileExtension = format === 'csv' ? 'csv' : 'txt';
+                let fileContent = downloadRows.map(e => e.join(separator)).join("\n");
+                
+                const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
+                const link = document.createElement("a");
+                const urlObj = URL.createObjectURL(blob);
+                link.setAttribute("href", urlObj);
+                link.setAttribute("download", `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (err) {
+                console.error("Errore durante il download diretto:", err);
+                alert("Si è verificato un errore durante il download dei dati.");
+            } finally {
+                loadingMultiStatus.style.display = "none";
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
         }
     </script>
 </body>
