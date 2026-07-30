@@ -136,7 +136,7 @@
         <button id="exportTxtBtn" class="export-btn" style="display: none;" onclick="exportData('txt')">📥 Scarica Anno (TXT)</button>
     </div>
 
-    <!-- Pannello Selezione Intervallo Multiplo Personalizzato con Visualizzazione in Tabella -->
+    <!-- Pannello Selezione Intervallo Multiplo con Pulsanti di Scaricamento che appaiono dopo il caricamento -->
     <div class="multi-download-box">
         <div>
             <label for="startYearSelect">Da Anno:</label>
@@ -151,6 +151,7 @@
             </select>
         </div>
         <button id="viewMultiBtn" class="export-btn export-multi-btn" onclick="viewCustomRange()">👁️ Visualizza Intervallo in Tabella</button>
+        <span id="loadingMultiStatus" class="loading" style="display: none;">Caricamento intervallo...</span>
         <button id="exportMultiCsvBtn" class="export-btn" style="display: none;" onclick="exportCustomRange('csv')">📥 Scarica Intervallo (CSV)</button>
         <button id="exportMultiTxtBtn" class="export-btn" style="display: none;" onclick="exportCustomRange('txt')">📥 Scarica Intervallo (TXT)</button>
     </div>
@@ -188,7 +189,7 @@
         const currentYear = new Date().getFullYear();
         let cachedYearData = null;
         let cachedCurrentData = null;
-        let cachedMultiData = []; // Per memorizzare i dati dell'intervallo multiplo visualizzato
+        let cachedMultiData = [];
 
         const yearSelect = document.getElementById("yearSelect");
         const startYearSelect = document.getElementById("startYearSelect");
@@ -346,6 +347,7 @@
         loadCurrentWeather();
 
         const loadingStatus = document.getElementById("loadingStatus");
+        const loadingMultiStatus = document.getElementById("loadingMultiStatus");
         const tbody = document.querySelector("#weatherTable tbody");
         const pageTitle = document.getElementById("pageTitle");
         const mainTitle = document.getElementById("mainTitle");
@@ -366,10 +368,12 @@
                 return;
             }
 
-            // Resetta i campi multipli per pulizia visiva
+            // Resetta i campi multipli
             cachedMultiData = [];
             exportMultiCsvBtn.style.display = "none";
             exportMultiTxtBtn.style.display = "none";
+            startYearSelect.value = "";
+            endYearSelect.value = "";
 
             pageTitle.textContent = `Archivio Storico Meteo Piacenza (${selectedYear})`;
             mainTitle.textContent = `Archivio Storico Meteo Piacenza (${selectedYear})`;
@@ -659,7 +663,12 @@
             const btn = document.getElementById("viewMultiBtn");
             btn.disabled = true;
             const originalText = btn.textContent;
+            loadingMultiStatus.style.display = "inline";
             
+            // Nascondi i pulsanti di scaricamento multiplo finché carica
+            exportMultiCsvBtn.style.display = "none";
+            exportMultiTxtBtn.style.display = "none";
+
             cachedMultiData = [];
             tbody.innerHTML = '<tr><td colspan="9" style="color: #e67e22; font-weight: bold;">Caricamento dati intervallo in corso...</td></tr>';
             
@@ -712,6 +721,7 @@
 
                 if (cachedMultiData.length > 0) {
                     renderMultiTableData();
+                    // I pulsanti di download appaiono dopo che i dati sono stati caricati e visualizzati
                     exportMultiCsvBtn.style.display = "inline-flex";
                     exportMultiTxtBtn.style.display = "inline-flex";
                 } else {
@@ -722,6 +732,7 @@
                 console.error("Errore durante il caricamento multiplo:", err);
                 tbody.innerHTML = '<tr><td colspan="9" style="color: red;">Errore durante il caricamento dei dati.</td></tr>';
             } finally {
+                loadingMultiStatus.style.display = "none";
                 btn.disabled = false;
                 btn.textContent = originalText;
             }
