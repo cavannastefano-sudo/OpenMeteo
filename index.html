@@ -633,14 +633,18 @@
 
             let fileContent = rows.map(e => e.join(separator)).join("\n");
             
-            // MODIFICATO: Utilizzo Data URI anziché Blob per compatibilità con le WebView Android
-            const dataUri = `data:text/${fileExtension};charset=utf-8,\uFEFF` + encodeURIComponent(fileContent);
+            // MODIFICATO: Utilizzo Blob per compatibilità nativa con la WebView e Android 16
+            const blob = new Blob(["\ufeff" + fileContent], { type: 'text/' + fileExtension + ';charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.setAttribute("href", dataUri);
-            link.setAttribute("download", `meteo_piacenza_${selectedYear}.${fileExtension}`);
+            link.href = url;
+            link.download = `meteo_piacenza_${selectedYear}.${fileExtension}`;
             document.body.appendChild(link);
             link.click();
-            document.body.removeChild(link);
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
         }
 
         async function viewCustomRange() {
@@ -813,14 +817,18 @@
                 let fileExtension = format === 'csv' ? 'csv' : 'txt';
                 let fileContent = rows.map(e => e.join(separator)).join("\n");
                 
-                // MODIFICATO: Utilizzo Data URI anziché Blob per compatibilità con le WebView Android
-                const dataUri = `data:text/${fileExtension};charset=utf-8,\uFEFF` + encodeURIComponent(fileContent);
+                // MODIFICATO: Utilizzo Blob per compatibilità nativa con la WebView e Android 16
+                const blob = new Blob(["\ufeff" + fileContent], { type: 'text/' + fileExtension + ';charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
                 const link = document.createElement("a");
-                link.setAttribute("href", dataUri);
-                link.setAttribute("download", `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`);
+                link.href = url;
+                link.download = `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`;
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }, 100);
 
             } catch (err) {
                 console.error("Errore durante il download diretto:", err);
