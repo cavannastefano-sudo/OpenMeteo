@@ -99,6 +99,7 @@
             <img src="SfondoN-512.png" alt="CavanWeb Logo">
         </a>
         <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
+        <button class="refresh-btn" style="background-color: #2980b9;" onclick="apriInChromeEsplicito()">🌐 Apri in Chrome</button>
         <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
     </div>
     
@@ -188,6 +189,15 @@
     </div>
 
     <script>
+        // Funzione per aprire la pagina corrente direttamente sul browser esterno (Chrome)
+        function apriInChromeEsplicito() {
+            var urlCorrente = window.location.href;
+            var opened = window.open(urlCorrente, '_system');
+            if (!opened || opened.closed || typeof opened == 'undefined') {
+                window.location.href = urlCorrente;
+            }
+        }
+
         const currentYear = new Date().getFullYear();
         let cachedYearData = null;
         let cachedCurrentData = null;
@@ -633,7 +643,6 @@
 
             let fileContent = rows.map(e => e.join(separator)).join("\n");
             
-            // MODIFICATO: Utilizzo Data URI anziché Blob per compatibilità con le WebView Android
             const dataUri = `data:text/${fileExtension};charset=utf-8,\uFEFF` + encodeURIComponent(fileContent);
             const link = document.createElement("a");
             link.setAttribute("href", dataUri);
@@ -813,7 +822,6 @@
                 let fileExtension = format === 'csv' ? 'csv' : 'txt';
                 let fileContent = rows.map(e => e.join(separator)).join("\n");
                 
-                // MODIFICATO: Utilizzo Data URI anziché Blob per compatibilità con le WebView Android
                 const dataUri = `data:text/${fileExtension};charset=utf-8,\uFEFF` + encodeURIComponent(fileContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", dataUri);
