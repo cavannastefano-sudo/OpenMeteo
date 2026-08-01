@@ -6,6 +6,7 @@
     <title id="pageTitle">Archivio Storico Meteo Piacenza 1940-Oggi</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c3e50">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <style>
         body { font-family: sans-serif; margin: 15px; background-color: #f4f4f9; color: #333; }
         .top-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -18,15 +19,16 @@
         .export-multi-btn { background-color: #2980b9; }
         .export-multi-btn:hover { background-color: #1c5980; }
         
-        /* Stile per il logo cliccabile di CavanWeb con l'immagine locale SfondoN-512.png */
+        /* Stile per il logo cliccabile di CavanWeb con sfondo trasparente */
         .logo-link {
             display: inline-block;
             width: 45px;
             height: 45px;
             flex-shrink: 0;
+            background: transparent;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: none;
             transition: transform 0.2s;
         }
         .logo-link:hover {
@@ -37,6 +39,7 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            background: transparent;
         }
         
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
@@ -633,18 +636,14 @@
 
             let fileContent = rows.map(e => e.join(separator)).join("\n");
             
-            // MODIFICATO: Utilizzo Blob per compatibilità nativa con la WebView e Android 16
-            const blob = new Blob(["\ufeff" + fileContent], { type: 'text/' + fileExtension + ';charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+            const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
             const link = document.createElement("a");
-            link.href = url;
-            link.download = `meteo_piacenza_${selectedYear}.${fileExtension}`;
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `meteo_piacenza_${selectedYear}.${fileExtension}`);
             document.body.appendChild(link);
             link.click();
-            setTimeout(() => {
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-            }, 100);
+            document.body.removeChild(link);
         }
 
         async function viewCustomRange() {
@@ -817,18 +816,14 @@
                 let fileExtension = format === 'csv' ? 'csv' : 'txt';
                 let fileContent = rows.map(e => e.join(separator)).join("\n");
                 
-                // MODIFICATO: Utilizzo Blob per compatibilità nativa con la WebView e Android 16
-                const blob = new Blob(["\ufeff" + fileContent], { type: 'text/' + fileExtension + ';charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
+                const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
                 const link = document.createElement("a");
-                link.href = url;
-                link.download = `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`;
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`);
                 document.body.appendChild(link);
                 link.click();
-                setTimeout(() => {
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                }, 100);
+                document.body.removeChild(link);
 
             } catch (err) {
                 console.error("Errore durante il download diretto:", err);
