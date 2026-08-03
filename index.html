@@ -11,7 +11,7 @@
         body { font-family: sans-serif; margin: 15px; background-color: #f4f4f9; color: #333; }
         .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .top-bar-left { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        h1 { margin: 0; font-size: 22px; }
+        h1 { margin: 0; font-size: 22px; width: 100%; }
         .refresh-btn, .export-btn { background-color: #2c3e50; color: white; border: none; padding: 10px 15px; font-size: 16px; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
         .refresh-btn:hover, .export-btn:hover { background-color: #34495e; }
         .export-btn { background-color: #27ae60; }
@@ -20,9 +20,9 @@
         .export-multi-btn { background-color: #2980b9; }
         .export-multi-btn:hover { background-color: #1c5980; }
         
-        /* Contatori visite in alto a destra, compatti e appena visibili */
-        .visit-counters { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
-        .visit-counter { color: #888; font-size: 11px; font-weight: normal; opacity: 0.75; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.03); white-space: nowrap; }
+        /* Contatori visite tutti sulla stessa riga, compatti e in alto a destra */
+        .visit-counters { display: flex; align-items: center; gap: 8px; }
+        .visit-counter { color: #888; font-size: 11px; font-weight: normal; opacity: 0.75; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.03); white-space: nowrap; }
         
         /* Stile per il logo cliccabile di CavanWeb con sfondo trasparente */
         .logo-link {
@@ -89,9 +89,7 @@
         @media screen and (max-width: 768px) {
             body { margin: 10px; }
             h1 { font-size: 18px; }
-            .top-bar { flex-direction: column; align-items: stretch; }
-            .top-bar-left { justify-content: space-between; }
-            .visit-counters { align-items: flex-end; }
+            .top-bar { gap: 10px; }
             .current-section { padding: 10px; }
             th, td { padding: 8px; font-size: 13px; }
             .current-temp, .current-apparent, .current-sub { font-size: 14px; }
@@ -111,13 +109,13 @@
                 <img src="SfondoN-512.png" alt="CavanWeb Logo">
             </a>
             <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
-            <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
         </div>
         <div class="visit-counters">
             <div class="visit-counter">Oggi: <span id="dailyVisits">0</span></div>
             <div class="visit-counter">Mese: <span id="monthlyVisits">0</span></div>
             <div class="visit-counter">Tot: <span id="totalVisits">0</span></div>
         </div>
+        <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
     </div>
     
     <!-- Sezione Dati Attuali / Oggi -->
@@ -212,15 +210,12 @@
             const todayStr = now.toISOString().split('T')[0];
             const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-            // Controlla se la visita è già stata contata in questa sessione del browser
             if (!sessionStorage.getItem('cavanweb_visited_session')) {
                 sessionStorage.setItem('cavanweb_visited_session', 'true');
 
-                // Totale Visite
                 let totalVisits = parseInt(localStorage.getItem('cavanweb_meteo_total') || '0') + 1;
                 localStorage.setItem('cavanweb_meteo_total', totalVisits);
 
-                // Visite Mensili
                 let lastMonth = localStorage.getItem('cavanweb_meteo_month_key');
                 let monthlyVisits = parseInt(localStorage.getItem('cavanweb_meteo_monthly') || '0');
                 if (lastMonth !== currentMonthStr) {
@@ -231,7 +226,6 @@
                 }
                 localStorage.setItem('cavanweb_meteo_monthly', monthlyVisits);
 
-                // Visite Giornaliere (si azzera ogni giorno)
                 let lastDay = localStorage.getItem('cavanweb_meteo_day_key');
                 let dailyVisits = parseInt(localStorage.getItem('cavanweb_meteo_daily') || '0');
                 if (lastDay !== todayStr) {
@@ -243,7 +237,6 @@
                 localStorage.setItem('cavanweb_meteo_daily', dailyVisits);
             }
 
-            // Recupera i valori salvati da mostrare a schermo
             let totalVisits = parseInt(localStorage.getItem('cavanweb_meteo_total') || '0');
             
             let lastMonth = localStorage.getItem('cavanweb_meteo_month_key');
@@ -254,7 +247,6 @@
             let dailyVisits = parseInt(localStorage.getItem('cavanweb_meteo_daily') || '0');
             if (lastDay !== todayStr) dailyVisits = 0;
 
-            // Aggiorna interfaccia
             document.getElementById('dailyVisits').textContent = dailyVisits.toLocaleString('it-IT');
             document.getElementById('monthlyVisits').textContent = monthlyVisits.toLocaleString('it-IT');
             document.getElementById('totalVisits').textContent = totalVisits.toLocaleString('it-IT');
