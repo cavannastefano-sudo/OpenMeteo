@@ -4,4 +4,4 @@ Archivio per:
 
 # OpenWeatherMap
 Situazione in tempo reale per:
-- PIACENZA IT: https://cavannastefano-sudo.github.io/OpenMeteo/openwmap1.html
+- PIACENZA IT: https://cavannastefano-sudo.github.io/OpenMeteo/openwmap2.html
