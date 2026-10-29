@@ -1,0 +1,241 @@
+```html
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteo Piacenza</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-indigo-700 min-h-screen text-slate-800 flex flex-col justify-between p-4 sm:p-8">
+
+    <!-- Header -->
+    <header class="w-full max-w-xl mx-auto text-center mb-4 text-white">
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">Meteo Piacenza</h1>
+        <p class="text-blue-100 text-xs sm:text-sm">Dati meteo in tempo reale da OpenWeatherMap (1 decimale)</p>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-xl mx-auto flex-grow flex items-center justify-center">
+        
+        <!-- Weather Card -->
+        <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full relative">
+            
+            <!-- Loading State -->
+            <div id="loading" class="flex flex-col items-center justify-center py-10 space-y-3">
+                <div class="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
+                <p class="text-slate-500 text-sm font-medium">Caricamento in corso...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden flex flex-col items-center justify-center py-8 text-center space-y-3">
+                <i class="fa-solid fa-triangle-exclamation text-red-500 text-3xl"></i>
+                <p id="error-message" class="text-red-600 text-sm">Impossibile recuperare i dati.</p>
+                <button onclick="fetchWeatherData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl text-sm transition">
+                    Riprova
+                </button>
+            </div>
+
+            <!-- Content State -->
+            <div id="weather-content" class="hidden space-y-5">
+                
+                <!-- Top Info -->
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 id="city-name" class="text-2xl font-bold text-slate-900">--</h2>
+                        <p class="text-xs text-slate-400 font-medium">Nazione: <span id="country-name">--</span></p>
+                    </div>
+                    <button onclick="fetchWeatherData()" title="Aggiorna" class="p-2 text-slate-400 hover:text-blue-600 transition rounded-full hover:bg-slate-50">
+                        <i id="refresh-icon" class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+
+                <!-- Main Temp & Description -->
+                <div class="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                    <div>
+                        <div class="flex items-start">
+                            <span id="temp-value" class="text-5xl font-extrabold text-slate-900">--</span>
+                            <span class="text-2xl font-semibold text-blue-600 ml-1">°C</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Percepita: <span id="feels-like" class="font-semibold text-slate-700">--</span> °C</p>
+                    </div>
+                    <div class="text-right">
+                        <div id="weather-icon-container" class="text-4xl text-blue-500 mb-1">
+                            <i class="fa-solid fa-cloud"></i>
+                        </div>
+                        <p id="weather-desc" class="text-sm font-medium capitalize text-slate-700">--</p>
+                    </div>
+                </div>
+
+                <!-- Grid Details (1 Decimal Place) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">Min / Max</p>
+                        <p class="font-bold text-slate-700 mt-0.5"><span id="temp-min">--</span> / <span id="temp-max">--</span> °C</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">Umidità</p>
+                        <p id="humidity-val" class="font-bold text-slate-700 mt-0.5">-- %</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">Pressione</p>
+                        <p id="pressure-val" class="font-bold text-slate-700 mt-0.5">-- hPa</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">Vento</p>
+                        <p id="wind-speed" class="font-bold text-slate-700 mt-0.5">-- m/s</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">Nuvolosità</p>
+                        <p id="clouds-val" class="font-bold text-slate-700 mt-0.5">-- %</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-400 font-medium">Visibilità</p>
+                        <p id="visibility-val" class="font-bold text-slate-700 mt-0.5">-- km</p>
+                    </div>
+                </div>
+
+                <!-- Sun Schedule -->
+                <div class="grid grid-cols-2 gap-3 text-xs pt-1">
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 flex items-center space-x-2 text-amber-800">
+                        <i class="fa-solid fa-sun text-amber-500 text-base"></i>
+                        <div>
+                            <p class="text-amber-600/70 font-medium">Alba</p>
+                            <p id="sunrise-val" class="font-bold text-sm">--:--</p>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 flex items-center space-x-2 text-indigo-900">
+                        <i class="fa-solid fa-moon text-indigo-500 text-base"></i>
+                        <div>
+                            <p class="text-indigo-600/70 font-medium">Tramonto</p>
+                            <p id="sunset-val" class="font-bold text-sm">--:--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Timestamp -->
+                <div class="text-center pt-2 border-t border-slate-100">
+                    <p class="text-[11px] text-slate-400">Aggiornato alle <span id="update-time">--:--</span></p>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Note -->
+    <footer class="w-full max-w-xl mx-auto text-center mt-4 text-xs text-blue-100/70">
+        <p>Pronto per GitHub Pages</p>
+    </footer>
+
+    <!-- JavaScript Script Logic -->
+    <script>
+        const API_URL = "https://api.openweathermap.org/data/2.5/weather?q=Piacenza&appid=bd940445d9a0cc5d54dc2b7b498ba441&units=metric&lang=it";
+
+        function formatTime(unixTimestamp) {
+            if (!unixTimestamp) return "--:--";
+            const date = new Date(unixTimestamp * 1000);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getWeatherIcon(iconCode) {
+            const iconMap = {
+                '01d': 'fa-sun text-amber-500',
+                '01n': 'fa-moon text-indigo-400',
+                '02d': 'fa-cloud-sun text-amber-500',
+                '02n': 'fa-cloud-moon text-indigo-400',
+                '03d': 'fa-cloud text-slate-400',
+                '03n': 'fa-cloud text-slate-500',
+                '04d': 'fa-cloud text-slate-400',
+                '04n': 'fa-cloud text-slate-500',
+                '09d': 'fa-cloud-showers-heavy text-blue-500',
+                '09n': 'fa-cloud-showers-heavy text-blue-600',
+                '10d': 'fa-cloud-rain text-blue-500',
+                '10n': 'fa-cloud-rain text-blue-600',
+                '11d': 'fa-bolt text-amber-500',
+                '11n': 'fa-bolt text-amber-600',
+                '13d': 'fa-snowflake text-blue-300',
+                '13n': 'fa-snowflake text-blue-400',
+                '50d': 'fa-smog text-slate-400',
+                '50n': 'fa-smog text-slate-500'
+            };
+            return iconMap[iconCode] || 'fa-cloud-sun text-amber-500';
+        }
+
+        async function fetchWeatherData() {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error-state');
+            const contentEl = document.getElementById('weather-content');
+            const refreshIcon = document.getElementById('refresh-icon');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            contentEl.classList.add('hidden');
+            refreshIcon.classList.add('fa-spin');
+
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error('Errore di connessione API');
+                }
+                const data = await response.json();
+
+                // Dati generali
+                document.getElementById('city-name').textContent = data.name || 'Piacenza';
+                document.getElementById('country-name').textContent = data.sys?.country || 'IT';
+
+                // Valori numerici formattati a ESATTAMENTE UN DECIMALE (.toFixed(1))
+                document.getElementById('temp-value').textContent = Number(data.main.temp).toFixed(1);
+                document.getElementById('feels-like').textContent = Number(data.main.feels_like).toFixed(1);
+                document.getElementById('temp-min').textContent = Number(data.main.temp_min).toFixed(1);
+                document.getElementById('temp-max').textContent = Number(data.main.temp_max).toFixed(1);
+
+                document.getElementById('humidity-val').textContent = Number(data.main.humidity).toFixed(1) + ' %';
+                document.getElementById('pressure-val').textContent = Number(data.main.pressure).toFixed(1) + ' hPa';
+                document.getElementById('wind-speed').textContent = Number(data.wind.speed).toFixed(1) + ' m/s';
+                document.getElementById('clouds-val').textContent = Number(data.clouds?.all || 0).toFixed(1) + ' %';
+
+                const visKm = data.visibility ? (data.visibility / 1000) : 0;
+                document.getElementById('visibility-val').textContent = Number(visKm).toFixed(1) + ' km';
+
+                // Descrizione & Icona
+                const desc = data.weather?.[0]?.description || 'n/d';
+                document.getElementById('weather-desc').textContent = desc.charAt(0).toUpperCase() + desc.slice(1);
+                const iconCode = data.weather?.[0]?.icon || '01d';
+                document.getElementById('weather-icon-container').innerHTML = `<i class="fa-solid ${getWeatherIcon(iconCode)}"></i>`;
+
+                // Alba e Tramonto
+                document.getElementById('sunrise-val').textContent = formatTime(data.sys?.sunrise);
+                document.getElementById('sunset-val').textContent = formatTime(data.sys?.sunset);
+                document.getElementById('update-time').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                loadingEl.classList.add('hidden');
+                contentEl.classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                document.getElementById('error-message').textContent = "Impossibile caricare i dati meteo.";
+            } finally {
+                refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        window.onload = () => {
+            fetchWeatherData();
+        };
+    </script>
+</body>
+</html>
+```
