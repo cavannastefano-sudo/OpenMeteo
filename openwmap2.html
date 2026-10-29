@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meteo - Cerca Località</title>
+    <title>Meteo - Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Inter -->
@@ -56,8 +56,8 @@
             <div id="error-state" class="hidden flex flex-col items-center justify-center py-8 text-center space-y-4">
                 <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl"></i>
                 <p id="error-message" class="text-red-200 text-sm">Località non trovata o errore di connessione.</p>
-                <button onclick="getLocationWeather()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 font-semibold rounded-xl text-slate-900 transition shadow-lg text-sm">
-                    Usa GPS
+                <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 font-semibold rounded-xl text-slate-900 transition shadow-lg text-sm">
+                    Carica Piacenza
                 </button>
             </div>
 
@@ -152,7 +152,7 @@
     <!-- Footer with GitHub Pages Instructions -->
     <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs text-blue-300/60 space-y-1">
         <p>Creato per GitHub Pages • Sviluppato con Tailwind CSS</p>
-        <p class="italic">Istruzioni rapide: Carica questo file come <code class="bg-white/10 px-1 py-0.5 rounded text-white">index.html</code> nel tuo repository GitHub e attiva GitHub Pages nelle impostazioni.</p>
+        <p class="italic">Istruzioni rapide: Carica questo file come <code class="bg-white/10 px-1 py-0.5 rounded text-white">index.html</code> nel tuo repository GitHub e attiva GitHub Pages.</p>
     </footer>
 
     <!-- JavaScript Logic -->
@@ -233,7 +233,7 @@
                 console.error(err);
                 loadingEl.classList.add('hidden');
                 errorEl.classList.remove('hidden');
-                document.getElementById('error-message').textContent = "Impossibile trovare la località inserita.";
+                document.getElementById('error-message').textContent = "Impossibile caricare i dati: " + err.message;
             } finally {
                 if(refreshIcon) refreshIcon.classList.remove('fa-spin');
             }
@@ -241,4 +241,42 @@
 
         function fetchWeatherDataByCity(cityName) {
             lastFetchFunction = () => fetchWeatherDataByCity(cityName);
-            const url = `
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric&lang=it`;
+            fetchWeather(url);
+        }
+
+        function fetchWeatherDataByCoords(lat, lon) {
+            lastFetchFunction = () => fetchWeatherDataByCoords(lat, lon);
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
+            fetchWeather(url);
+        }
+
+        function refreshCurrent() {
+            if (lastFetchFunction) {
+                lastFetchFunction();
+            } else {
+                fetchWeatherDataByCity('Piacenza');
+            }
+        }
+
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                fetchWeatherDataByCity(query);
+            }
+        }
+
+        function getLocationWeather() {
+            document.getElementById('loading-text').textContent = "Caricamento meteo Piacenza...";
+            // Per evitare blocchi di geolocalizzazione sul PC locale, carichiamo direttamente Piacenza all'avvio
+            fetchWeatherDataByCity('Piacenza');
+        }
+
+        // All'avvio carica direttamente Piacenza in modo sicuro
+        window.onload = () => {
+            fetchWeatherDataByCity('Piacenza');
+        };
+    </script>
+</body>
+</html>
