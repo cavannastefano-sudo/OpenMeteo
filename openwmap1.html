@@ -98,7 +98,7 @@
                         </div>
                         <div>
                             <p class="text-xs text-blue-300 font-medium">Vento</p>
-                            <p id="wind-value" class="text-lg font-bold">-- m/s</p>
+                            <p id="wind-value" class="text-lg font-bold">-- km/h</p>
                         </div>
                     </div>
 
@@ -138,7 +138,7 @@
     <!-- Footer with GitHub Pages Instructions -->
     <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs text-blue-300/60 space-y-1">
         <p>Creato per GitHub Pages • Sviluppato con Tailwind CSS</p>
-        <p class="italic">-<code class="bg-white/10 px-1 py-0.5 rounded text-white">-</code>-</p>
+        <p class="italic">Istruzioni rapide: Carica questo file come <code class="bg-white/10 px-1 py-0.5 rounded text-white">index.html</code> nel tuo repository GitHub e attiva GitHub Pages nelle impostazioni.</p>
     </footer>
 
     <!-- JavaScript Logic -->
@@ -210,9 +210,9 @@
                 const iconClass = getWeatherIcon(data.weather[0].icon);
                 document.getElementById('weather-icon-container').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
 
-                // Dettagli griglia
+                // Dettagli griglia (conversione vento da m/s a km/h: * 3.6)
                 document.getElementById('humidity-value').textContent = data.main.humidity + '%';
-                document.getElementById('wind-value').textContent = Number(data.wind.speed).toFixed(1) + ' m/s';
+                document.getElementById('wind-value').textContent = Number(data.wind.speed * 3.6).toFixed(1) + ' km/h';
                 document.getElementById('sunrise-value').textContent = formatTime(data.sys.sunrise);
                 document.getElementById('sunset-value').textContent = formatTime(data.sys.sunset);
 
