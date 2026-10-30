@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meteo - Dashboard</title>
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts Inter -->
@@ -22,7 +26,7 @@
     <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4">
         <!-- Logo Cliccabile verso CavanWeb -->
         <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
-            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-white/20 shadow-lg group-hover:scale-105 transition">
+            <img src="SfondoN2.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-white/20 shadow-lg group-hover:scale-105 transition">
         </a>
         
         <!-- Titolo Centrale -->
@@ -166,7 +170,7 @@
     <!-- Footer with GitHub Pages Instructions -->
     <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs text-blue-300/60 space-y-1">
         <p>Creato per GitHub Pages • Sviluppato con Tailwind CSS</p>
-        <p class="italic"><code class="bg-white/10 px-1 py-0.5 rounded text-white"></code><code class="bg-white/10 px-1 py-0.5 rounded text-white"></code></p>
+        <p class="italic">Assicurati che <code class="bg-white/10 px-1 py-0.5 rounded text-white">SfondoN2.png</code> sia nella stessa cartella su GitHub.</p>
     </footer>
 
     <!-- JavaScript Logic -->
@@ -229,7 +233,7 @@
                 const description = data.weather[0].description;
                 document.getElementById('weather-desc').textContent = description.charAt(0).toUpperCase() + description.slice(1);
                 
-                const iconClass = getWeatherIcon(data.weather[0].icon);
+                iconClass = getWeatherIcon(data.weather[0].icon);
                 document.getElementById('weather-icon-container').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
 
                 document.getElementById('humidity-value').textContent = data.main.humidity + '%';
@@ -290,6 +294,16 @@
         window.onload = () => {
             fetchWeatherDataByCity('Piacenza');
         };
+    </script>
+    <!-- Registrazione Service Worker per PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrato con successo:', reg.scope))
+                    .catch(err => console.log('Registrazione Service Worker fallita:', err));
+            });
+        }
     </script>
 </body>
 </html>
