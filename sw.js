@@ -3,7 +3,7 @@ self.addEventListener('install', (e) => {
     caches.open('meteo-realtime-v1').then((cache) => {
       return cache.addAll([
         './openwmap2.html',
-        './SfondoN-512.png'
+        './SfondoN2.png'
       ]);
     })
   );
