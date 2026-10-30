@@ -18,12 +18,23 @@
 </head>
 <body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8">
 
-    <!-- Header -->
-    <header class="w-full max-w-4xl mx-auto text-center mb-6">
-        <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-2 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-cloud-sun text-amber-400"></i> Meteo in Tempo Reale
-        </h1>
-        <p class="text-blue-200 text-sm sm:text-base">Dati meteorologici ufficiali da OpenWeatherMap</p>
+    <!-- Header con Logo a sinistra -->
+    <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4">
+        <!-- Logo Cliccabile -->
+        <a href="#" onclick="fetchWeatherDataByCity('Piacenza'); return false;" class="flex items-center group" title="Torna a Piacenza">
+            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-white/20 shadow-lg group-hover:scale-105 transition">
+        </a>
+        
+        <!-- Titolo Centrale -->
+        <div class="text-center flex-grow mx-2">
+            <h1 class="text-2xl sm:text-4xl font-bold tracking-tight mb-1 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-cloud-sun text-amber-400"></i> Meteo in Tempo Reale
+            </h1>
+            <p class="text-blue-200 text-xs sm:text-base">Dati meteorologici ufficiali da OpenWeatherMap</p>
+        </div>
+
+        <!-- Spaziatore simmetrico per centrare perfettamente il titolo -->
+        <div class="w-12 sm:w-14"></div>
     </header>
 
     <!-- Main Content Container -->
@@ -152,7 +163,7 @@
     <!-- Footer with GitHub Pages Instructions -->
     <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs text-blue-300/60 space-y-1">
         <p>Creato per GitHub Pages • Sviluppato con Tailwind CSS</p>
-        <p class="italic">-<code class="bg-white/10 px-1 py-0.5 rounded text-white">-</code>-</p>
+        <p class="italic">Istruzioni rapide: Assicurati che il file <code class="bg-white/10 px-1 py-0.5 rounded text-white">SfondoN-512.png</code> sia nella stessa cartella di <code class="bg-white/10 px-1 py-0.5 rounded text-white">index.html</code> su GitHub.</p>
     </footer>
 
     <!-- JavaScript Logic -->
@@ -269,11 +280,10 @@
 
         function getLocationWeather() {
             document.getElementById('loading-text').textContent = "Caricamento meteo Piacenza...";
-            // Per evitare blocchi di geolocalizzazione sul PC locale, carichiamo direttamente Piacenza all'avvio
             fetchWeatherDataByCity('Piacenza');
         }
 
-        // All'avvio carica direttamente Piacenza in modo sicuro
+        // All'avvio carica Piacenza
         window.onload = () => {
             fetchWeatherDataByCity('Piacenza');
         };
