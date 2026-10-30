@@ -111,7 +111,7 @@
                 <img src="SfondoN-512.png" alt="CavanWeb Logo">
             </a>
             <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
-            <a href="https://cavannastefano-sudo.github.io/OpenMeteo/openwmap2.html" target="_blank" class="owm-btn" title="Apri OpenWeatherMap">📡Dati Realtime OpenWeatherMap</a>
+            <a href="https://cavannastefano-sudo.github.io/OpenMeteo/openwmap2.html" target="_blank" class="owm-btn" title="Apri OpenWeatherMap">📡 Dati Realtime OpenWeatherMap</a>
         </div>
         <div class="visit-counters">
             <div class="visit-counter">Oggi: <span id="dailyVisits">0</span></div>
@@ -627,4 +627,287 @@
             const tMax = `<span class="modal-normal-val">${formatVal(row.tMax)}°C</span>`;
             const tApp = `<span class="modal-normal-val">${formatVal(row.tApp)}°C</span>`;
             const tMin = `<span class="modal-normal-val">${formatVal(row.tMin)}°C</span>`;
-            const pressure
+            const pressure = `<span class="modal-normal-val">${formatVal(row.press, 1)} hPa</span>`;
+            const windDirStr = getWindDirection(row.windDirDeg);
+            const windSpeed = `<span class="modal-normal-val">${formatVal(row.windSpd)} km/h (${windDirStr})</span>`;
+            const humidity = `<span class="modal-normal-val">${formatVal(row.hum)}%</span>`;
+            const precip = `<span class="modal-normal-val">${formatPrecipitation(row.precip, row.snow, row.tMin)}</span>`;
+            const sunrise = `<span class="modal-normal-val">🌅 ${row.sunrise}</span>`;
+            const sunset = `<span class="modal-normal-val">🌇 ${row.sunset}</span>`;
+
+            document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${row.dateIT}`;
+            
+            const detailTbody = document.querySelector("#modalDetailTable tbody");
+            detailTbody.innerHTML = `
+                <tr><th>Data</th><td><span class="modal-normal-val">${row.dateIT}</span></td></tr>
+                <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
+                <tr><th>Temperatura Percepita</th><td>${tApp}</td></tr>
+                <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
+                <tr><th>Pressione Media</th><td>${pressure}</td></tr>
+                <tr><th>Vento Massimo</th><td>${windSpeed}</td></tr>
+                <tr><th>Umidità Media</th><td>${humidity}</td></tr>
+                <tr><th>Pioggia / Neve</th><td>${precip}</td></tr>
+                <tr><th>Alba</th><td>${sunrise}</td></tr>
+                <tr><th>Tramonto</th><td>${sunset}</td></tr>
+            `;
+
+            document.getElementById("dayModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("dayModal").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("dayModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        function exportData(format) {
+            if (!cachedYearData || !cachedYearData.time) return;
+            const selectedYear = yearSelect.value;
+
+            let separator = format === 'csv' ? ';' : '\t';
+            let fileExtension = format === 'csv' ? 'csv' : 'txt';
+            
+            let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
+
+            for (let i = 0; i < cachedYearData.time.length; i++) {
+                const dateIT = formatDateIT(cachedYearData.time[i]);
+                const tMax = formatVal(cachedYearData.temperature_2m_max[i]);
+                const tApp = formatVal(cachedYearData.apparent_temperature_max[i]);
+                const tMin = formatVal(cachedYearData.temperature_2m_min[i]);
+                const press = formatVal(cachedYearData.pressure_msl_mean[i], 1);
+                const windSpd = formatVal(cachedYearData.wind_speed_10m_max[i]);
+                const windDir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
+                const hum = formatVal(cachedYearData.relative_humidity_2m_mean[i]);
+                
+                let p = cachedYearData.precipitation_sum[i] || 0;
+                let s = cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[i] : 0;
+                let precipStr = `${formatVal(p)} mm`;
+                if (s > 0) {
+                    precipStr = `${formatVal(s)} cm neve`;
+                } else if (p > 0 && cachedYearData.temperature_2m_min[i] <= 1.5) {
+                    precipStr = `~${formatVal(p)} cm neve (stima)`;
+                }
+
+                const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[i]);
+                const sunset = formatTimeWithSeconds(cachedYearData.sunset[i]);
+
+                rows.push([dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]);
+            }
+
+            let fileContent = rows.map(e => e.join(separator)).join("\n");
+            
+            const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `meteo_piacenza_${selectedYear}.${fileExtension}`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function viewCustomRange() {
+            const startVal = parseInt(startYearSelect.value);
+            const endVal = parseInt(endYearSelect.value);
+
+            if (!startVal || !endVal) {
+                alert("Seleziona sia l'anno di inizio che l'anno di fine.");
+                return;
+            }
+
+            if (startVal > endVal) {
+                alert("L'anno di inizio non può essere successivo all'anno di fine.");
+                return;
+            }
+
+            const btn = document.getElementById("viewMultiBtn");
+            btn.disabled = true;
+            const originalText = btn.textContent;
+            loadingMultiStatus.style.display = "inline";
+
+            cachedMultiData = [];
+            tbody.innerHTML = '<tr><td colspan="9" style="color: #e67e22; font-weight: bold;">Caricamento dati intervallo in corso...</td></tr>';
+            
+            yearSelect.value = "";
+            exportCsvBtn.style.display = "none";
+            exportTxtBtn.style.display = "none";
+            cachedYearData = null;
+
+            pageTitle.textContent = `Archivio Storico Meteo Piacenza (${startVal}-${endVal})`;
+            mainTitle.textContent = `Archivio Storico Meteo Piacenza (${startVal}-${endVal})`;
+
+            try {
+                for (let y = endVal; y >= startVal; y--) {
+                    btn.textContent = `Caricamento ${y}...`;
+                    let endDate = `${y}-12-31`;
+                    if (y === currentYear) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        endDate = yesterday.toISOString().split("T")[0];
+                    }
+
+                    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
+
+                    const response = await fetch(url);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const daily = data.daily;
+
+                    if (daily && daily.time) {
+                        let yearRows = [];
+                        for (let i = 0; i < daily.time.length; i++) {
+                            yearRows.push({
+                                dateIT: formatDateIT(daily.time[i]),
+                                rawDate: daily.time[i],
+                                tMax: daily.temperature_2m_max[i],
+                                tApp: daily.apparent_temperature_max[i],
+                                tMin: daily.temperature_2m_min[i],
+                                press: daily.pressure_msl_mean[i],
+                                windSpd: daily.wind_speed_10m_max[i],
+                                windDirDeg: daily.wind_direction_10m_dominant[i],
+                                hum: daily.relative_humidity_2m_mean[i],
+                                precip: daily.precipitation_sum[i] || 0,
+                                snow: daily.snowfall_sum ? daily.snowfall_sum[i] : 0,
+                                sunrise: formatTimeWithSeconds(daily.sunrise[i]),
+                                sunset: formatTimeWithSeconds(daily.sunset[i])
+                            });
+                        }
+                        yearRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
+                        cachedMultiData.push(...yearRows);
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                cachedMultiData.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
+
+                if (cachedMultiData.length > 0) {
+                    renderMultiTableData();
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="9" style="color: orange;">Nessun dato trovato per l\'intervallo selezionato.</td></tr>';
+                }
+
+            } catch (err) {
+                console.error("Errore durante il caricamento multiplo:", err);
+                tbody.innerHTML = '<tr><td colspan="9" style="color: red;">Errore durante il caricamento dei dati.</td></tr>';
+            } finally {
+                loadingMultiStatus.style.display = "none";
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        async function directDownloadCustomRange(format) {
+            const startVal = parseInt(startYearSelect.value);
+            const endVal = parseInt(endYearSelect.value);
+
+            if (!startVal || !endVal) {
+                alert("Seleziona sia l'anno di inizio che l'anno di fine per il download.");
+                return;
+            }
+
+            if (startVal > endVal) {
+                alert("L'anno di inizio non può essere successivo all'anno di fine.");
+                return;
+            }
+
+            const downloadBtnId = format === 'csv' ? 'exportMultiCsvBtn' : 'exportMultiTxtBtn';
+            const btn = document.getElementById(downloadBtnId);
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            loadingMultiStatus.style.display = "inline";
+
+            let tempDownloadRows = [];
+
+            try {
+                for (let y = endVal; y >= startVal; y--) {
+                    btn.textContent = `Scaricando ${y}...`;
+                    let endDate = `${y}-12-31`;
+                    if (y === currentYear) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        endDate = yesterday.toISOString().split("T")[0];
+                    }
+
+                    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=45.0483&longitude=9.6953&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
+
+                    const response = await fetch(url);
+                    if (!response.ok) continue;
+                    const data = await response.json();
+                    const daily = data.daily;
+
+                    if (daily && daily.time) {
+                        for (let i = 0; i < daily.time.length; i++) {
+                            const dateIT = formatDateIT(daily.time[i]);
+                            const tMax = formatVal(daily.temperature_2m_max[i]);
+                            const tApp = formatVal(daily.apparent_temperature_max[i]);
+                            const tMin = formatVal(daily.temperature_2m_min[i]);
+                            const press = formatVal(daily.pressure_msl_mean[i], 1);
+                            const windSpd = formatVal(daily.wind_speed_10m_max[i]);
+                            const windDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
+                            const hum = formatVal(daily.relative_humidity_2m_mean[i]);
+                            
+                            let p = daily.precipitation_sum[i] || 0;
+                            let s = daily.snowfall_sum ? daily.snowfall_sum[i] : 0;
+                            let precipStr = `${formatVal(p)} mm`;
+                            if (s > 0) {
+                                precipStr = `${formatVal(s)} cm neve`;
+                            } else if (p > 0 && daily.temperature_2m_min[i] <= 1.5) {
+                                precipStr = `~${formatVal(p)} cm neve (stima)`;
+                            }
+
+                            const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
+                            const sunset = formatTimeWithSeconds(daily.sunset[i]);
+
+                            tempDownloadRows.push({
+                                rawDate: daily.time[i],
+                                cols: [dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]
+                            });
+                        }
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                tempDownloadRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
+
+                let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
+                tempDownloadRows.forEach(item => rows.push(item.cols));
+
+                let separator = format === 'csv' ? ';' : '\t';
+                let fileExtension = format === 'csv' ? 'csv' : 'txt';
+                let fileContent = rows.map(e => e.join(separator)).join("\n");
+                
+                const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", `meteo_piacenza_${startVal}_${endVal}.${fileExtension}`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (err) {
+                console.error("Errore durante il download diretto:", err);
+                alert("Si è verificato un errore durante il download dei dati.");
+            } finally {
+                loadingMultiStatus.style.display = "none";
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrato con successo:', reg.scope))
+                    .catch(err => console.log('Registrazione Service Worker fallita:', err));
+            });
+        }
+    </script>
+</body>
+</html>
