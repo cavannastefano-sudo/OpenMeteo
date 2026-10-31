@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa Meteo Mondiale</title>
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS (Mappa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #map { height: calc(100vh - 100px); width: 100%; border-radius: 1.5rem; }
+        /* Personalizzazione popup mappa in stile scuro */
+        .leaflet-popup-content-wrapper { background: #1e293b; color: white; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.2); }
+        .leaflet-popup-tip { background: #1e293b; }
+        /* Stile personalizzato per il controllo dei layer (sfondo scuro) */
+        .leaflet-control-layers { background: #1e293b !important; color: white !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 1rem !important; padding: 8px 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); max-height: 80vh; overflow-y: auto; }
+        .leaflet-control-layers label { font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+        .leaflet-control-layers-separator { border-top: 1px solid rgba(255,255,255,0.2); margin: 6px 0; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-6">
+
+    <!-- Header -->
+    <header class="w-full max-w-6xl mx-auto mb-4 flex items-center justify-between px-2">
+        <a href="openwmap2.html" class="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center gap-2 text-sm font-semibold">
+            <i class="fa-solid fa-arrow-left text-amber-400"></i>
+            <span>Torna al Meteo</span>
+        </a>
+        <div class="text-center flex-grow mx-2">
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center justify-center gap-2">
+                <i class="fa-solid fa-earth-americas text-amber-400"></i> Mappa Meteo Interattiva
+            </h1>
+        </div>
+        <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
+            <img src="SfondoN-512.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover border border-white/20 shadow-lg group-hover:scale-105 transition">
+        </a>
+    </header>
+
+    <!-- Main Map Container -->
+    <main class="w-full max-w-6xl mx-auto flex-grow relative">
+        <div id="map" class="shadow-2xl border border-white/20"></div>
+        <!-- Istruzione fluttuante -->
+        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-blue-200 pointer-events-none shadow-xl z-[999] text-center">
+            📍 Clicca ovunque sulla mappa per scoprire il meteo della località
+        </div>
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
+
+        // Definizione dei Layer di base (Dark, Light, Topo, OSM) senza problemi di API Key
+        const darkLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 16,
+            attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
+        });
+
+        const lightLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 16,
+            attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
+        });
+
+        const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'
+        });
+
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        });
+
+        // Layer delle Situazioni Meteorologiche di OpenWeatherMap con Opacità Massima (1.0)
+        const tempLayer = L.tileLayer(`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
+        });
+
+        const precipLayer = L.tileLayer(`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
+        });
+
+        const windLayer = L.tileLayer(`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
+        });
+
+        const pressureLayer = L.tileLayer(`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
+        });
+
+        const cloudsLayer = L.tileLayer(`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
+        });
+
+        // Recupera la scelta precedente della mappa di base (default: dark)
+        const savedLayerType = localStorage.getItem('preferred_map_layer') || 'dark';
+        let defaultLayer = darkLayer;
+        if (savedLayerType === 'light') defaultLayer = lightLayer;
+        if (savedLayerType === 'topo') defaultLayer = topoLayer;
+        if (savedLayerType === 'osm') defaultLayer = osmLayer;
+
+        // Inizializzazione Mappa centrata su Piacenza
+        const map = L.map('map', {
+            center: [45.0483, 9.6953],
+            zoom: 10,
+            layers: [defaultLayer]
+        });
+
+        // Mappe di base (scelta singola tra Dark, Light, Topo, OSM)
+        const baseMaps = {
+            "🌙 Esri Dark (Scura)": darkLayer,
+            "☀️ Esri Light (Chiara)": lightLayer,
+            "⛰️ OpenTopoMap": topoLayer,
+            "🗺️ OpenStreetMap": osmLayer
+        };
+
+        // Livelli sovrapponibili (attivabili/disattivabili con checkbox)
+        const overlayMaps = {
+            "🌡️ Temperature": tempLayer,
+            "🌧️ Precipitazioni (Pioggia)": precipLayer,
+            "💨 Vento": windLayer,
+            "⏱️ Pressione Atmosferica": pressureLayer,
+            "☁️ Copertura Nuvolosa": cloudsLayer
+        };
+
+        // Aggiunge il selettore in alto a destra
+        L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
+
+        // Salva la preferenza della mappa di base scelta dall'utente
+        map.on('baselayerchange', function (e) {
+            if (e.name.includes("Dark")) {
+                localStorage.setItem('preferred_map_layer', 'dark');
+            } else if (e.name.includes("Light")) {
+                localStorage.setItem('preferred_map_layer', 'light');
+            } else if (e.name.includes("Topo")) {
+                localStorage.setItem('preferred_map_layer', 'topo');
+            } else {
+                localStorage.setItem('preferred_map_layer', 'osm');
+            }
+        });
+
+        let currentMarker = null;
+
+        // Funzione per caricare il meteo al click sulla mappa
+        async function getWeatherByCoords(lat, lon) {
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Dati non disponibili");
+                const data = await response.json();
+
+                const cityName = data.name || "Località sconosciuta";
+                const country = data.sys.country || "";
+                const temp = Number(data.main.temp).toFixed(1);
+                const feelsLike = Number(data.main.feels_like).toFixed(1);
+                const desc = data.weather[0].description;
+                const humidity = data.main.humidity;
+                const wind = Number(data.wind.speed * 3.6).toFixed(1);
+
+                const popupContent = `
+                    <div class="p-2 space-y-1 text-left">
+                        <h3 class="font-bold text-base text-amber-400">${cityName} (${country})</h3>
+                        <p class="text-2xl font-extrabold">${temp}°C <span class="text-xs font-normal text-slate-300">(Percepita ${feelsLike}°C)</span></p>
+                        <p class="capitalize text-sm text-blue-200">${desc}</p>
+                        <hr class="border-white/10 my-1">
+                        <div class="text-xs text-slate-300 space-y-0.5">
+                            <p><i class="fa-solid fa-droplet text-blue-400"></i> Umidità: ${humidity}%</p>
+                            <p><i class="fa-solid fa-wind text-teal-400"></i> Vento: ${wind} km/h</p>
+                        </div>
+                        <div class="pt-2 text-center">
+                            <a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${cityName}')" class="inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold px-3 py-1 rounded-lg text-xs transition shadow">
+                                Visualizza nella Dashboard
+                            </a>
+                        </div>
+                    </div>
+                `;
+
+                if (currentMarker) {
+                    currentMarker.setLatLng([lat, lon]).setPopupContent(popupContent).openPopup();
+                } else {
+                    currentMarker = L.marker([lat, lon]).addTo(map).bindPopup(popupContent).openPopup();
+                }
+
+            } catch (err) {
+                console.error(err);
+                if (currentMarker) {
+                    currentMarker.setLatLng([lat, lon]).setPopupContent("<p class='p-2 text-red-400'>Impossibile caricare il meteo per questa posizione.</p>").openPopup();
+                } else {
+                    currentMarker = L.marker([lat, lon]).addTo(map).bindPopup("<p class='p-2 text-red-400'>Impossibile caricare il meteo per questa posizione.</p>").openPopup();
+                }
+            }
+        }
+
+        // Evento click sulla mappa
+        map.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lon = e.latlng.lng;
+            getWeatherByCoords(lat, lon);
+        });
+
+        // Carica Piacenza all'avvio sulla mappa
+        getWeatherByCoords(45.0483, 9.6953);
+    </script>
+</body>
+</html>
