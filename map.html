@@ -60,15 +60,25 @@
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
 
-        // Definizione dei Layer di mappa di base geografici
-        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Definizione dei Layer di base (Dark, Light, Topo, OSM)
+        const darkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        });
+
+        const lightLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         });
 
         const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
             maxZoom: 17,
             attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'
+        });
+
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
         });
 
         // Layer delle Situazioni Meteorologiche di OpenWeatherMap con Opacità Massima (1.0)
@@ -92,9 +102,12 @@
             maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
 
-        // Recupera la scelta precedente della mappa di base
-        const savedLayerType = localStorage.getItem('preferred_map_layer') || 'osm';
-        const defaultLayer = savedLayerType === 'topo' ? topoLayer : osmLayer;
+        // Recupera la scelta precedente della mappa di base (default: dark)
+        const savedLayerType = localStorage.getItem('preferred_map_layer') || 'dark';
+        let defaultLayer = darkLayer;
+        if (savedLayerType === 'light') defaultLayer = lightLayer;
+        if (savedLayerType === 'topo') defaultLayer = topoLayer;
+        if (savedLayerType === 'osm') defaultLayer = osmLayer;
 
         // Inizializzazione Mappa centrata su Piacenza
         const map = L.map('map', {
@@ -105,11 +118,13 @@
 
         // Mappe di base (scelta singola)
         const baseMaps = {
-            "🗺️ OpenStreetMap": osmLayer,
-            "⛰️ OpenTopoMap": topoLayer
+            "🌙 CartoDB Dark": darkLayer,
+            "☀️ CartoDB Light": lightLayer,
+            "⛰️ OpenTopoMap": topoLayer,
+            "🗺️ OpenStreetMap": osmLayer
         };
 
-        // Livelli sovrapponibili (attivabili/disattivabili con checkbox) con opacità piena
+        // Livelli sovrapponibili (attivabili/disattivabili con checkbox)
         const overlayMaps = {
             "🌡️ Temperature": tempLayer,
             "🌧️ Precipitazioni (Pioggia)": precipLayer,
@@ -121,9 +136,13 @@
         // Aggiunge il selettore in alto a destra
         L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
 
-        // Salva la preferenza della mappa di base
+        // Salva la preferenza della mappa di base scelta dall'utente
         map.on('baselayerchange', function (e) {
-            if (e.name.includes("Topo")) {
+            if (e.name.includes("Dark")) {
+                localStorage.setItem('preferred_map_layer', 'dark');
+            } else if (e.name.includes("Light")) {
+                localStorage.setItem('preferred_map_layer', 'light');
+            } else if (e.name.includes("Topo")) {
                 localStorage.setItem('preferred_map_layer', 'topo');
             } else {
                 localStorage.setItem('preferred_map_layer', 'osm');
