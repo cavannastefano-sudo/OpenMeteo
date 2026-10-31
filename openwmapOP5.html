@@ -26,7 +26,7 @@
 </head>
 <body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8">
 
-    <!-- Header con Logo a sinistra e Pulsante Archivio a destra -->
+    <!-- Header con Logo a sinistra, Titolo e Pulsanti Mappa/Archivio a destra -->
     <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4">
         <!-- Logo Cliccabile verso CavanWeb -->
         <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
@@ -41,11 +41,19 @@
             <p class="text-blue-200 text-xs sm:text-base">Dati da OpenWeatherMap & Open-Meteo</p>
         </div>
 
-        <!-- Pulsante Archivio Storico (Simmetrico al logo) -->
-        <a href="https://cavannastefano-sudo.github.io/OpenMeteo/" target="_blank" title="Apri Archivio Storico Meteo" class="bg-white/10 hover:bg-white/20 p-3 sm:px-4 sm:py-3 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center justify-center gap-2 text-sm font-semibold">
-            <i class="fa-solid fa-calendar-days text-amber-400 text-lg"></i>
-            <span class="hidden sm:inline">Archivio</span>
-        </a>
+        <!-- Pulsanti a Destra (Mappa e Archivio) -->
+        <div class="flex items-center gap-2">
+            <!-- Pulsante Mappa -->
+            <a href="map.html" title="Apri Mappa Interattiva" class="bg-white/10 hover:bg-white/20 p-3 sm:px-4 sm:py-3 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center justify-center gap-2 text-sm font-semibold">
+                <i class="fa-solid fa-earth-americas text-amber-400 text-lg"></i>
+                <span class="hidden sm:inline">Mappa</span>
+            </a>
+            <!-- Pulsante Archivio Storico -->
+            <a href="https://cavannastefano-sudo.github.io/OpenMeteo/" target="_blank" title="Apri Archivio Storico Meteo" class="bg-white/10 hover:bg-white/20 p-3 sm:px-4 sm:py-3 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center justify-center gap-2 text-sm font-semibold">
+                <i class="fa-solid fa-calendar-days text-amber-400 text-lg"></i>
+                <span class="hidden sm:inline">Archivio</span>
+            </a>
+        </div>
     </header>
 
     <!-- Main Content Container -->
@@ -466,9 +474,17 @@
             fetchWeatherDataByCity('Piacenza');
         }
 
-        // All'avvio carica Piacenza
+        // All'avvio controlla se arriva una città selezionata dalla mappa o carica Piacenza
         window.onload = () => {
-            fetchWeatherDataByCity('Piacenza');
+            const selectedCity = localStorage.getItem('selected_city');
+            if (selectedCity) {
+                localStorage.removeItem('selected_city');
+                document.getElementById('search-input').value = selectedCity;
+                toggleClearButton();
+                fetchWeatherDataByCity(selectedCity);
+            } else {
+                fetchWeatherDataByCity('Piacenza');
+            }
         };
     </script>
     <!-- Registrazione Service Worker per PWA -->
