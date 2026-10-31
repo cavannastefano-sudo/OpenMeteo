@@ -26,32 +26,42 @@
 </head>
 <body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8">
 
-    <!-- Header con Logo a sinistra, Titolo e Pulsanti Mappa/Archivio a destra -->
-    <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4">
+    <!-- Header con Logo a sinistra, Titolo ridotto e Pulsanti a destra -->
+    <header class="w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 gap-2">
         <!-- Logo Cliccabile verso CavanWeb (Formato quadrato) -->
         <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
             <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
         </a>
         
-        <!-- Titolo Centrale -->
-        <div class="text-center flex-grow mx-2">
-            <h1 class="text-2xl sm:text-4xl font-bold tracking-tight mb-1 flex items-center justify-center gap-2">
+        <!-- Titolo Centrale (Carattere ridotto) -->
+        <div class="text-center flex-grow mx-1">
+            <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5">
                 <i class="fa-solid fa-cloud-sun text-amber-400"></i> MeteoCWEB
             </h1>
-            <p class="text-blue-200 text-xs sm:text-base">Dati da OpenWeatherMap & Open-Meteo</p>
+            <p class="text-blue-200 text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
         </div>
 
-        <!-- Pulsanti a Destra (Mappa e Archivio) -->
-        <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- Pulsanti a Destra (Mappa, SunClock, Meteo Europa, Archivio) -->
+        <div class="flex items-center gap-1.5 flex-shrink-0 flex-wrap justify-end">
             <!-- Pulsante Mappa -->
-            <a href="map.html" title="Apri Mappa Interattiva" class="bg-white/10 hover:bg-white/20 p-3 sm:px-4 sm:py-3 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center justify-center gap-2 text-sm font-semibold">
-                <i class="fa-solid fa-earth-americas text-amber-400 text-lg"></i>
-                <span class="hidden sm:inline">Mappa</span>
+            <a href="map.html" title="Apri Mappa Interattiva" class="bg-white/10 hover:bg-white/20 p-2.5 sm:px-3 sm:py-2.5 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold">
+                <i class="fa-solid fa-earth-americas text-amber-400"></i>
+                <span class="hidden md:inline">Mappa</span>
+            </a>
+            <!-- Pulsante SunClock24 -->
+            <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" title="Apri SunClock24" class="bg-white/10 hover:bg-white/20 p-2.5 sm:px-3 sm:py-2.5 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold">
+                <i class="fa-solid fa-clock text-amber-400"></i>
+                <span class="hidden md:inline">SunClock</span>
+            </a>
+            <!-- Pulsante Meteo Europa -->
+            <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" title="Apri Meteo Europa" class="bg-white/10 hover:bg-white/20 p-2.5 sm:px-3 sm:py-2.5 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold">
+                <i class="fa-solid fa-globe text-amber-400"></i>
+                <span class="hidden md:inline">Europa</span>
             </a>
             <!-- Pulsante Archivio Storico -->
-            <a href="https://cavannastefano-sudo.github.io/OpenMeteo/" target="_blank" title="Apri Archivio Storico Meteo" class="bg-white/10 hover:bg-white/20 p-3 sm:px-4 sm:py-3 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center justify-center gap-2 text-sm font-semibold">
-                <i class="fa-solid fa-calendar-days text-amber-400 text-lg"></i>
-                <span class="hidden sm:inline">Archivio</span>
+            <a href="https://cavannastefano-sudo.github.io/OpenMeteo/" target="_blank" title="Apri Archivio Storico Meteo" class="bg-white/10 hover:bg-white/20 p-2.5 sm:px-3 sm:py-2.5 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center gap-1.5 text-xs sm:text-sm font-semibold">
+                <i class="fa-solid fa-calendar-days text-amber-400"></i>
+                <span class="hidden md:inline">Archivio</span>
             </a>
         </div>
     </header>
