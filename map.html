@@ -28,7 +28,7 @@
 
     <!-- Header -->
     <header class="w-full max-w-6xl mx-auto mb-4 flex items-center justify-between px-2">
-        <a href="index.html" class="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center gap-2 text-sm font-semibold">
+        <a href="openwmap2.html" class="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center gap-2 text-sm font-semibold">
             <i class="fa-solid fa-arrow-left text-amber-400"></i>
             <span>Torna al Meteo</span>
         </a>
@@ -59,7 +59,7 @@
         // Inizializzazione Mappa centrata su Piacenza di default
         const map = L.map('map').setView([45.0483, 9.6953], 10);
 
-        // Layer grafico OpenStreetMap in stile scuro / standard
+        // Layer grafico OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 18,
             attribution: '© OpenStreetMap contributors'
@@ -95,7 +95,7 @@
                             <p><i class="fa-solid fa-wind text-teal-400"></i> Vento: ${wind} km/h</p>
                         </div>
                         <div class="pt-2 text-center">
-                            <a href="index.html" onclick="localStorage.setItem('selected_city', '${cityName}')" class="inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold px-3 py-1 rounded-lg text-xs transition shadow">
+                            <a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${cityName}')" class="inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold px-3 py-1 rounded-lg text-xs transition shadow">
                                 Visualizza nella Dashboard
                             </a>
                         </div>
