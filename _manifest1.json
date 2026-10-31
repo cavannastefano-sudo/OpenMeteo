@@ -2,7 +2,7 @@
   "name": "Meteo Realtime & Archivio PC",
   "short_name": "Meteo Piacenza",
   "description": "Archivio meteorologico storico e dati attuali di Piacenza",
-  "start_url": "./openwmap2.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f4f4f9",
   "theme_color": "#2c3e50",
