@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meteo - Dashboard</title>
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8">
+
+    <!-- Header con Logo a sinistra e Pulsante Archivio a destra -->
+    <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4">
+        <!-- Logo Cliccabile verso CavanWeb -->
+        <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
+            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-white/20 shadow-lg group-hover:scale-105 transition">
+        </a>
+        
+        <!-- Titolo Centrale -->
+        <div class="text-center flex-grow mx-2">
+            <h1 class="text-2xl sm:text-4xl font-bold tracking-tight mb-1 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-cloud-sun text-amber-400"></i> Meteo in Tempo Reale
+            </h1>
+            <p class="text-blue-200 text-xs sm:text-base">Dati da OpenWeatherMap & Open-Meteo</p>
+        </div>
+
+        <!-- Pulsante Archivio Storico (Simmetrico al logo) -->
+        <a href="https://cavannastefano-sudo.github.io/OpenMeteo/" target="_blank" title="Apri Archivio Storico Meteo" class="bg-white/10 hover:bg-white/20 p-3 sm:px-4 sm:py-3 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center justify-center gap-2 text-sm font-semibold">
+            <i class="fa-solid fa-calendar-days text-amber-400 text-lg"></i>
+            <span class="hidden sm:inline">Archivio</span>
+        </a>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-xl mx-auto flex-grow flex items-center justify-center">
+        
+        <!-- Weather Card -->
+        <div id="weather-card" class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl w-full relative overflow-hidden transition-all duration-300 space-y-6">
+            
+            <!-- Search Bar Form -->
+            <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2">
+                <div class="relative flex-grow">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-blue-300">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </span>
+                    <input type="text" id="search-input" placeholder="Cerca località (es. Piacenza, Roma...)" 
+                        class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm sm:text-base transition">
+                </div>
+                <button type="button" onclick="getLocationWeather()" title="Usa GPS" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-location-crosshairs text-lg"></i>
+                </button>
+            </form>
+
+            <!-- Loading State -->
+            <div id="loading" class="flex flex-col items-center justify-center py-12 space-y-4">
+                <div class="animate-spin rounded-full h-12 w-12 border-4 border-amber-400 border-t-transparent"></div>
+                <p id="loading-text" class="text-blue-200 font-medium">Caricamento dati meteo in corso...</p>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-state" class="hidden flex flex-col items-center justify-center py-8 text-center space-y-4">
+                <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl"></i>
+                <p id="error-message" class="text-red-200 text-sm">Località non trovata o errore di connessione.</p>
+                <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 font-semibold rounded-xl text-slate-900 transition shadow-lg text-sm">
+                    Carica Piacenza
+                </button>
+            </div>
+
+            <!-- Content State (Hidden initially) -->
+            <div id="weather-content" class="hidden space-y-6">
+                
+                <!-- Top Row: City & Refresh -->
+                <div class="flex justify-between items-start border-b border-white/10 pb-4">
+                    <div>
+                        <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide">--</h2>
+                        <p id="country-name" class="text-xs uppercase tracking-widest text-blue-300 font-semibold mt-1">--</p>
+                    </div>
+                    <button onclick="refreshCurrent()" title="Aggiorna dati" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition text-blue-200 hover:text-white">
+                        <i id="refresh-icon" class="fa-solid fa-rotate"></i>
+                    </button>
+                </div>
+
+                <!-- Middle Row: Temperature & Description -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="flex items-start">
+                            <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter">--</span>
+                            <span class="text-3xl sm:text-4xl font-light ml-1 text-amber-400">°C</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div id="weather-icon-container" class="text-5xl sm:text-6xl text-amber-300 mb-1">
+                            <i class="fa-solid fa-cloud"></i>
+                        </div>
+                        <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize text-blue-100">--</p>
+                    </div>
+                </div>
+
+                <!-- Grid Details -->
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <!-- Temp Min / Max (Open-Meteo) -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-amber-500/20 p-3 rounded-xl text-amber-400">
+                            <i class="fa-solid fa-temperature-arrow-up text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Min / Max Oggi</p>
+                            <p id="min-max-value" class="text-sm sm:text-base font-bold">--° / --°</p>
+                        </div>
+                    </div>
+
+                    <!-- Altitudine (Open-Meteo) -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-emerald-500/20 p-3 rounded-xl text-emerald-400">
+                            <i class="fa-solid fa-mountain text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Altitudine</p>
+                            <p id="altitude-value" class="text-lg font-bold">-- m s.l.m.</p>
+                        </div>
+                    </div>
+
+                    <!-- Percepita -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-rose-500/20 p-3 rounded-xl text-rose-400">
+                            <i class="fa-solid fa-temperature-half text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Percepita</p>
+                            <p id="feels-like" class="text-lg font-bold">--°C</p>
+                        </div>
+                    </div>
+
+                    <!-- Pressione -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-indigo-500/20 p-3 rounded-xl text-indigo-400">
+                            <i class="fa-solid fa-gauge text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Pressione</p>
+                            <p id="pressure-value" class="text-lg font-bold">-- hPa</p>
+                        </div>
+                    </div>
+
+                    <!-- Nuvole -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-slate-500/20 p-3 rounded-xl text-slate-300">
+                            <i class="fa-solid fa-cloud text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Copertura nuvolosa</p>
+                            <p id="clouds-value" class="text-lg font-bold">--%</p>
+                        </div>
+                    </div>
+
+                    <!-- Pioggia -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-sky-500/20 p-3 rounded-xl text-sky-400">
+                            <i class="fa-solid fa-cloud-rain text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Pioggia (1h)</p>
+                            <p id="rain-value" class="text-lg font-bold">0 mm</p>
+                        </div>
+                    </div>
+
+                    <!-- Umidità -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-blue-500/20 p-3 rounded-xl text-blue-400">
+                            <i class="fa-solid fa-droplet text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Umidità</p>
+                            <p id="humidity-value" class="text-lg font-bold">--%</p>
+                        </div>
+                    </div>
+
+                    <!-- Vento -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-teal-500/20 p-3 rounded-xl text-teal-400">
+                            <i class="fa-solid fa-wind text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Vento</p>
+                            <p id="wind-value" class="text-lg font-bold">-- km/h</p>
+                        </div>
+                    </div>
+
+                    <!-- Alba -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-amber-500/20 p-3 rounded-xl text-amber-400">
+                            <i class="fa-solid fa-sun text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Alba</p>
+                            <p id="sunrise-value" class="text-sm sm:text-base font-bold">--:--</p>
+                        </div>
+                    </div>
+
+                    <!-- Mezzogiorno Solare -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-orange-500/20 p-3 rounded-xl text-orange-400">
+                            <i class="fa-solid fa-sun text-xl" style="filter: brightness(1.2);"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Mezzogiorno Solare</p>
+                            <p id="solar-noon-value" class="text-sm sm:text-base font-bold">--:--</p>
+                        </div>
+                    </div>
+
+                    <!-- Tramonto -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-purple-500/20 p-3 rounded-xl text-purple-400">
+                            <i class="fa-solid fa-moon text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Tramonto</p>
+                            <p id="sunset-value" class="text-sm sm:text-base font-bold">--:--</p>
+                        </div>
+                    </div>
+
+                    <!-- Mezzanotte Solare -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-indigo-400/20 p-3 rounded-xl text-indigo-300">
+                            <i class="fa-solid fa-moon text-xl" style="filter: brightness(1.3);"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Mezzanotte Solare</p>
+                            <p id="solar-midnight-value" class="text-sm sm:text-base font-bold">--:--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Last Update timestamp -->
+                <div class="text-center pt-2 border-t border-white/10">
+                    <p class="text-xs text-blue-300/70">Ultimo aggiornamento: <span id="update-time">--</span></p>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer with GitHub Pages Instructions -->
+    <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs text-blue-300/60 space-y-1">
+        <p>Creato per GitHub Pages • Sviluppato con Tailwind CSS</p>
+        <p class="italic">Assicurati che <code class="bg-white/10 px-1 py-0.5 rounded text-white">SfondoN-512.png</code> e <code class="bg-white/10 px-1 py-0.5 rounded text-white">SfondoN2.png</code> siano nella stessa cartella su GitHub.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
+        let lastFetchFunction = null;
+
+        function formatTime(unixTimestamp) {
+            const date = new Date(unixTimestamp * 1000);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getWeatherIcon(iconCode) {
+            const iconMap = {
+                '01d': 'fa-sun text-amber-400',
+                '01n': 'fa-moon text-indigo-200',
+                '02d': 'fa-cloud-sun text-amber-300',
+                '02n': 'fa-cloud-moon text-indigo-300',
+                '03d': 'fa-cloud text-slate-300',
+                '03n': 'fa-cloud text-slate-400',
+                '04d': 'fa-cloud text-slate-300',
+                '04n': 'fa-cloud text-slate-400',
+                '09d': 'fa-cloud-showers-heavy text-blue-400',
+                '09n': 'fa-cloud-showers-heavy text-blue-500',
+                '10d': 'fa-cloud-rain text-blue-400',
+                '10n': 'fa-cloud-rain text-blue-500',
+                '11d': 'fa-bolt text-amber-400',
+                '11n': 'fa-bolt text-amber-500',
+                '13d': 'fa-snowflake text-blue-200',
+                '13n': 'fa-snowflake text-blue-300',
+                '50d': 'fa-smog text-slate-300',
+                '50n': 'fa-smog text-slate-400'
+            };
+            return iconMap[iconCode] || 'fa-cloud-sun text-amber-400';
+        }
+
+        async function fetchWeather(url) {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error-state');
+            const contentEl = document.getElementById('weather-content');
+            const refreshIcon = document.getElementById('refresh-icon');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            contentEl.classList.add('hidden');
+            if(refreshIcon) refreshIcon.classList.add('fa-spin');
+
+            try {
+                // 1. Chiamata OpenWeatherMap per i dati correnti
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Località non trovata');
+                }
+                const data = await response.json();
+
+                document.getElementById('city-name').textContent = data.name;
+                document.getElementById('country-name').textContent = data.sys.country || 'IT';
+                document.getElementById('temp-value').textContent = Number(data.main.temp).toFixed(1);
+                document.getElementById('feels-like').textContent = Number(data.main.feels_like).toFixed(1) + '°C';
+                document.getElementById('pressure-value').textContent = data.main.pressure + ' hPa';
+                document.getElementById('clouds-value').textContent = (data.clouds ? data.clouds.all : 0) + '%';
+                
+                let rainAmount = 0;
+                if (data.rain) {
+                    rainAmount = data.rain['1h'] || data.rain['3h'] || 0;
+                }
+                document.getElementById('rain-value').textContent = Number(rainAmount).toFixed(1) + ' mm';
+                
+                const description = data.weather[0].description;
+                document.getElementById('weather-desc').textContent = description.charAt(0).toUpperCase() + description.slice(1);
+                
+                const iconClass = getWeatherIcon(data.weather[0].icon);
+                document.getElementById('weather-icon-container').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+
+                document.getElementById('humidity-value').textContent = data.main.humidity + '%';
+                document.getElementById('wind-value').textContent = Number(data.wind.speed * 3.6).toFixed(1) + ' km/h';
+
+                // Alba e Tramonto
+                const sunriseTimestamp = data.sys.sunrise;
+                const sunsetTimestamp = data.sys.sunset;
+
+                document.getElementById('sunrise-value').textContent = formatTime(sunriseTimestamp);
+                document.getElementById('sunset-value').textContent = formatTime(sunsetTimestamp);
+
+                // Calcolo Mezzogiorno Solare e Mezzanotte Solare
+                if (sunriseTimestamp && sunsetTimestamp) {
+                    const solarNoonTimestamp = (sunriseTimestamp + sunsetTimestamp) / 2;
+                    document.getElementById('solar-noon-value').textContent = formatTime(solarNoonTimestamp);
+                    const solarMidnightTimestamp = solarNoonTimestamp + 43200;
+                    document.getElementById('solar-midnight-value').textContent = formatTime(solarMidnightTimestamp);
+                } else {
+                    document.getElementById('solar-noon-value').textContent = "--:--";
+                    document.getElementById('solar-midnight-value').textContent = "--:--";
+                }
+
+                // 2. Chiamata Open-Meteo per Altitudine e Min/Max giornaliere basate su coordinate (lat, lon)
+                const lat = data.coord.lat;
+                const lon = data.coord.lon;
+                const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+
+                try {
+                    const omResponse = await fetch(openMeteoUrl);
+                    if (omResponse.ok) {
+                        const omData = await omResponse.json();
+                        // Altitudine
+                        if (omData.elevation !== undefined && omData.elevation !== null) {
+                            document.getElementById('altitude-value').textContent = Math.round(omData.elevation) + ' m s.l.m.';
+                        } else {
+                            document.getElementById('altitude-value').textContent = 'N/D';
+                        }
+                        // Temp Min e Max di oggi (indice 0)
+                        if (omData.daily && omData.daily.temperature_2m_min && omData.daily.temperature_2m_max) {
+                            const tMin = Number(omData.daily.temperature_2m_min[0]).toFixed(1);
+                            const tMax = Number(omData.daily.temperature_2m_max[0]).toFixed(1);
+                            document.getElementById('min-max-value').textContent = `${tMin}° / ${tMax}°`;
+                        } else {
+                            document.getElementById('min-max-value').textContent = 'N/D';
+                        }
+                    }
+                } catch (omErr) {
+                    console.error("Errore recupero Open-Meteo:", omErr);
+                    document.getElementById('altitude-value').textContent = 'N/D';
+                    document.getElementById('min-max-value').textContent = 'N/D';
+                }
+
+                const now = new Date();
+                document.getElementById('update-time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                loadingEl.classList.add('hidden');
+                contentEl.classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                document.getElementById('error-message').textContent = "Impossibile caricare i dati: " + err.message;
+            } finally {
+                if(refreshIcon) refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        function fetchWeatherDataByCity(cityName) {
+            lastFetchFunction = () => fetchWeatherDataByCity(cityName);
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric&lang=it`;
+            fetchWeather(url);
+        }
+
+        function fetchWeatherDataByCoords(lat, lon) {
+            lastFetchFunction = () => fetchWeatherDataByCoords(lat, lon);
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
+            fetchWeather(url);
+        }
+
+        function refreshCurrent() {
+            if (lastFetchFunction) {
+                lastFetchFunction();
+            } else {
+                fetchWeatherDataByCity('Piacenza');
+            }
+        }
+
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                fetchWeatherDataByCity(query);
+            }
+        }
+
+        function getLocationWeather() {
+            document.getElementById('loading-text').textContent = "Caricamento meteo Piacenza...";
+            fetchWeatherDataByCity('Piacenza');
+        }
+
+        // All'avvio carica Piacenza
+        window.onload = () => {
+            fetchWeatherDataByCity('Piacenza');
+        };
+    </script>
+    <!-- Registrazione Service Worker per PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrato con successo:', reg.scope))
+                    .catch(err => console.log('Registrazione Service Worker fallita:', err));
+            });
+        }
+    </script>
+</body>
+</html>
