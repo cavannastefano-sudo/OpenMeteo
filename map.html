@@ -17,8 +17,8 @@
     <!-- Leaflet CSS (Mappa) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        #map { height: calc(100vh - 100px); width: 100%; border-radius: 1.5rem; }
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow: hidden; background-color: #0f172a; }
+        #map { height: calc(100vh - 130px); width: 100vw; border-radius: 0; }
         /* Personalizzazione popup mappa in stile scuro */
         .leaflet-popup-content-wrapper { background: #1e293b; color: white; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.2); }
         .leaflet-popup-tip { background: #1e293b; }
@@ -28,29 +28,29 @@
         .leaflet-control-layers-separator { border-top: 1px solid rgba(255,255,255,0.2); margin: 6px 0; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-6">
+<body class="min-h-screen text-white flex flex-col justify-between">
 
-    <!-- Header -->
-    <header class="w-full max-w-6xl mx-auto mb-4 flex items-center justify-between px-2">
-        <a href="openwmap2.html" class="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center gap-2 text-sm font-semibold">
+    <!-- Header Full Width -->
+    <header class="w-full bg-slate-900/60 backdrop-blur-md border-b border-white/10 px-4 py-3 flex items-center justify-between z-[1000]">
+        <a href="openwmap2.html" class="bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-semibold">
             <i class="fa-solid fa-arrow-left text-amber-400"></i>
             <span>Torna al Meteo</span>
         </a>
         <div class="text-center flex-grow mx-2">
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center justify-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2">
                 <i class="fa-solid fa-earth-americas text-amber-400"></i> Mappa Meteo Interattiva
             </h1>
         </div>
         <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
-            <img src="SfondoN-512.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover border border-white/20 shadow-lg group-hover:scale-105 transition">
+            <img src="SfondoN-512.png" alt="Logo" class="w-9 h-9 rounded-xl object-cover border border-white/20 shadow group-hover:scale-105 transition">
         </a>
     </header>
 
-    <!-- Main Map Container -->
-    <main class="w-full max-w-6xl mx-auto flex-grow relative">
-        <div id="map" class="shadow-2xl border border-white/20"></div>
-        <!-- Istruzione fluttuante -->
-        <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-blue-200 pointer-events-none shadow-xl z-[999] text-center">
+    <!-- Main Map Container Full Width -->
+    <main class="w-full flex-grow relative">
+        <div id="map"></div>
+        <!-- Istruzione fluttuante in basso -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-blue-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap">
             📍 Clicca ovunque sulla mappa per scoprire il meteo della località
         </div>
     </main>
@@ -60,7 +60,7 @@
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
 
-        // Definizione dei Layer di base (Dark, Light, Topo, OSM) senza problemi di API Key
+        // Definizione dei Layer di base
         const darkLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 16,
             attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
@@ -109,14 +109,14 @@
         if (savedLayerType === 'topo') defaultLayer = topoLayer;
         if (savedLayerType === 'osm') defaultLayer = osmLayer;
 
-        // Inizializzazione Mappa centrata su Piacenza
+        // Inizializzazione Mappa con zoom più lontano (zoom 5 invece di 10) centrata sull'Europa/Italia
         const map = L.map('map', {
             center: [45.0483, 9.6953],
-            zoom: 10,
+            zoom: 5,
             layers: [defaultLayer]
         });
 
-        // Mappe di base (scelta singola tra Dark, Light, Topo, OSM)
+        // Mappe di base
         const baseMaps = {
             "🌙 Esri Dark (Scura)": darkLayer,
             "☀️ Esri Light (Chiara)": lightLayer,
@@ -124,7 +124,7 @@
             "🗺️ OpenStreetMap": osmLayer
         };
 
-        // Livelli sovrapponibili (attivabili/disattivabili con checkbox)
+        // Livelli sovrapponibili con checkbox
         const overlayMaps = {
             "🌡️ Temperature": tempLayer,
             "🌧️ Precipitazioni (Pioggia)": precipLayer,
@@ -208,9 +208,6 @@
             const lon = e.latlng.lng;
             getWeatherByCoords(lat, lon);
         });
-
-        // Carica Piacenza all'avvio sulla mappa
-        getWeatherByCoords(45.0483, 9.6953);
     </script>
 </body>
 </html>
