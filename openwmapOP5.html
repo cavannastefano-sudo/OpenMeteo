@@ -18,6 +18,10 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        /* Nasconde la X nativa di alcuni browser sui campi di ricerca */
+        input[type="search"]::-webkit-search-cancel-button {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8">
@@ -53,13 +57,28 @@
             <!-- Search Bar Form -->
             <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2">
                 <div class="relative flex-grow">
+                    <!-- Icona lente a sinistra -->
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-blue-300">
                         <i class="fa-solid fa-magnifying-glass text-sm"></i>
                     </span>
-                    <input type="text" id="search-input" placeholder="Cerca località (es. Piacenza, Roma...)" 
-                        class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm sm:text-base transition">
+                    <!-- Input di ricerca -->
+                    <input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca località (es. Piacenza, Roma...)" 
+                        class="w-full pl-10 pr-10 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm sm:text-base transition">
+                    
+                    <!-- Pulsante X (Svuota campo) - Nascosto di default -->
+                    <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota campo" 
+                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-blue-300 hover:text-white transition hidden">
+                        <i class="fa-solid fa-circle-xmark text-base"></i>
+                    </button>
                 </div>
-                <button type="button" onclick="getLocationWeather()" title="Usa GPS" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center justify-center">
+
+                <!-- Pulsante Cerca -->
+                <button type="submit" title="Cerca località" class="bg-amber-500 hover:bg-amber-600 px-4 py-3 rounded-2xl font-semibold text-slate-900 transition shadow-lg flex items-center justify-center gap-1.5 text-sm sm:text-base">
+                    <span>Cerca</span>
+                </button>
+
+                <!-- Pulsante GPS -->
+                <button type="button" onclick="getLocationWeather()" title="Carica Piacenza (GPS)" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center justify-center">
                     <i class="fa-solid fa-location-crosshairs text-lg"></i>
                 </button>
             </form>
@@ -294,6 +313,24 @@
             return iconMap[iconCode] || 'fa-cloud-sun text-amber-400';
         }
 
+        // Gestione visibilità pulsante X
+        function toggleClearButton() {
+            const input = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-btn');
+            if (input.value.trim().length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+        }
+
+        function clearSearchInput() {
+            const input = document.getElementById('search-input');
+            input.value = '';
+            toggleClearButton();
+            input.focus();
+        }
+
         async function fetchWeather(url) {
             const loadingEl = document.getElementById('loading');
             const errorEl = document.getElementById('error-state');
@@ -306,7 +343,6 @@
             if(refreshIcon) refreshIcon.classList.add('fa-spin');
 
             try {
-                // 1. Chiamata OpenWeatherMap per i dati correnti
                 const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Località non trovata');
@@ -342,7 +378,7 @@
                 document.getElementById('sunrise-value').textContent = formatTime(sunriseTimestamp);
                 document.getElementById('sunset-value').textContent = formatTime(sunsetTimestamp);
 
-                // Calcolo Mezzogiorno Solare e Mezzanotte Solare
+                // Mezzogiorno e Mezzanotte Solare
                 if (sunriseTimestamp && sunsetTimestamp) {
                     const solarNoonTimestamp = (sunriseTimestamp + sunsetTimestamp) / 2;
                     document.getElementById('solar-noon-value').textContent = formatTime(solarNoonTimestamp);
@@ -353,7 +389,7 @@
                     document.getElementById('solar-midnight-value').textContent = "--:--";
                 }
 
-                // 2. Chiamata Open-Meteo per Altitudine e Min/Max giornaliere basate su coordinate (lat, lon)
+                // Altitudine e Temp Min/Max (Open-Meteo)
                 const lat = data.coord.lat;
                 const lon = data.coord.lon;
                 const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
@@ -362,13 +398,11 @@
                     const omResponse = await fetch(openMeteoUrl);
                     if (omResponse.ok) {
                         const omData = await omResponse.json();
-                        // Altitudine
                         if (omData.elevation !== undefined && omData.elevation !== null) {
                             document.getElementById('altitude-value').textContent = Math.round(omData.elevation) + ' m s.l.m.';
                         } else {
                             document.getElementById('altitude-value').textContent = 'N/D';
                         }
-                        // Temp Min e Max di oggi (indice 0)
                         if (omData.daily && omData.daily.temperature_2m_min && omData.daily.temperature_2m_max) {
                             const tMin = Number(omData.daily.temperature_2m_min[0]).toFixed(1);
                             const tMax = Number(omData.daily.temperature_2m_max[0]).toFixed(1);
@@ -378,7 +412,7 @@
                         }
                     }
                 } catch (omErr) {
-                    console.error("Errore recupero Open-Meteo:", omErr);
+                    console.error("Errore Open-Meteo:", omErr);
                     document.getElementById('altitude-value').textContent = 'N/D';
                     document.getElementById('min-max-value').textContent = 'N/D';
                 }
