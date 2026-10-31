@@ -1,7 +1,7 @@
 {
   "name": "Meteo in Tempo Reale",
   "short_name": "Meteo",
-  "start_url": "./index.html",
+  "start_url": "./openwmap2.html",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
