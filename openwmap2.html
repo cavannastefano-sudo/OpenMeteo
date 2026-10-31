@@ -28,9 +28,9 @@
 
     <!-- Header con Logo a sinistra, Titolo e Pulsanti Mappa/Archivio a destra -->
     <header class="w-full max-w-4xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4">
-        <!-- Logo Cliccabile verso CavanWeb -->
-        <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
-            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-white/20 shadow-lg group-hover:scale-105 transition">
+        <!-- Logo Cliccabile verso CavanWeb (Rettificato in formato quadrato) -->
+        <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
         </a>
         
         <!-- Titolo Centrale -->
@@ -42,7 +42,7 @@
         </div>
 
         <!-- Pulsanti a Destra (Mappa e Archivio) -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 flex-shrink-0">
             <!-- Pulsante Mappa -->
             <a href="map.html" title="Apri Mappa Interattiva" class="bg-white/10 hover:bg-white/20 p-3 sm:px-4 sm:py-3 rounded-2xl border border-white/20 shadow-lg transition text-blue-200 hover:text-white flex items-center justify-center gap-2 text-sm font-semibold">
                 <i class="fa-solid fa-earth-americas text-amber-400 text-lg"></i>
