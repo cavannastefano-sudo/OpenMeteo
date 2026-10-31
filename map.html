@@ -71,25 +71,25 @@
             attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'
         });
 
-        // Layer delle Situazioni Meteorologiche di OpenWeatherMap (Sovrapposizioni)
+        // Layer delle Situazioni Meteorologiche di OpenWeatherMap con Opacità Massima (1.0)
         const tempLayer = L.tileLayer(`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 0.65, attribution: 'Map data © OpenWeatherMap'
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
 
         const precipLayer = L.tileLayer(`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 0.65, attribution: 'Map data © OpenWeatherMap'
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
 
         const windLayer = L.tileLayer(`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 0.65, attribution: 'Map data © OpenWeatherMap'
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
 
         const pressureLayer = L.tileLayer(`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 0.5, attribution: 'Map data © OpenWeatherMap'
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
 
         const cloudsLayer = L.tileLayer(`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 0.6, attribution: 'Map data © OpenWeatherMap'
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
 
         // Recupera la scelta precedente della mappa di base
@@ -109,7 +109,7 @@
             "⛰️ OpenTopoMap": topoLayer
         };
 
-        // Livelli sovrapponibili (attivabili/disattivabili con checkbox)
+        // Livelli sovrapponibili (attivabili/disattivabili con checkbox) con opacità piena
         const overlayMaps = {
             "🌡️ Temperature": tempLayer,
             "🌧️ Precipitazioni (Pioggia)": precipLayer,
