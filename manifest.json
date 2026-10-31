@@ -1,0 +1,15 @@
+{
+  "name": "Meteo in Tempo Reale",
+  "short_name": "Meteo",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "SfondoN2.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
