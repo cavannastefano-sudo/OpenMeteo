@@ -109,7 +109,7 @@
                     </div>
                 </div>
 
-                <!-- Grid Details: Percepita, Pressione, Nuvole, Pioggia, Umidità, Vento, Alba, Tramonto -->
+                <!-- Grid Details -->
                 <div class="grid grid-cols-2 gap-3 pt-2">
                     <!-- Percepita -->
                     <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
@@ -177,7 +177,7 @@
                         </div>
                     </div>
 
-                    <!-- Sunrise -->
+                    <!-- Alba -->
                     <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
                         <div class="bg-amber-500/20 p-3 rounded-xl text-amber-400">
                             <i class="fa-solid fa-sun text-xl"></i>
@@ -188,7 +188,18 @@
                         </div>
                     </div>
 
-                    <!-- Sunset -->
+                    <!-- Mezzogiorno Solare -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-orange-500/20 p-3 rounded-xl text-orange-400">
+                            <i class="fa-solid fa-solid fa-sun text-xl" style="filter: brightness(1.2);"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Mezzogiorno Solare</p>
+                            <p id="solar-noon-value" class="text-sm sm:text-base font-bold">--:--</p>
+                        </div>
+                    </div>
+
+                    <!-- Tramonto -->
                     <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
                         <div class="bg-purple-500/20 p-3 rounded-xl text-purple-400">
                             <i class="fa-solid fa-moon text-xl"></i>
@@ -196,6 +207,17 @@
                         <div>
                             <p class="text-xs text-blue-300 font-medium">Tramonto</p>
                             <p id="sunset-value" class="text-sm sm:text-base font-bold">--:--</p>
+                        </div>
+                    </div>
+
+                    <!-- Mezzanotte Solare -->
+                    <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                        <div class="bg-indigo-400/20 p-3 rounded-xl text-indigo-300">
+                            <i class="fa-solid fa-solid fa-moon text-xl" style="filter: brightness(1.3);"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 font-medium">Mezzanotte Solare</p>
+                            <p id="solar-midnight-value" class="text-sm sm:text-base font-bold">--:--</p>
                         </div>
                     </div>
                 </div>
@@ -275,7 +297,6 @@
                 document.getElementById('pressure-value').textContent = data.main.pressure + ' hPa';
                 document.getElementById('clouds-value').textContent = (data.clouds ? data.clouds.all : 0) + '%';
                 
-                // Gestione pioggia (OpenWeatherMap restituisce l'oggetto 'rain' solo se piove nelle ultime 1 o 3 ore)
                 let rainAmount = 0;
                 if (data.rain) {
                     rainAmount = data.rain['1h'] || data.rain['3h'] || 0;
@@ -290,8 +311,27 @@
 
                 document.getElementById('humidity-value').textContent = data.main.humidity + '%';
                 document.getElementById('wind-value').textContent = Number(data.wind.speed * 3.6).toFixed(1) + ' km/h';
-                document.getElementById('sunrise-value').textContent = formatTime(data.sys.sunrise);
-                document.getElementById('sunset-value').textContent = formatTime(data.sys.sunset);
+
+                // Alba e Tramonto
+                const sunriseTimestamp = data.sys.sunrise;
+                const sunsetTimestamp = data.sys.sunset;
+
+                document.getElementById('sunrise-value').textContent = formatTime(sunriseTimestamp);
+                document.getElementById('sunset-value').textContent = formatTime(sunsetTimestamp);
+
+                // Calcolo Mezzogiorno Solare e Mezzanotte Solare
+                if (sunriseTimestamp && sunsetTimestamp) {
+                    // Mezzogiorno solare = metà strada esatta tra alba e tramonto
+                    const solarNoonTimestamp = (sunriseTimestamp + sunsetTimestamp) / 2;
+                    document.getElementById('solar-noon-value').textContent = formatTime(solarNoonTimestamp);
+
+                    // Mezzanotte solare = esattamente 12 ore (43200 secondi) dopo il mezzogiorno solare
+                    const solarMidnightTimestamp = solarNoonTimestamp + 43200;
+                    document.getElementById('solar-midnight-value').textContent = formatTime(solarMidnightTimestamp);
+                } else {
+                    document.getElementById('solar-noon-value').textContent = "--:--";
+                    document.getElementById('solar-midnight-value').textContent = "--:--";
+                }
 
                 const now = new Date();
                 document.getElementById('update-time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -302,6 +342,7 @@
             } catch (err) {
                 console.error(err);
                 loadingEl.classList.add('hidden');
+                errorEl.classList.add('hidden'); // Fix visual error toggle if needed
                 errorEl.classList.remove('hidden');
                 document.getElementById('error-message').textContent = "Impossibile caricare i dati: " + err.message;
             } finally {
