@@ -22,6 +22,9 @@
         /* Personalizzazione popup mappa in stile scuro */
         .leaflet-popup-content-wrapper { background: #1e293b; color: white; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.2); }
         .leaflet-popup-tip { background: #1e293b; }
+        /* Stile personalizzato per il controllo dei layer (sfondo scuro) */
+        .leaflet-control-layers { background: #1e293b !important; color: white !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 1rem !important; padding: 6px 10px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+        .leaflet-control-layers label { font-size: 13px; cursor: pointer; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-6">
@@ -56,14 +59,45 @@
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
 
-        // Inizializzazione Mappa centrata su Piacenza di default
-        const map = L.map('map').setView([45.0483, 9.6953], 10);
-
-        // Layer grafico OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 18,
+        // Definizione dei Layer di mappa
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
             attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+        });
+
+        const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'
+        });
+
+        // Recupera la scelta precedente dell'utente (o usa OSM come default)
+        const savedLayerType = localStorage.getItem('preferred_map_layer') || 'osm';
+        const defaultLayer = savedLayerType === 'topo' ? topoLayer : osmLayer;
+
+        // Inizializzazione Mappa centrata su Piacenza
+        const map = L.map('map', {
+            center: [45.0483, 9.6953],
+            zoom: 10,
+            layers: [defaultLayer]
+        });
+
+        // Oggetti base per il menu a tendina della mappa
+        const baseMaps = {
+            "🗺️ OpenStreetMap (Standard)": osmLayer,
+            "⛰️ OpenTopoMap (Topografica)": topoLayer
+        };
+
+        // Aggiunge il selettore dei layer in alto a destra sulla mappa
+        const layerControl = L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
+
+        // Salva la preferenza dell'utente quando cambia stile di mappa
+        map.on('baselayerchange', function (e) {
+            if (e.name.includes("Topo")) {
+                localStorage.setItem('preferred_map_layer', 'topo');
+            } else {
+                localStorage.setItem('preferred_map_layer', 'osm');
+            }
+        });
 
         let currentMarker = null;
 
