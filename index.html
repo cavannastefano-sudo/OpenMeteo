@@ -7,47 +7,50 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2c3e50">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- FontAwesome per le icone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: sans-serif; margin: 15px; background-color: #f4f4f9; color: #333; }
-        .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-        .top-bar-left { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        h1 { margin: 0; font-size: 22px; width: 100%; }
-        .refresh-btn, .export-btn, .owm-btn { background-color: #2c3e50; color: white; border: none; padding: 10px 15px; font-size: 16px; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-        .refresh-btn:hover, .export-btn:hover, .owm-btn:hover { background-color: #34495e; }
-        .owm-btn { background-color: #d35400; }
-        .owm-btn:hover { background-color: #e67e22; }
+        .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; background: white; padding: 12px 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .top-bar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .top-bar-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
+        h1 { margin: 0; font-size: 20px; width: 100%; color: #2c3e50; }
+        
+        .refresh-btn, .export-btn { background-color: #2c3e50; color: white; border: none; padding: 8px 12px; font-size: 14px; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .refresh-btn:hover, .export-btn:hover { background-color: #34495e; }
         .export-btn { background-color: #27ae60; }
         .export-btn:hover { background-color: #219653; }
         .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
         .export-multi-btn { background-color: #2980b9; }
         .export-multi-btn:hover { background-color: #1c5980; }
         
-        /* Contatori visite tutti sulla stessa riga, compatti e in alto a destra */
+        /* Contatori visite compatti */
         .visit-counters { display: flex; align-items: center; gap: 8px; }
-        .visit-counter { color: #888; font-size: 11px; font-weight: normal; opacity: 0.75; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.03); white-space: nowrap; }
+        .visit-counter { color: #666; font-size: 11px; padding: 4px 8px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0; white-space: nowrap; }
         
-        /* Stile per il logo cliccabile di CavanWeb con sfondo trasparente */
+        /* Menu a tendina header */
+        .menu-container { position: relative; display: inline-block; }
+        .menu-toggle-btn { background-color: #d35400; color: white; border: none; padding: 8px 12px; font-size: 14px; border-radius: 5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: bold; }
+        .menu-toggle-btn:hover { background-color: #e67e22; }
+        .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 210px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-radius: 6px; border: 1px solid #cbd5e1; z-index: 100; overflow: hidden; }
+        .dropdown-content.show { display: block; }
+        .dropdown-content a { color: #2c3e50; padding: 10px 14px; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #f1f5f9; }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #f8fafc; color: #d35400; }
+
+        /* Stile per il logo cliccabile di CavanWeb */
         .logo-link {
             display: inline-block;
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             flex-shrink: 0;
             background: transparent;
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: none;
             transition: transform 0.2s;
         }
-        .logo-link:hover {
-            transform: scale(1.05);
-        }
-        .logo-link img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            background: transparent;
-        }
+        .logo-link:hover { transform: scale(1.05); }
+        .logo-link img { width: 100%; height: 100%; object-fit: cover; display: block; }
         
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
 
@@ -91,7 +94,7 @@
         @media screen and (max-width: 768px) {
             body { margin: 10px; }
             h1 { font-size: 18px; }
-            .top-bar { gap: 10px; }
+            .top-bar { gap: 10px; padding: 10px; }
             .current-section { padding: 10px; }
             th, td { padding: 8px; font-size: 13px; }
             .current-temp, .current-apparent, .current-sub { font-size: 14px; }
@@ -111,13 +114,29 @@
                 <img src="SfondoN-512.png" alt="CavanWeb Logo">
             </a>
             <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
-            <a href="https://cavannastefano-sudo.github.io/OpenMeteo/openwmap2.html" target="_blank" class="owm-btn" title="Apri OpenWeatherMap">📡 Dati Realtime OpenWeatherMap</a>
         </div>
-        <div class="visit-counters">
-            <div class="visit-counter">Oggi: <span id="dailyVisits">0</span></div>
-            <div class="visit-counter">Mese: <span id="monthlyVisits">0</span></div>
-            <div class="visit-counter">Tot: <span id="totalVisits">0</span></div>
+
+        <div class="top-bar-right">
+            <div class="visit-counters">
+                <div class="visit-counter">Oggi: <span id="dailyVisits">0</span></div>
+                <div class="visit-counter">Mese: <span id="monthlyVisits">0</span></div>
+                <div class="visit-counter">Tot: <span id="totalVisits">0</span></div>
+            </div>
+
+            <!-- Menu a Tendina Navigazione App -->
+            <div class="menu-container">
+                <button class="menu-toggle-btn" onclick="toggleArchiveMenu()" title="Apri menu collegamenti">
+                    <i class="fa-solid fa-bars"></i> <span>Menu</span>
+                </button>
+                <div id="archiveDropdown" class="dropdown-content">
+                    <a href="openwmap2.html" title="Apri MeteoCWEB"><i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)</a>
+                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" title="Apri SunClock24"><i class="fa-solid fa-clock text-amber-500"></i> SunClock24</a>
+                    <a href="map.html" title="Apri Mappa Interattiva"><i class="fa-solid fa-earth-americas text-amber-500"></i> Mappa Interattiva</a>
+                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" title="Apri Meteo Europa"><i class="fa-solid fa-globe text-amber-500"></i> Meteo Europa</a>
+                </div>
+            </div>
         </div>
+
         <h1 id="mainTitle">Archivio Storico Meteo Piacenza 1940-Oggi</h1>
     </div>
     
@@ -207,6 +226,22 @@
     </div>
 
     <script>
+        // Gestione Menu a Tendina Archivio
+        function toggleArchiveMenu() {
+            const dropdown = document.getElementById('archiveDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Chiusura tendina cliccando all'esterno
+        window.addEventListener('click', function(event) {
+            if (!event.target.closest('.menu-container')) {
+                const dropdown = document.getElementById('archiveDropdown');
+                if (dropdown && dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        });
+
         // Gestione Contatori Visite (Protezione contro i click su Aggiorna)
         function updateVisitCounters() {
             const now = new Date();
