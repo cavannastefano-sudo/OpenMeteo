@@ -61,7 +61,7 @@
                     <i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i>
                     <span>Meteo Europa</span>
                 </a>
-                <a href="https://cavannastefano-sudo.github.io/OpenMeteo/" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
+                <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
                     <i class="fa-solid fa-calendar-days text-amber-400 w-5 text-center"></i>
                     <span>Archivio Storico</span>
                 </a>
@@ -99,7 +99,7 @@
                 </button>
 
                 <!-- Pulsante GPS -->
-                <button type="button" onclick="getLocationWeather()" title="Carica Piacenza (GPS)" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center justify-center">
+                <button type="button" onclick="getGPSWeather()" title="Usa posizione GPS" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center justify-center">
                     <i class="fa-solid fa-location-crosshairs text-lg"></i>
                 </button>
             </form>
@@ -392,7 +392,16 @@
                 }
                 const data = await response.json();
 
-                document.getElementById('city-name').textContent = data.name;
+                const cityName = data.name;
+                const lat = data.coord.lat;
+                const lon = data.coord.lon;
+
+                // Salva in localStorage per sincronizzarlo con l'Archivio Storico
+                localStorage.setItem('cavanweb_active_lat', lat);
+                localStorage.setItem('cavanweb_active_lon', lon);
+                localStorage.setItem('cavanweb_active_name', cityName);
+
+                document.getElementById('city-name').textContent = cityName;
                 document.getElementById('country-name').textContent = data.sys.country || 'IT';
                 document.getElementById('temp-value').textContent = Number(data.main.temp).toFixed(1);
                 document.getElementById('feels-like').textContent = Number(data.main.feels_like).toFixed(1) + '°C';
@@ -433,8 +442,6 @@
                 }
 
                 // Altitudine e Temp Min/Max (Open-Meteo)
-                const lat = data.coord.lat;
-                const lon = data.coord.lon;
                 const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
 
                 try {
@@ -504,19 +511,46 @@
             }
         }
 
-        function getLocationWeather() {
-            document.getElementById('loading-text').textContent = "Caricamento meteo Piacenza...";
-            fetchWeatherDataByCity('Piacenza');
+        function getGPSWeather() {
+            if (!navigator.geolocation) {
+                alert("La geolocalizzazione non è supportata dal tuo browser.");
+                fetchWeatherDataByCity('Piacenza');
+                return;
+            }
+            document.getElementById('loading-text').textContent = "Rilevamento posizione GPS...";
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    fetchWeatherDataByCoords(lat, lon);
+                },
+                (error) => {
+                    console.error(error);
+                    alert("Impossibile rilevare la posizione GPS. Caricamento Piacenza di default.");
+                    fetchWeatherDataByCity('Piacenza');
+                },
+                { timeout: 10000 }
+            );
         }
 
-        // All'avvio controlla se arriva una città selezionata dalla mappa o carica Piacenza
+        // All'avvio controlla se arriva una città dalla mappa, da localStorage o carica Piacenza
         window.onload = () => {
             const selectedCity = localStorage.getItem('selected_city');
+            const savedLat = localStorage.getItem('cavanweb_active_lat');
+            const savedLon = localStorage.getItem('cavanweb_active_lon');
+            const savedName = localStorage.getItem('cavanweb_active_name');
+
             if (selectedCity) {
                 localStorage.removeItem('selected_city');
                 document.getElementById('search-input').value = selectedCity;
                 toggleClearButton();
                 fetchWeatherDataByCity(selectedCity);
+            } else if (savedLat && savedLon) {
+                if (savedName) {
+                    document.getElementById('search-input').value = savedName;
+                    toggleClearButton();
+                }
+                fetchWeatherDataByCoords(parseFloat(savedLat), parseFloat(savedLon));
             } else {
                 fetchWeatherDataByCity('Piacenza');
             }
