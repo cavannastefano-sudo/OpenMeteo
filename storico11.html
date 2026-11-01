@@ -45,15 +45,6 @@
         </div>
 
         <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
-            <!-- Contatori visite compatti -->
-            <div class="hidden sm:flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-2xl text-xs text-blue-200">
-                <span>Oggi: <strong id="dailyVisits" class="text-amber-400">0</strong></span>
-                <span>•</span>
-                <span>Mese: <strong id="monthlyVisits" class="text-amber-400">0</strong></span>
-                <span>•</span>
-                <span>Tot: <strong id="totalVisits" class="text-amber-400">0</strong></span>
-            </div>
-
             <!-- Menu a Tendina Navigazione App -->
             <div class="relative flex-shrink-0">
                 <button onclick="toggleArchiveMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center text-lg font-semibold">
@@ -288,52 +279,6 @@
                 }
             }
         });
-
-        function updateVisitCounters() {
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-
-            if (!sessionStorage.getItem('cavanweb_visited_session')) {
-                sessionStorage.setItem('cavanweb_visited_session', 'true');
-                let totalVisits = parseInt(localStorage.getItem('cavanweb_meteo_total') || '0') + 1;
-                localStorage.setItem('cavanweb_meteo_total', totalVisits);
-
-                let lastMonth = localStorage.getItem('cavanweb_meteo_month_key');
-                let monthlyVisits = parseInt(localStorage.getItem('cavanweb_meteo_monthly') || '0');
-                if (lastMonth !== currentMonthStr) {
-                    monthlyVisits = 1;
-                    localStorage.setItem('cavanweb_meteo_month_key', currentMonthStr);
-                } else {
-                    monthlyVisits += 1;
-                }
-                localStorage.setItem('cavanweb_meteo_monthly', monthlyVisits);
-
-                let lastDay = localStorage.getItem('cavanweb_meteo_day_key');
-                let dailyVisits = parseInt(localStorage.getItem('cavanweb_meteo_daily') || '0');
-                if (lastDay !== todayStr) {
-                    dailyVisits = 1;
-                    localStorage.setItem('cavanweb_meteo_day_key', todayStr);
-                } else {
-                    dailyVisits += 1;
-                }
-                localStorage.setItem('cavanweb_meteo_daily', dailyVisits);
-            }
-
-            let totalVisits = parseInt(localStorage.getItem('cavanweb_meteo_total') || '0');
-            let lastMonth = localStorage.getItem('cavanweb_meteo_month_key');
-            let monthlyVisits = parseInt(localStorage.getItem('cavanweb_meteo_monthly') || '0');
-            if (lastMonth !== currentMonthStr) monthlyVisits = 0;
-
-            let lastDay = localStorage.getItem('cavanweb_meteo_day_key');
-            let dailyVisits = parseInt(localStorage.getItem('cavanweb_meteo_daily') || '0');
-            if (lastDay !== todayStr) dailyVisits = 0;
-
-            document.getElementById('dailyVisits').textContent = dailyVisits.toLocaleString('it-IT');
-            document.getElementById('monthlyVisits').textContent = monthlyVisits.toLocaleString('it-IT');
-            document.getElementById('totalVisits').textContent = totalVisits.toLocaleString('it-IT');
-        }
-        updateVisitCounters();
 
         const currentYear = new Date().getFullYear();
         let cachedYearData = null;
