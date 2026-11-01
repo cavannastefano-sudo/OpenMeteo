@@ -48,7 +48,19 @@
             </button>
 
             <!-- Contenuto della Tendina a scomparsa -->
-            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-52 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
+            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
+                
+                <!-- Sezione Preferiti Dinamica -->
+                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5">
+                    <i class="fa-solid fa-star"></i> Preferiti
+                </div>
+                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1">
+                    <!-- Inseriti via JS -->
+                    <span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span>
+                </div>
+
+                <div class="border-t border-white/10 my-1"></div>
+
                 <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
                     <i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i>
                     <span>Mappa Interattiva</span>
@@ -122,13 +134,21 @@
             <!-- Content State (Hidden initially) -->
             <div id="weather-content" class="hidden space-y-6">
                 
-                <!-- Top Row: City & Refresh -->
+                <!-- Top Row: City, Favorite Star & Refresh -->
                 <div class="flex justify-between items-start border-b border-white/10 pb-4">
-                    <div>
-                        <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide">--</h2>
-                        <p id="country-name" class="text-xs uppercase tracking-widest text-blue-300 font-semibold mt-1">--</p>
+                    <div class="flex items-center gap-3">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide">--</h2>
+                                <!-- Pulsante Stella Preferito -->
+                                <button onclick="toggleFavorite()" id="fav-btn" title="Aggiungi/Rimuovi dai preferiti" class="text-xl text-blue-300 hover:text-amber-400 transition p-1">
+                                    <i id="fav-icon" class="fa-regular fa-star"></i>
+                                </button>
+                            </div>
+                            <p id="country-name" class="text-xs uppercase tracking-widest text-blue-300 font-semibold mt-1">--</p>
+                        </div>
                     </div>
-                    <button onclick="refreshCurrent()" title="Aggiorna dati" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition text-blue-200 hover:text-white">
+                    <button onclick="refreshCurrent()" title="Aggiorna dati" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition text-blue-200 hover:text-white flex-shrink-0">
                         <i id="refresh-icon" class="fa-solid fa-rotate"></i>
                     </button>
                 </div>
@@ -311,6 +331,7 @@
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
         let lastFetchFunction = null;
+        let currentLoadedCity = "";
 
         // Funzione per aprire/chiudere il menu a tendina
         function toggleMenu() {
@@ -326,6 +347,70 @@
                 menu.classList.add('hidden');
             }
         });
+
+        // Gestione Preferiti (LocalStorage)
+        function getFavorites() {
+            try {
+                return JSON.parse(localStorage.getItem('cavanweb_favorites')) || [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveFavorites(favorites) {
+            localStorage.setItem('cavanweb_favorites', JSON.stringify(favorites));
+            renderFavoritesMenu();
+        }
+
+        function toggleFavorite() {
+            if (!currentLoadedCity) return;
+            let favorites = getFavorites();
+            const index = favorites.indexOf(currentLoadedCity);
+            
+            if (index > -1) {
+                favorites.splice(index, 1); // Rimuovi dai preferiti
+            } else {
+                favorites.push(currentLoadedCity); // Aggiungi ai preferiti
+            }
+            saveFavorites(favorites);
+            updateFavoriteIcon(currentLoadedCity);
+        }
+
+        function updateFavoriteIcon(cityName) {
+            const favIcon = document.getElementById('fav-icon');
+            const favorites = getFavorites();
+            if (favorites.includes(cityName)) {
+                favIcon.className = "fa-solid fa-star text-amber-400";
+            } else {
+                favIcon.className = "fa-regular fa-star text-blue-300 hover:text-amber-400";
+            }
+        }
+
+        function renderFavoritesMenu() {
+            const favListContainer = document.getElementById('favorites-list');
+            const favorites = getFavorites();
+
+            if (favorites.length === 0) {
+                favListContainer.innerHTML = '<span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span>';
+                return;
+            }
+
+            let html = '';
+            favorites.forEach(city => {
+                html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-medium transition">
+                    <span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-blue-300/50"></i>
+                </button>`;
+            });
+            favListContainer.innerHTML = html;
+        }
+
+        function loadFavoriteCity(cityName) {
+            document.getElementById('search-input').value = cityName;
+            toggleClearButton();
+            toggleMenu(); // Chiudi il menu
+            fetchWeatherDataByCity(cityName);
+        }
 
         function formatTime(unixTimestamp) {
             const date = new Date(unixTimestamp * 1000);
@@ -395,6 +480,9 @@
                 const cityName = data.name;
                 const lat = data.coord.lat;
                 const lon = data.coord.lon;
+
+                currentLoadedCity = cityName;
+                updateFavoriteIcon(cityName);
 
                 // Salva in localStorage per sincronizzarlo con l'Archivio Storico
                 localStorage.setItem('cavanweb_active_lat', lat);
@@ -535,6 +623,7 @@
 
         // All'avvio controlla se arriva una città dalla mappa, da localStorage o carica Piacenza
         window.onload = () => {
+            renderFavoritesMenu();
             const selectedCity = localStorage.getItem('selected_city');
             const savedLat = localStorage.getItem('cavanweb_active_lat');
             const savedLon = localStorage.getItem('cavanweb_active_lon');
