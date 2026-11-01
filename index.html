@@ -393,7 +393,6 @@
                     currentLat = position.coords.latitude;
                     currentLon = position.coords.longitude;
                     
-                    // Ottieni il nome del luogo tramite reverse geocoding
                     try {
                         const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&accept-language=it`);
                         const data = await res.json();
@@ -420,6 +419,11 @@
         }
 
         function updateLocationUI() {
+            // Salva la posizione attiva in localStorage per sincronizzarla con MeteoCWEB
+            localStorage.setItem('cavanweb_active_lat', currentLat);
+            localStorage.setItem('cavanweb_active_lon', currentLon);
+            localStorage.setItem('cavanweb_active_name', currentPlaceName);
+
             document.getElementById('currentLocationLabel').textContent = `${currentPlaceName} (${currentLat.toFixed(2)}°N, ${currentLon.toFixed(2)}°E)`;
             document.getElementById('currentLocationTitle').textContent = currentPlaceName;
             
@@ -558,35 +562,62 @@
                 });
         }
 
-        // Avvio automatico: tenta il GPS, altrimenti parte con Piacenza di default
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    currentLat = position.coords.latitude;
-                    currentLon = position.coords.longitude;
-                    try {
-                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&accept-language=it`);
-                        const data = await res.json();
-                        if (data && data.address) {
-                            currentPlaceName = data.address.city || data.address.town || data.address.village || data.address.county || "Posizione GPS";
-                        } else {
+        // Inizializzazione posizione all'avvio (Priorità: URL params -> localStorage -> GPS -> Piacenza default)
+        function initLocation() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlLat = urlParams.get('lat');
+            const urlLon = urlParams.get('lon');
+            const urlName = urlParams.get('name');
+
+            const savedLat = localStorage.getItem('cavanweb_active_lat');
+            const savedLon = localStorage.getItem('cavanweb_active_lon');
+            const savedName = localStorage.getItem('cavanweb_active_name');
+
+            if (urlLat && urlLon) {
+                currentLat = parseFloat(urlLat);
+                currentLon = parseFloat(urlLon);
+                if (urlName) currentPlaceName = decodeURIComponent(urlName);
+                document.getElementById('locationInput').value = currentPlaceName;
+                handleSearchInput(document.getElementById('locationInput'));
+                updateLocationUI();
+            } else if (savedLat && savedLon) {
+                currentLat = parseFloat(savedLat);
+                currentLon = parseFloat(savedLon);
+                if (savedName) currentPlaceName = savedName;
+                document.getElementById('locationInput').value = currentPlaceName;
+                handleSearchInput(document.getElementById('locationInput'));
+                updateLocationUI();
+            } else if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        currentLat = position.coords.latitude;
+                        currentLon = position.coords.longitude;
+                        try {
+                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&accept-language=it`);
+                            const data = await res.json();
+                            if (data && data.address) {
+                                currentPlaceName = data.address.city || data.address.town || data.address.village || data.address.county || "Posizione GPS";
+                            } else {
+                                currentPlaceName = "Posizione GPS";
+                            }
+                        } catch (e) {
                             currentPlaceName = "Posizione GPS";
                         }
-                    } catch (e) {
-                        currentPlaceName = "Posizione GPS";
-                    }
-                    document.getElementById('locationInput').value = currentPlaceName;
-                    handleSearchInput(document.getElementById('locationInput'));
-                    updateLocationUI();
-                },
-                (error) => {
-                    loadCurrentWeather(); // Fallback su Piacenza di default
-                },
-                { timeout: 7000 }
-            );
-        } else {
-            loadCurrentWeather();
+                        document.getElementById('locationInput').value = currentPlaceName;
+                        handleSearchInput(document.getElementById('locationInput'));
+                        updateLocationUI();
+                    },
+                    (error) => {
+                        updateLocationUI(); // Fallback su Piacenza di default
+                    },
+                    { timeout: 7000 }
+                );
+            } else {
+                updateLocationUI();
+            }
         }
+
+        initLocation();
 
         const loadingStatus = document.getElementById("loadingStatus");
         const loadingMultiStatus = document.getElementById("loadingMultiStatus");
@@ -792,7 +823,7 @@
             document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${row.dateIT}`;
             const detailTbody = document.querySelector("#modalDetailTable tbody");
             detailTbody.innerHTML = `
-                <tr><th>Data</th><td><span class="modal-normal-val">${row.dateIT}</span></td></tr>
+                <tr><th>Data</th><td><span class="modal-normal-val">${dateIT}</span></td></tr>
                 <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
                 <tr><th>Temperatura Percepita</th><td>${tApp}</td></tr>
                 <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
@@ -957,7 +988,7 @@
 
                     const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLat}&longitude=${currentLon}&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
 
-                    const response = await fetch(url);
+                    const response =- await fetch(url);
                     if (!response.ok) continue;
                     const data = await response.json();
                     const daily = data.daily;
