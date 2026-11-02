@@ -46,7 +46,7 @@
         </div>
 
         <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
-            <!-- Menu a Tendina Navigazione App -->
+            <!-- Menu a Tendina Navigazione App (Pulsante Arancione) -->
             <div class="relative flex-shrink-0">
                 <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-amber-500 hover:bg-amber-600 px-4 py-2.5 rounded-2xl shadow transition text-white flex items-center gap-2 text-sm font-semibold">
                     <i class="fa-solid fa-bars"></i> <span>Menu</span>
@@ -87,7 +87,7 @@
     <!-- Main Container -->
     <main class="w-full max-w-6xl mx-auto space-y-6 flex-grow">
 
-        <!-- Barra di Ricerca Località (Stile Archivio) -->
+        <!-- Barra di Ricerca Località -->
         <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-2 text-slate-700 font-semibold text-sm">
                 <i class="fa-solid fa-earth-americas text-amber-500"></i> Località:
@@ -100,11 +100,13 @@
                     <i class="fa-solid fa-circle-xmark text-base"></i>
                 </button>
             </div>
-            <button onclick="handleSearchBtn()" class="bg-amber-500 hover:bg-amber-600 px-5 py-3 rounded-2xl font-semibold text-white transition shadow-sm flex items-center gap-2 text-sm">
+            <!-- Pulsante Cerca Verde -->
+            <button onclick="handleSearchBtn()" class="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-2xl font-semibold text-white transition shadow-sm flex items-center gap-2 text-sm">
                 <i class="fa-solid fa-magnifying-glass"></i> Cerca
             </button>
-            <button onclick="getGPSWeather()" class="bg-slate-100 hover:bg-slate-200 px-4 py-3 rounded-2xl border border-slate-200 transition text-slate-700 flex items-center gap-2 text-sm" title="Usa GPS">
-                <i class="fa-solid fa-location-crosshairs text-amber-500"><span>GPS</span></i>
+            <!-- Pulsante GPS Blu -->
+            <button onclick="getGPSWeather()" class="bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-2xl transition text-white flex items-center gap-2 text-sm font-semibold shadow-sm" title="Usa GPS">
+                <i class="fa-solid fa-location-crosshairs text-white"><span>GPS</span></i>
             </button>
             <div class="w-full text-xs text-slate-500 pt-1 flex items-center justify-between">
                 <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-slate-800">--</span></span>
@@ -124,12 +126,12 @@
         <div id="error-state" class="hidden bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-sm space-y-4">
             <i class="fa-solid fa-triangle-exclamation text-amber-500 text-4xl"></i>
             <p id="error-message" class="text-slate-600 text-sm">Località non trovata o errore di connessione.</p>
-            <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 font-semibold rounded-xl text-white transition shadow-sm text-sm">
+            <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 font-semibold rounded-xl text-white transition shadow-sm text-sm">
                 Carica Piacenza
             </button>
         </div>
 
-        <!-- Sezione Dati Attuali / Dashboard (Tabella Verticale in stile Archivio) -->
+        <!-- Sezione Dati Attuali / Dashboard (Tabella Verticale) -->
         <div id="weather-content" class="hidden bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-bolt text-amber-500"></i> Condizioni Attuali (<span id="city-title">--</span>)
