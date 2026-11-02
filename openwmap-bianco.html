@@ -6,7 +6,7 @@
     <title>MeteoCWEB - Dashboard Realtime</title>
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#f1f5f9">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,60 +23,67 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8">
+<body class="bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between p-4 sm:p-8">
 
     <!-- Top Bar / Header -->
-    <header class="w-full max-w-6xl mx-auto mb-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-4 shadow-2xl flex flex-wrap items-center justify-between gap-4 relative">
+    <header class="w-full max-w-6xl mx-auto mb-6 flex items-center justify-between gap-4 px-2 sm:px-4 relative">
         <div class="flex items-center gap-3">
             <!-- Logo Cliccabile verso CavanWeb -->
             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
+                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
             </a>
-            <button onclick="refreshCurrent();" class="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 transition text-blue-200 hover:text-white flex items-center gap-2 text-sm font-semibold shadow">
-                <i class="fa-solid fa-rotate text-amber-400"></i> <span>Aggiorna</span>
+            <button onclick="refreshCurrent();" class="bg-slate-700 hover:bg-slate-800 px-4 py-2.5 rounded-xl text-white transition text-sm font-semibold shadow flex items-center gap-2">
+                <i class="fa-solid fa-rotate"></i> <span>Aggiorna</span>
             </button>
         </div>
 
         <!-- Titolo Centrale -->
         <div class="text-center flex-grow mx-2 order-3 lg:order-2 w-full lg:w-auto">
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mb-0.5 flex items-center justify-center gap-1.5">
-                <i class="fa-solid fa-cloud-sun text-amber-400"></i> MeteoCWEB (Realtime)
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)
             </h1>
-            <p class="text-blue-200 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
+            <p class="text-slate-500 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
         </div>
 
         <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
+            <!-- Badge superiori in stile Archivio -->
+            <div class="hidden sm:flex items-center gap-1.5 bg-white border border-slate-300 rounded-lg p-1 shadow-sm text-xs font-semibold text-slate-700">
+                <span class="bg-slate-100 px-2 py-1 rounded">Oggi: <span id="badge-oggi" class="text-amber-600 font-bold">1</span></span>
+                <span class="bg-slate-100 px-2 py-1 rounded">Mese: <span id="badge-mese" class="text-amber-600 font-bold">1</span></span>
+                <span class="bg-slate-100 px-2 py-1 rounded">Tot: <span id="badge-tot" class="text-amber-600 font-bold">1</span></span>
+            </div>
+
             <!-- Menu a Tendina Navigazione App (Pulsante Arancione) -->
             <div class="relative flex-shrink-0">
-                <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-orange-500 hover:bg-orange-600 px-4 py-2.5 rounded-2xl shadow-lg transition text-white flex items-center gap-2 text-sm font-semibold">
-                    <i class="fa-solid fa-bars text-amber-200"></i> <span>Menu</span>
+                <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-amber-600 hover:bg-amber-700 px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
+                    <i class="fa-solid fa-bars"></i> <span>Menu</span>
                 </button>
-                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
+                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2">
                     
                     <!-- Sezione Preferiti Dinamica -->
-                    <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5">
-                        <i class="fa-solid fa-star text-amber-400"></i> Preferiti
+                    <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 border-b border-slate-100 flex items-center gap-1.5">
+                        <i class="fa-solid fa-star"></i> Preferiti
                     </div>
                     <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1">
-                        <span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span>
+                        <span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span>
                     </div>
 
-                    <div class="border-t border-white/10 my-1"></div>
+                    <div class="border-t border-slate-100 my-1"></div>
 
-                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
-                        <i class="fa-solid fa-calendar-days text-amber-400 w-5 text-center"></i>
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                        <i class="fa-solid fa-calendar-days text-amber-500 w-5 text-center"></i>
                         <span>Archivio Storico</span>
                     </a>
-                    <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
-                        <i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i>
+                    <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-semibold transition">
+                        <i class="fa-solid fa-earth-americas text-amber-500 w-5 text-center"></i>
                         <span>Mappa Interattiva</span>
                     </a>
-                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
-                        <i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i>
+                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-semibold transition">
+                        <i class="fa-solid fa-clock text-amber-500 w-5 text-center"></i>
                         <span>SunClock24</span>
                     </a>
-                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
-                        <i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i>
+                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-semibold transition">
+                        <i class="fa-solid fa-globe text-amber-500 w-5 text-center"></i>
                         <span>Meteo Europa</span>
                     </a>
                 </div>
@@ -85,91 +92,121 @@
     </header>
 
     <!-- Main Container -->
-    <main class="w-full max-w-6xl mx-auto space-y-6 flex-grow">
+    <main class="w-full max-w-6xl mx-auto space-y-4 flex-grow">
 
         <!-- Barra di Ricerca Località -->
-        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2 text-blue-200 font-semibold text-sm">
-                <i class="fa-solid fa-earth-americas text-amber-400"></i> Località:
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2 text-slate-800 font-semibold text-sm">
+                <i class="fa-solid fa-earth-americas text-slate-700"></i> Località:
             </div>
-            <div class="relative flex-grow max-w-md">
-                <input type="text" id="search-input" placeholder="Cerca città (es. Roma, Tokyo)..." oninput="toggleClearButton()"
-                    class="w-full pl-4 pr-10 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm transition">
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()"
+                    class="w-full pl-3 pr-8 py-1.5 bg-white border border-slate-300 rounded text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-500 text-sm">
                 <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota campo" 
-                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-blue-300 hover:text-white transition hidden">
-                    <i class="fa-solid fa-circle-xmark text-base"></i>
+                    class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 transition hidden">
+                    <i class="fa-solid fa-circle-xmark text-sm"></i>
                 </button>
             </div>
-            <!-- Pulsante Cerca Verde -->
-            <button onclick="handleSearchBtn()" class="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-2xl font-semibold text-white transition shadow-lg flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-magnifying-glass text-amber-300"></i> Cerca
+            <!-- Pulsante Cerca Blu -->
+            <button onclick="handleSearchBtn()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition">
+                <i class="fa-solid fa-magnifying-glass"></i> Cerca
             </button>
-            <!-- Pulsante GPS Blu -->
-            <button onclick="getGPSWeather()" class="bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-2xl border border-white/10 transition text-white flex items-center gap-2 text-sm font-semibold shadow-lg" title="Usa GPS">
-                <i class="fa-solid fa-location-crosshairs text-amber-300"><span>GPS</span></i>
+            <!-- Pulsante GPS Verde -->
+            <button onclick="getGPSWeather()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition" title="Usa GPS">
+                <i class="fa-solid fa-location-crosshairs"></i> GPS
             </button>
-            <div class="w-full text-xs text-blue-300 pt-1 flex items-center justify-between">
-                <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-white">--</span></span>
-                <button onclick="toggleFavorite()" id="fav-btn" title="Aggiungi/Rimuovi dai preferiti" class="text-base text-blue-300 hover:text-amber-400 transition flex items-center gap-1.5 px-2 py-0.5 bg-white/5 rounded-xl border border-white/10">
-                    <i id="fav-icon" class="fa-regular fa-star text-amber-400"></i> <span class="text-xs">Preferito</span>
-                </button>
-            </div>
+        </div>
+
+        <div class="text-xs text-slate-600 flex items-center justify-between pb-1">
+            <span>Attuale: <span id="currentLocationLabel" class="font-bold text-slate-800">--</span></span>
+            <button onclick="toggleFavorite()" id="fav-btn" title="Aggiungi/Rimuovi dai preferiti" class="text-xs text-slate-600 hover:text-amber-600 transition flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-slate-300 shadow-sm">
+                <i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span>Preferito</span>
+            </button>
         </div>
 
         <!-- Loading State -->
-        <div id="loading" class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 text-center shadow-2xl space-y-4">
-            <div class="animate-spin rounded-full h-12 w-12 border-4 border-amber-400 border-t-transparent mx-auto"></div>
-            <p id="loading-text" class="text-blue-200 font-medium">Caricamento dati meteo in corso...</p>
+        <div id="loading" class="bg-white border border-slate-300 rounded p-12 text-center shadow-sm space-y-4">
+            <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-700 border-t-transparent mx-auto"></div>
+            <p id="loading-text" class="text-slate-600 font-medium text-sm">Caricamento dati meteo in corso...</p>
         </div>
 
         <!-- Error State -->
-        <div id="error-state" class="hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center shadow-2xl space-y-4">
-            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-4xl"></i>
-            <p id="error-message" class="text-red-200 text-sm">Località non trovata o errore di connessione.</p>
-            <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 font-semibold rounded-xl text-white transition shadow-lg text-sm">
+        <div id="error-state" class="hidden bg-white border border-slate-300 rounded p-8 text-center shadow-sm space-y-4">
+            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl"></i>
+            <p id="error-message" class="text-slate-600 text-sm">Località non trovata o errore di connessione.</p>
+            <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] font-semibold rounded text-white text-sm">
                 Carica Piacenza
             </button>
         </div>
 
-        <!-- Sezione Dati Attuali / Dashboard (Tabella Verticale) -->
-        <div id="weather-content" class="hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4">
-            <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-bolt text-amber-400"></i> Condizioni Attuali (<span id="city-title" class="text-amber-300">--</span>)
+        <!-- Sezione Tabella Dati Attuali (Stile identico all'Archivio) -->
+        <div id="weather-content" class="hidden space-y-3">
+            <h2 class="text-base font-bold text-slate-900">
+                Meteo Attuale / Oggi (<span id="city-title">--</span>)
             </h2>
-            <div class="w-full overflow-hidden rounded-2xl border border-white/10">
-                <table class="w-full text-left border-collapse text-sm">
-                    <tbody class="divide-y divide-white/10 text-blue-100">
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold w-1/3 flex items-center gap-2"><i class="fa-solid fa-cloud-sun text-amber-400 w-5"></i> Condizione Meteo</td><td class="p-3 flex items-center gap-2 font-bold text-white"><span id="weather-icon-container" class="text-xl text-amber-400"></span><span id="weather-desc">--</span></td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-temperature-three-quarters text-amber-400 w-5"></i> Temperatura Attuale</td><td class="p-3 text-rose-400 font-bold text-base"><span id="temp-value">--</span>°C</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-temperature-half text-amber-400 w-5"></i> Temperatura Percepita</td><td class="p-3 text-teal-300 font-bold"><span id="feels-like">--</span>°C</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-temperature-arrow-up text-amber-400 w-5"></i> Temperatura Min / Max Oggi</td><td class="p-3 font-semibold text-amber-300" id="min-max-value">--° / --°</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-mountain text-amber-400 w-5"></i> Altitudine</td><td class="p-3 font-semibold" id="altitude-value">-- m s.l.m.</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-gauge text-amber-400 w-5"></i> Pressione Atmosferica</td><td class="p-3 font-semibold" id="pressure-value">-- hPa</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-cloud text-amber-400 w-5"></i> Copertura Nuvolosa</td><td class="p-3 font-semibold" id="clouds-value">--%</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-cloud-rain text-amber-400 w-5"></i> Pioggia (1h)</td><td class="p-3 font-semibold" id="rain-value">0 mm</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-droplet text-amber-400 w-5"></i> Umidità Relativa</td><td class="p-3 font-semibold" id="humidity-value">--%</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-wind text-amber-400 w-5"></i> Vento</td><td class="p-3 font-semibold" id="wind-value">-- km/h</td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-sun text-amber-400 w-5"></i> Alba / Tramonto</td><td class="p-3 font-semibold text-amber-200">🌅 <span id="sunrise-value">--:--</span> | 🌇 <span id="sunset-value">--:--</span></td></tr>
-                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-clock text-amber-400 w-5"></i> Mezzogiorno / Mezzanotte Solare</td><td class="p-3 font-semibold text-amber-200">☀️ <span id="solar-noon-value">--:--</span> | 🌙 <span id="solar-midnight-value">--:--</span></td></tr>
+            <div class="w-full overflow-x-auto rounded border border-slate-400 shadow-sm">
+                <table class="w-full text-left border-collapse text-xs whitespace-nowrap bg-white">
+                    <thead>
+                        <tr class="bg-[#1e293b] text-white border-b border-slate-500 text-center">
+                            <th class="p-2.5 border-r border-slate-600">Data</th>
+                            <th class="p-2.5 border-r border-slate-600">Temp. Attuale</th>
+                            <th class="p-2.5 border-r border-slate-600">Percepita Attuale</th>
+                            <th class="p-2.5 border-r border-slate-600">Max</th>
+                            <th class="p-2.5 border-r border-slate-600">Percepita</th>
+                            <th class="p-2.5 border-r border-slate-600">Min</th>
+                            <th class="p-2.5 border-r border-slate-600">Pressione</th>
+                            <th class="p-2.5 border-r border-slate-600">Vento (Vel. e Dir.)</th>
+                            <th class="p-2.5 border-r border-slate-600">Umidità (%)</th>
+                            <th class="p-2.5 border-r border-slate-600">Pioggia / Neve</th>
+                            <th class="p-2.5">Alba / Tramonto</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 text-slate-800 text-center">
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-2.5 border-r border-slate-200 font-semibold text-[#0284c7] underline cursor-pointer" id="table-date">--</td>
+                            <td class="p-2.5 border-r border-slate-200 font-bold text-rose-600" id="table-temp-curr">--</td>
+                            <td class="p-2.5 border-r border-slate-200 font-bold text-teal-600" id="table-feels-curr">--</td>
+                            <td class="p-2.5 border-r border-slate-200" id="table-temp-max">--</td>
+                            <td class="p-2.5 border-r border-slate-200" id="table-feels-max">--</td>
+                            <td class="p-2.5 border-r border-slate-200" id="table-temp-min">--</td>
+                            <td class="p-2.5 border-r border-slate-200">
+                                <span id="table-press-mean">--</span><br>
+                                <span class="text-teal-600 font-bold" id="table-press-curr">--</span>
+                            </td>
+                            <td class="p-2.5 border-r border-slate-200">
+                                <span id="table-wind-max">--</span><br>
+                                <span class="text-teal-600 font-bold" id="table-wind-curr">--</span>
+                            </td>
+                            <td class="p-2.5 border-r border-slate-200">
+                                <span id="table-hum-mean">--</span><br>
+                                <span class="text-teal-600 font-bold" id="table-hum-curr">--</span>
+                            </td>
+                            <td class="p-2.5 border-r border-slate-200">
+                                <span id="table-rain-sum">--</span><br>
+                                <span class="text-teal-600 font-bold" id="table-rain-curr">--</span>
+                            </td>
+                            <td class="p-2.5">
+                                🌅 <span id="table-sunrise">--</span><br>
+                                🌇 <span id="table-sunset">--</span>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="text-xs text-blue-200/80 space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10">
-                <p>ℹ️ <strong>Informazioni:</strong> Ultimo aggiornamento in tempo reale registrato alle <span id="update-time" class="font-bold text-amber-300">--</span>.</p>
+
+            <!-- Legenda in stile Archivio -->
+            <div class="text-xs text-slate-600 space-y-0.5 bg-white p-3 rounded border border-slate-300 shadow-sm">
+                <p>ℹ️ <strong>Legenda:</strong></p>
+                <p>• La temperatura attuale in alto è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
+                <p>• I valori in <span class="text-teal-600 font-bold">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).</p>
+                <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-slate-700">--</span>.</p>
             </div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="w-full max-w-4xl mx-auto text-center mt-8 text-xs text-blue-300/60 space-y-2">
-        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-            <p class="text-xs text-blue-200">Scarica la mia app ufficiale:</p>
-            <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group" title="Scarica da Google Play">
-                <i class="fa-brands fa-google-play text-amber-400 text-sm group-hover:scale-110 transition"></i>
-                <span>Google Play Store</span>
-            </a>
-        </div>
+    <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs text-slate-500 space-y-1">
         <p>MeteoCWEB Realtime • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
     </footer>
 
@@ -223,9 +260,9 @@
             const favIcon = document.getElementById('fav-icon');
             const favorites = getFavorites();
             if (favorites.includes(cityName)) {
-                favIcon.className = "fa-solid fa-star text-amber-400";
+                favIcon.className = "fa-solid fa-star text-amber-500";
             } else {
-                favIcon.className = "fa-regular fa-star text-blue-300 hover:text-amber-400";
+                favIcon.className = "fa-regular fa-star text-amber-500";
             }
         }
 
@@ -234,15 +271,15 @@
             const favorites = getFavorites();
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = '<span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span>';
+                favListContainer.innerHTML = '<span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span>';
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
-                html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-medium transition">
-                    <span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span>
-                    <i class="fa-solid fa-chevron-right text-xs text-blue-300/50"></i>
+                html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                    <span class="truncate"><i class="fa-solid fa-location-dot text-amber-500 mr-2 text-xs"></i>${city}</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                 </button>`;
             });
             favListContainer.innerHTML = html;
@@ -257,31 +294,22 @@
 
         function formatTime(unixTimestamp) {
             const date = new Date(unixTimestamp * 1000);
-            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
 
-        function getWeatherIcon(iconCode) {
-            const iconMap = {
-                '01d': 'fa-sun text-amber-400',
-                '01n': 'fa-moon text-indigo-300',
-                '02d': 'fa-cloud-sun text-amber-300',
-                '02n': 'fa-cloud-moon text-indigo-300',
-                '03d': 'fa-cloud text-slate-300',
-                '03n': 'fa-cloud text-slate-400',
-                '04d': 'fa-cloud text-slate-300',
-                '04n': 'fa-cloud text-slate-400',
-                '09d': 'fa-cloud-showers-heavy text-blue-400',
-                '09n': 'fa-cloud-showers-heavy text-blue-500',
-                '10d': 'fa-cloud-rain text-blue-400',
-                '10n': 'fa-cloud-rain text-blue-500',
-                '11d': 'fa-bolt text-amber-400',
-                '11n': 'fa-bolt text-amber-500',
-                '13d': 'fa-snowflake text-blue-200',
-                '13n': 'fa-snowflake text-blue-300',
-                '50d': 'fa-smog text-slate-300',
-                '50n': 'fa-smog text-slate-400'
-            };
-            return iconMap[iconCode] || 'fa-cloud-sun text-amber-400';
+        function formatHourOnly(unixTimestamp) {
+            const date = new Date(unixTimestamp * 1000);
+            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return ` (${timeStr})`;
+        }
+
+        function getWindDirection(degrees) {
+            if (degrees === undefined || degrees === null) return "";
+            const sectors = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+            degrees += 22.5;
+            if (degrees < 0) degrees = 360 - (Math.abs(degrees) % 360);
+            else degrees = degrees % 360;
+            return sectors[parseInt(degrees / 45)];
         }
 
         function toggleClearButton() {
@@ -320,6 +348,7 @@
                 const cityName = data.name;
                 const lat = data.coord.lat;
                 const lon = data.coord.lon;
+                const dt = data.dt;
 
                 currentLoadedCity = cityName;
                 updateFavoriteIcon(cityName);
@@ -330,65 +359,55 @@
 
                 document.getElementById('city-title').textContent = cityName;
                 document.getElementById('currentLocationLabel').textContent = `${cityName} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
-                document.getElementById('temp-value').textContent = Number(data.main.temp).toFixed(1);
-                document.getElementById('feels-like').textContent = Number(data.main.feels_like).toFixed(1);
-                document.getElementById('pressure-value').textContent = data.main.pressure + ' hPa';
-                document.getElementById('clouds-value').textContent = (data.clouds ? data.clouds.all : 0) + '%';
                 
-                let rainAmount = 0;
-                if (data.rain) {
-                    rainAmount = data.rain['1h'] || data.rain['3h'] || 0;
-                }
-                document.getElementById('rain-value').textContent = Number(rainAmount).toFixed(1) + ' mm';
+                // Data odierna formattata
+                const todayDate = new Date(dt * 1000);
+                const dayStr = String(todayDate.getDate()).padStart(2, '0');
+                const monthStr = String(todayDate.getMonth() + 1).padStart(2, '0');
+                const yearStr = todayDate.getFullYear();
+                document.getElementById('table-date').textContent = `${dayStr}-${monthStr}-${yearStr} (Oggi)`;
+
+                // Temperature attuali e percepite con orario
+                const currTimeSuffix = formatHourOnly(dt);
+                document.getElementById('table-temp-curr').textContent = Number(data.main.temp).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
+                document.getElementById('table-feels-curr').textContent = Number(data.main.feels_like).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
                 
-                const description = data.weather[0].description;
-                document.getElementById('weather-desc').textContent = description.charAt(0).toUpperCase() + description.slice(1);
+                document.getElementById('table-press-curr').textContent = data.main.pressure + ' hPa' + currTimeSuffix;
                 
-                const iconClass = getWeatherIcon(data.weather[0].icon);
-                document.getElementById('weather-icon-container').innerHTML = `<i class="fa-solid ${iconClass}"></i>`;
+                const windSpeedKmh = Number(data.wind.speed * 3.6).toFixed(1).replace('.', ',');
+                const windDirStr = getWindDirection(data.wind.deg);
+                document.getElementById('table-wind-curr').textContent = `${windSpeedKmh} km/h ${windDirStr}${currTimeSuffix}`;
 
-                document.getElementById('humidity-value').textContent = data.main.humidity + '%';
-                document.getElementById('wind-value').textContent = Number(data.wind.speed * 3.6).toFixed(1) + ' km/h';
+                const humCurr = data.main.humidity;
+                document.getElementById('table-hum-curr').textContent = humCurr.toFixed(1).replace('.', ',') + '%' + currTimeSuffix;
 
-                const sunriseTimestamp = data.sys.sunrise;
-                const sunsetTimestamp = data.sys.sunset;
+                let rain1h = 0;
+                if (data.rain && data.rain['1h']) rain1h = data.rain['1h'];
+                document.getElementById('table-rain-curr').textContent = rain1h.toFixed(1).replace('.', ',') + ' mm' + currTimeSuffix;
 
-                document.getElementById('sunrise-value').textContent = formatTime(sunriseTimestamp);
-                document.getElementById('sunset-value').textContent = formatTime(sunsetTimestamp);
+                document.getElementById('table-sunrise').textContent = formatTime(data.sys.sunrise);
+                document.getElementById('table-sunset').textContent = formatTime(data.sys.sunset);
 
-                if (sunriseTimestamp && sunsetTimestamp) {
-                    const solarNoonTimestamp = (sunriseTimestamp + sunsetTimestamp) / 2;
-                    document.getElementById('solar-noon-value').textContent = formatTime(solarNoonTimestamp);
-                    const solarMidnightTimestamp = solarNoonTimestamp + 43200;
-                    document.getElementById('solar-midnight-value').textContent = formatTime(solarMidnightTimestamp);
-                } else {
-                    document.getElementById('solar-noon-value').textContent = "--:--";
-                    document.getElementById('solar-midnight-value').textContent = "--:--";
-                }
-
-                const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+                // Open-Meteo per dati giornalieri (Max, Min, Pressione media, ecc.)
+                const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
 
                 try {
                     const omResponse = await fetch(openMeteoUrl);
                     if (omResponse.ok) {
                         const omData = await omResponse.json();
-                        if (omData.elevation !== undefined && omData.elevation !== null) {
-                            document.getElementById('altitude-value').textContent = Math.round(omData.elevation) + ' m s.l.m.';
-                        } else {
-                            document.getElementById('altitude-value').textContent = 'N/D';
-                        }
-                        if (omData.daily && omData.daily.temperature_2m_min && omData.daily.temperature_2m_max) {
-                            const tMin = Number(omData.daily.temperature_2m_min[0]).toFixed(1);
-                            const tMax = Number(omData.daily.temperature_2m_max[0]).toFixed(1);
-                            document.getElementById('min-max-value').textContent = `${tMin}°C / ${tMax}°C`;
-                        } else {
-                            document.getElementById('min-max-value').textContent = 'N/D';
+                        if (omData.daily) {
+                            const d = omData.daily;
+                            document.getElementById('table-temp-max').textContent = Number(d.temperature_2m_max[0]).toFixed(1).replace('.', ',') + '°C';
+                            document.getElementById('table-feels-max').textContent = Number(d.apparent_temperature_max[0]).toFixed(1).replace('.', ',') + '°C';
+                            document.getElementById('table-temp-min').textContent = Number(d.temperature_2m_min[0]).toFixed(1).replace('.', ',') + '°C';
+                            document.getElementById('table-press-mean').textContent = Number(d.pressure_msl_mean[0]).toFixed(1).replace('.', ',') + ' hPa';
+                            document.getElementById('table-wind-mean').textContent = Number(d.wind_speed_10m_max[0]).toFixed(1).replace('.', ',') + ' km/h ' + getWindDirection(d.wind_direction_10m_dominant[0]);
+                            document.getElementById('table-hum-mean').textContent = Number(d.relative_humidity_2m_mean[0]).toFixed(1).replace('.', ',') + '%';
+                            document.getElementById('table-rain-sum').textContent = Number(d.precipitation_sum[0] || 0).toFixed(1).replace('.', ',') + ' mm';
                         }
                     }
                 } catch (omErr) {
-                    console.error("Errore Open-Meteo:", omErr);
-                    document.getElementById('altitude-value').textContent = 'N/D';
-                    document.getElementById('min-max-value').textContent = 'N/D';
+                    console.error("Errore Open-Meteo giornaliero:", omErr);
                 }
 
                 const now = new Date();
@@ -494,3 +513,4 @@
     </script>
 </body>
 </html>
+```[cite: 2]
