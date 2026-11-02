@@ -85,11 +85,10 @@
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 px-3.5 py-1.5 rounded-xl border border-slate-300 transition shadow text-xs font-semibold text-slate-800 group";
                 footerCopy.className = "text-slate-500";
             } else {
-                // Tema CavanWeb: Sfondo #728890
                 body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
                 metaTheme.setAttribute("content", "#728890");
                 footerAppText.className = "text-xs text-slate-200";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#D8D9D0]/40 hover:bg-[#D8D9D0]/70 px-3.5 py-1.5 rounded-xl border border-slate-600/30 transition shadow text-xs font-semibold text-[#800040] group";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#D8D9D0]/40 hover:bg-[#D8D9D0]/70 px-3.5 py-1.5 rounded-xl border border-slate-600/30 transition shadow text-xs font-semibold text-slate-900 group";
                 footerCopy.className = "text-slate-200/80";
             }
 
@@ -120,7 +119,7 @@
             else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
 
             const themeButtonHTML = `
-                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-[#800040] border-slate-400' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
                     <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
                 </button>
             `;
@@ -226,14 +225,10 @@
                     </div>
                 `;
             } else {
-                // Tema Chiaro o Tema CavanWeb con sfondo #D8D9D0 e tasti stile blog (#728890 e scritte rossicce #800040)
+                // Tema Chiaro o Tema CavanWeb Classico (#D8D9D0)
                 const isCavanWeb = (currentTheme === 'cavanweb');
                 const headerBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400" : "bg-white border-slate-200";
-                const cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-[#800040]" : "bg-white border-slate-300 text-slate-800";
-                
-                // Colori specifici pulsanti per CavanWeb (sfondo #728890 e testo #800040 o simile)
-                const cavanWebBtnSearch = isCavanWeb ? "bg-[#728890] hover:bg-[#5b6e74] text-[#800040] font-bold" : "bg-[#0284c7] hover:bg-[#0369a1] text-white";
-                const cavanWebBtnGps = isCavanWeb ? "bg-[#728890] hover:bg-[#5b6e74] text-[#800040] font-bold" : "bg-[#10b981] hover:bg-[#059669] text-white";
+                const cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : "bg-white border-slate-300 text-slate-800";
 
                 headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${headerBgClass} border rounded-3xl p-4 shadow-sm space-y-4 relative`;
                 headerContainer.innerHTML = `
@@ -242,14 +237,14 @@
                             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
                                 <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
                             </a>
-                            <!-- Pulsante Aggiorna piccolo e rotondo -->
-                            <button onclick="refreshCurrent();" title="Aggiorna" class="${isCavanWeb ? 'bg-[#728890] hover:bg-[#5b6e74] text-[#800040]' : 'bg-slate-700 hover:bg-slate-800 text-white'} w-12 h-12 rounded-2xl transition shadow flex items-center justify-center text-lg flex-shrink-0">
+                            <!-- Pulsante Aggiorna piccolo e rotondo (stile blu) -->
+                            <button onclick="refreshCurrent();" title="Aggiorna" class="bg-slate-700 hover:bg-slate-800 w-12 h-12 rounded-2xl text-white transition shadow flex items-center justify-center text-lg flex-shrink-0">
                                 <i id="refresh-icon" class="fa-solid fa-rotate"></i>
                             </button>
                             ${themeButtonHTML}
                         </div>
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isCavanWeb ? 'bg-[#728890] hover:bg-[#5b6e74] text-[#800040] border border-[#800040]/30' : 'bg-amber-600 hover:bg-amber-700 text-white'} px-4 py-2.5 rounded-lg shadow transition flex items-center gap-2 text-sm font-semibold">
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-amber-600 hover:bg-amber-700 px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
                             <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-800">
@@ -264,69 +259,71 @@
                         </div>
                     </div>
                     <div class="text-center border-t border-slate-300/40 pt-3">
-                        <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-[#800040] mb-0.5 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-cloud-sun text-amber-600"></i> MeteoCWEB (Realtime)
+                        <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)
                         </h1>
-                        <p class="text-[#800040]/80 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
+                        <p class="text-slate-600 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
                     </div>
                 `;
 
                 mainContainer.className = "w-full max-w-6xl mx-auto space-y-4 flex-grow";
                 mainContainer.innerHTML = `
                     <div class="flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2 text-[#800040] font-semibold text-sm">
+                        <div class="flex items-center gap-2 text-slate-900 font-semibold text-sm">
                             <i class="fa-solid fa-earth-americas"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-xs">
-                            <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-1.5 ${isCavanWeb ? 'bg-[#728890] text-white placeholder-white/70 border-[#800040]/40' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-sm">
-                            <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-white/70 hover:text-white transition hidden"><i class="fa-solid fa-circle-xmark text-sm"></i></button>
+                            <!-- Campo cerca con sfondo azzurrino (#728890) e scritte rossicce (#800040) per CavanWeb -->
+                            <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-1.5 ${isCavanWeb ? 'bg-[#728890] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-semibold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-sm">
+                            <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#800040] hover:text-black transition hidden"><i class="fa-solid fa-circle-xmark text-sm"></i></button>
                         </div>
-                        <button onclick="handleSearchBtn()" class="${cavanWebBtnSearch} px-4 py-1.5 rounded text-sm flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
-                        <button onclick="getGPSWeather()" class="${cavanWebBtnGps} px-4 py-1.5 rounded text-sm flex items-center gap-1.5 shadow-sm transition" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"></i> GPS</button>
+                        <button onclick="handleSearchBtn()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
+                        <button onclick="getGPSWeather()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"></i> GPS</button>
                     </div>
 
-                    <div class="text-xs flex items-center justify-between pb-1">
-                        <span class="text-[#800040] font-medium">Attuale: <span id="currentLocationLabel" class="font-bold text-[#800040]">--</span></span>
-                        <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xs text-[#800040] hover:text-[#500028] transition flex items-center gap-1 ${isCavanWeb ? 'bg-[#728890] text-white border-[#800040]/40' : 'bg-white border-slate-300'} px-2.5 py-1 rounded border shadow-sm font-semibold">
-                            <i id="fav-icon" class="fa-regular fa-star text-amber-400"></i> <span>Preferito</span>
+                    <div class="text-xs text-slate-200 flex items-center justify-between pb-1">
+                        <span class="text-slate-900">Attuale: <span id="currentLocationLabel" class="font-bold text-slate-900">--</span></span>
+                        <!-- Bottone preferito con sfondo azzurrino (#728890) e scritte rossicce (#800040) per CavanWeb -->
+                        <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xs transition flex items-center gap-1 ${isCavanWeb ? 'bg-[#728890] text-[#800040] border-[#800040]/50 font-bold' : 'bg-white text-slate-800 border-slate-300 font-semibold'} px-2.5 py-1 rounded border shadow-sm">
+                            <i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span>Preferito</span>
                         </button>
                     </div>
 
                     <div id="loading" class="${cardBgClass} border rounded p-12 text-center shadow-sm space-y-4">
-                        <div class="animate-spin rounded-full h-10 w-10 border-4 border-[#800040] border-t-transparent mx-auto"></div>
-                        <p id="loading-text" class="text-[#800040] font-medium text-sm">Caricamento dati meteo in corso...</p>
+                        <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-700 border-t-transparent mx-auto"></div>
+                        <p id="loading-text" class="text-slate-700 font-medium text-sm">Caricamento dati meteo in corso...</p>
                     </div>
 
                     <div id="error-state" class="hidden ${cardBgClass} border rounded p-8 text-center shadow-sm space-y-4">
-                        <i class="fa-solid fa-triangle-exclamation text-amber-600 text-3xl"></i>
-                        <p id="error-message" class="text-[#800040] text-sm">Località non trovata o errore di connessione.</p>
-                        <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-1.5 bg-[#728890] text-[#800040] font-bold rounded text-sm">Carica Piacenza</button>
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl"></i>
+                        <p id="error-message" class="text-slate-700 text-sm">Località non trovata o errore di connessione.</p>
+                        <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] font-semibold rounded text-white text-sm">Carica Piacenza</button>
                     </div>
 
                     <div id="weather-content" class="hidden space-y-3">
-                        <h2 class="text-base font-bold text-[#800040]">Meteo Attuale / Oggi (<span id="city-title">--</span>)</h2>
-                        <div class="w-full overflow-hidden rounded border border-[#800040]/30 shadow-sm">
+                        <h2 class="text-base font-bold text-slate-900">Meteo Attuale / Oggi (<span id="city-title">--</span>)</h2>
+                        <div class="w-full overflow-hidden rounded border border-slate-400 shadow-sm">
                             <table class="w-full text-left border-collapse text-sm ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'}">
-                                <tbody class="divide-y divide-slate-300 text-[#800040]">
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold w-1/3 border-r border-slate-300">Data</td><td class="p-3 font-semibold text-[#800040] underline" id="table-date">--</td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Temperatura Attuale</td><td class="p-3 font-bold text-rose-700" id="table-temp-curr">--</td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Percepita Attuale</td><td class="p-3 font-bold text-teal-800" id="table-feels-curr">--</td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Temperatura Max</td><td class="p-3 font-semibold" id="table-temp-max">--</td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Percepita Max</td><td class="p-3 font-semibold" id="table-feels-max">--</td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Temperatura Min</td><td class="p-3 font-semibold" id="table-temp-min">--</td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Pressione (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-press-mean">--</span> <span class="text-teal-800 font-bold text-xs ml-2" id="table-press-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Vento (Max / Attuale)</td><td class="p-3 font-semibold"><span id="table-wind-mean">--</span> <span class="text-teal-800 font-bold text-xs ml-2" id="table-wind-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Umidità (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-hum-mean">--</span> <span class="text-teal-800 font-bold text-xs ml-2" id="table-hum-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Pioggia / Neve (Totale / Attuale)</td><td class="p-3 font-semibold"><span id="table-rain-sum">--</span> <span class="text-teal-800 font-bold text-xs ml-2" id="table-rain-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-black/5 transition"><td class="p-3 text-[#800040]/80 font-semibold border-r border-slate-300">Alba / Tramonto</td><td class="p-3 font-semibold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
+                                <tbody class="divide-y divide-slate-300 text-slate-900">
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold w-1/3 border-r border-slate-300">Data</td><td class="p-3 font-semibold text-[#0284c7] underline" id="table-date">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Temperatura Attuale</td><td class="p-3 font-bold text-rose-600" id="table-temp-curr">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Percepita Attuale</td><td class="p-3 font-bold text-teal-700" id="table-feels-curr">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Temperatura Max</td><td class="p-3 font-semibold" id="table-temp-max">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Percepita Max</td><td class="p-3 font-semibold" id="table-feels-max">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Temperatura Min</td><td class="p-3 font-semibold" id="table-temp-min">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Pressione (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-press-mean">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-press-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Vento (Max / Attuale)</td><td class="p-3 font-semibold"><span id="table-wind-mean">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-wind-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Umidità (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-hum-mean">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-hum-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Pioggia / Neve (Totale / Attuale)</td><td class="p-3 font-semibold"><span id="table-rain-sum">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-rain-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Alba / Tramonto</td><td class="p-3 font-semibold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="text-xs text-[#800040] space-y-0.5 ${cardBgClass} p-3 rounded border border-slate-400 shadow-sm">
+                        <div class="text-xs text-slate-700 space-y-0.5 ${cardBgClass} p-3 rounded border border-slate-400 shadow-sm">
                             <p>ℹ️ <strong>Legenda:</strong></p>
-                            <p>• La temperatura attuale è indicata in <span class="text-rose-700 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
-                            <p>• I valori in <span class="text-teal-800 font-bold">turchese scuro</span> rappresentano i dati attuali con relativi orari.</p>
-                            <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-[#800040]">--</span>.</p>
+                            <p>• La temperatura attuale è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
+                            <p>• I valori in <span class="text-teal-700 font-bold">turchese grassetto</span> rappresentano i dati attuali con relativi orari.</p>
+                            <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-slate-900">--</span>.</p>
                         </div>
                     </div>
                 `;
