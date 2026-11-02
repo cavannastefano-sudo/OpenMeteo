@@ -225,7 +225,7 @@
                     </div>
                 `;
             } else {
-                // Tema Chiaro o Tema CavanWeb Classico (#D8D9D0)
+                // Tema Chiaro o Tema CavanWeb Classico (#D8D9D0) con caratteri ingranditi
                 const isCavanWeb = (currentTheme === 'cavanweb');
                 const headerBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400" : "bg-white border-slate-200";
                 const cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : "bg-white border-slate-300 text-slate-800";
@@ -237,7 +237,7 @@
                             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
                                 <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
                             </a>
-                            <!-- Pulsante Aggiorna piccolo e rotondo (stile blu) -->
+                            <!-- Pulsante Aggiorna piccolo e rotondo -->
                             <button onclick="refreshCurrent();" title="Aggiorna" class="bg-slate-700 hover:bg-slate-800 w-12 h-12 rounded-2xl text-white transition shadow flex items-center justify-center text-lg flex-shrink-0">
                                 <i id="refresh-icon" class="fa-solid fa-rotate"></i>
                             </button>
@@ -245,84 +245,83 @@
                         </div>
                         <div class="relative flex-shrink-0">
                             <!-- Tasto Menu con colore rossiccio #800040 -->
-                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-base font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
-                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-800">
+                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-800 text-base">
                                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b border-slate-100 flex items-center gap-1.5"><i class="fa-solid fa-star text-[#800040]"></i> Preferiti</div>
-                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span></div>
+                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-sm text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span></div>
                                 <div class="border-t border-slate-100 my-1"></div>
-                                <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-calendar-days text-[#800040] w-5 text-center"></i> <span>Archivio Storico</span></a>
-                                <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-earth-americas text-[#800040] w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
-                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-base font-medium transition"><i class="fa-solid fa-calendar-days text-[#800040] w-5 text-center"></i> <span>Archivio Storico</span></a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-base font-medium transition"><i class="fa-solid fa-earth-americas text-[#800040] w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-base font-medium transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-base font-medium transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
                             </div>
                         </div>
                     </div>
                     <div class="text-center border-t border-slate-300/40 pt-3">
-                        <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
-                            <!-- Iconcina solare con lo stesso colore del tasto menu (#800040) nel tema CavanWeb, altrimenti ambra -->
+                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-cloud-sun ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> MeteoCWEB
                         </h1>
-                        <p class="text-slate-600 text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
+                        <p class="text-slate-600 text-sm sm:text-base">Dati da OpenWeatherMap & Open-Meteo</p>
                     </div>
                 `;
 
                 mainContainer.className = "w-full max-w-6xl mx-auto space-y-4 flex-grow";
                 mainContainer.innerHTML = `
                     <div class="flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2 text-slate-900 font-semibold text-sm">
+                        <div class="flex items-center gap-2 text-slate-900 font-semibold text-base">
                             <i class="fa-solid fa-earth-americas"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-xs">
-                            <!-- Campo cerca con sfondo #8FBBD0 e scritte rossicce #800040 -->
-                            <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-1.5 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-semibold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-sm">
-                            <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#800040] hover:text-black transition hidden"><i class="fa-solid fa-circle-xmark text-sm"></i></button>
+                            <!-- Campo cerca con carattere ingrandito -->
+                            <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-2 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-base">
+                            <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#800040] hover:text-black transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
-                        <button onclick="handleSearchBtn()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
-                        <button onclick="getGPSWeather()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"></i> GPS</button>
+                        <button onclick="handleSearchBtn()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-2 rounded text-white font-semibold text-base flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
+                        <button onclick="getGPSWeather()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-2 rounded text-white font-semibold text-base flex items-center gap-1.5 shadow-sm transition" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"></i> GPS</button>
                     </div>
 
-                    <div class="text-xs text-slate-200 flex items-center justify-between pb-1">
-                        <span class="text-slate-900">Attuale: <span id="currentLocationLabel" class="font-bold text-slate-900">--</span></span>
-                        <!-- Bottone preferito con sfondo #8FBBD0 e scritte/bordi rossicci -->
-                        <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xs transition flex items-center gap-1 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/50 font-bold' : 'bg-white text-slate-800 border-slate-300 font-semibold'} px-2.5 py-1 rounded border shadow-sm">
-                            <!-- Stellina con lo stesso colore del tasto menu (#800040) per CavanWeb, altrimenti ambra -->
+                    <div class="text-sm text-slate-200 flex items-center justify-between pb-1">
+                        <span class="text-slate-900 font-semibold">Attuale: <span id="currentLocationLabel" class="font-bold text-slate-900">--</span></span>
+                        <!-- Pulsante preferito con carattere ingrandito -->
+                        <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/50 font-bold' : 'bg-white text-slate-800 border-slate-300 font-semibold'} px-3 py-1.5 rounded border shadow-sm">
                             <i id="fav-icon" class="fa-regular fa-star ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> <span>Preferito</span>
                         </button>
                     </div>
 
                     <div id="loading" class="${cardBgClass} border rounded p-12 text-center shadow-sm space-y-4">
                         <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-700 border-t-transparent mx-auto"></div>
-                        <p id="loading-text" class="text-slate-700 font-medium text-sm">Caricamento dati meteo in corso...</p>
+                        <p id="loading-text" class="text-slate-700 font-medium text-base">Caricamento dati meteo in corso...</p>
                     </div>
 
                     <div id="error-state" class="hidden ${cardBgClass} border rounded p-8 text-center shadow-sm space-y-4">
                         <i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl"></i>
-                        <p id="error-message" class="text-slate-700 text-sm">Località non trovata o errore di connessione.</p>
-                        <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] font-semibold rounded text-white text-sm">Carica Piacenza</button>
+                        <p id="error-message" class="text-slate-700 text-base">Località non trovata o errore di connessione.</p>
+                        <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] font-semibold rounded text-white text-base">Carica Piacenza</button>
                     </div>
 
                     <div id="weather-content" class="hidden space-y-3">
-                        <h2 class="text-base font-bold text-slate-900">Meteo Attuale / Oggi (<span id="city-title">--</span>)</h2>
+                        <h2 class="text-lg font-bold text-slate-900">Meteo Attuale / Oggi (<span id="city-title">--</span>)</h2>
+                        <!-- Tabella con caratteri ingranditi (text-base / text-lg) -->
                         <div class="w-full overflow-hidden rounded border border-slate-400 shadow-sm">
-                            <table class="w-full text-left border-collapse text-sm ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'}">
+                            <table class="w-full text-left border-collapse text-base ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'}">
                                 <tbody class="divide-y divide-slate-300 text-slate-900">
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold w-1/3 border-r border-slate-300">Data</td><td class="p-3 font-semibold text-[#0284c7] underline" id="table-date">--</td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Temperatura Attuale</td><td class="p-3 font-bold text-rose-600" id="table-temp-curr">--</td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Percepita Attuale</td><td class="p-3 font-bold text-teal-700" id="table-feels-curr">--</td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Temperatura Max</td><td class="p-3 font-semibold" id="table-temp-max">--</td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Percepita Max</td><td class="p-3 font-semibold" id="table-feels-max">--</td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Temperatura Min</td><td class="p-3 font-semibold" id="table-temp-min">--</td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Pressione (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-press-mean">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-press-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Vento (Max / Attuale)</td><td class="p-3 font-semibold"><span id="table-wind-mean">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-wind-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Umidità (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-hum-mean">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-hum-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Pioggia / Neve (Totale / Attuale)</td><td class="p-3 font-semibold"><span id="table-rain-sum">--</span> <span class="text-teal-700 font-bold text-xs ml-2" id="table-rain-curr">(--)</span></td></tr>
-                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3 text-slate-600 font-semibold border-r border-slate-300">Alba / Tramonto</td><td class="p-3 font-semibold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold w-1/3 border-r border-slate-300">Data</td><td class="p-3.5 font-bold text-[#0284c7] underline" id="table-date">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Temperatura Attuale</td><td class="p-3.5 font-extrabold text-rose-600 text-lg" id="table-temp-curr">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Percepita Attuale</td><td class="p-3.5 font-bold text-teal-700" id="table-feels-curr">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Temperatura Max</td><td class="p-3.5 font-bold" id="table-temp-max">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Percepita Max</td><td class="p-3.5 font-bold" id="table-feels-max">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Temperatura Min</td><td class="p-3.5 font-bold" id="table-temp-min">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Pressione (Media / Attuale)</td><td class="p-3.5 font-bold"><span id="table-press-mean">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-press-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Vento (Max / Attuale)</td><td class="p-3.5 font-bold"><span id="table-wind-mean">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-wind-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Umidità (Media / Attuale)</td><td class="p-3.5 font-bold"><span id="table-hum-mean">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-hum-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Pioggia / Neve (Totale / Attuale)</td><td class="p-3.5 font-bold"><span id="table-rain-sum">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-rain-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Alba / Tramonto</td><td class="p-3.5 font-bold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="text-xs text-slate-700 space-y-0.5 ${cardBgClass} p-3 rounded border border-slate-400 shadow-sm">
+                        <div class="text-sm text-slate-700 space-y-1 ${cardBgClass} p-3.5 rounded border border-slate-400 shadow-sm">
                             <p>ℹ️ <strong>Legenda:</strong></p>
                             <p>• La temperatura attuale è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
                             <p>• I valori in <span class="text-teal-700 font-bold">turchese grassetto</span> rappresentano i dati attuali con relativi orari.</p>
@@ -387,19 +386,19 @@
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = `<span class="text-xs ${currentTheme === 'dark' ? 'text-blue-300/60' : 'text-slate-400'} px-3 py-1 italic">Nessun preferito salvato</span>`;
+                favListContainer.innerHTML = `<span class="text-sm ${currentTheme === 'dark' ? 'text-blue-300/60' : 'text-slate-400'} px-3 py-1 italic">Nessun preferito salvato</span>`;
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
                 if (currentTheme === 'dark') {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-base font-semibold transition">
                         <span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span>
                         <i class="fa-solid fa-chevron-right text-xs text-blue-300/50"></i>
                     </button>`;
                 } else {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-base font-medium transition">
                         <span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span>
                         <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                     </button>`;
