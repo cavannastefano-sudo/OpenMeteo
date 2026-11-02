@@ -45,7 +45,7 @@
                 <span>Google Play Store</span>
             </a>
         </div>
-        <p id="footer-copy">MeteoCWEB Realtime • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
+        <p id="footer-copy">MeteoCWEB • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
     </footer>
 
     <!-- JAVASCRIPT UNIFICATO (3 TEMI) -->
@@ -244,25 +244,27 @@
                             ${themeButtonHTML}
                         </div>
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-amber-600 hover:bg-amber-700 px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
+                            <!-- Tasto Menu con colore rossiccio #800040 -->
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
                             <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-800">
-                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 border-b border-slate-100 flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b border-slate-100 flex items-center gap-1.5"><i class="fa-solid fa-star text-[#800040]"></i> Preferiti</div>
                                 <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span></div>
                                 <div class="border-t border-slate-100 my-1"></div>
-                                <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-calendar-days text-amber-500 w-5 text-center"></i> <span>Archivio Storico</span></a>
-                                <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-earth-americas text-amber-500 w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-clock text-amber-500 w-5 text-center"></i> <span>SunClock24</span></a>
-                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-globe text-amber-500 w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-calendar-days text-[#800040] w-5 text-center"></i> <span>Archivio Storico</span></a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-earth-americas text-[#800040] w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
                             </div>
                         </div>
                     </div>
                     <div class="text-center border-t border-slate-300/40 pt-3">
                         <h1 class="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)
+                            <!-- Iconcina solare con lo stesso colore del tasto menu (#800040) nel tema CavanWeb, altrimenti ambra -->
+                            <i class="fa-solid fa-cloud-sun ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> MeteoCWEB
                         </h1>
-                        <p class="text-slate-600 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
+                        <p class="text-slate-600 text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
                     </div>
                 `;
 
@@ -273,7 +275,7 @@
                             <i class="fa-solid fa-earth-americas"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-xs">
-                            <!-- Campo cerca con il colore esatto #8FBBD0 e scritte rossicce #800040 per CavanWeb -->
+                            <!-- Campo cerca con sfondo #8FBBD0 e scritte rossicce #800040 -->
                             <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-1.5 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-semibold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-sm">
                             <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#800040] hover:text-black transition hidden"><i class="fa-solid fa-circle-xmark text-sm"></i></button>
                         </div>
@@ -283,9 +285,10 @@
 
                     <div class="text-xs text-slate-200 flex items-center justify-between pb-1">
                         <span class="text-slate-900">Attuale: <span id="currentLocationLabel" class="font-bold text-slate-900">--</span></span>
-                        <!-- Pulsante preferito con il colore esatto #8FBBD0 e scritte rossicce #800040 per CavanWeb -->
+                        <!-- Bottone preferito con sfondo #8FBBD0 e scritte/bordi rossicci -->
                         <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xs transition flex items-center gap-1 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/50 font-bold' : 'bg-white text-slate-800 border-slate-300 font-semibold'} px-2.5 py-1 rounded border shadow-sm">
-                            <i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span>Preferito</span>
+                            <!-- Stellina con lo stesso colore del tasto menu (#800040) per CavanWeb, altrimenti ambra -->
+                            <i id="fav-icon" class="fa-regular fa-star ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> <span>Preferito</span>
                         </button>
                     </div>
 
@@ -368,10 +371,12 @@
             const favIcon = document.getElementById('fav-icon');
             if (!favIcon) return;
             const favorites = getFavorites();
+            const isCavanWeb = (currentTheme === 'cavanweb');
+
             if (favorites.includes(cityName)) {
-                favIcon.className = currentTheme === 'dark' ? "fa-solid fa-star text-amber-400" : "fa-solid fa-star text-amber-500";
+                favIcon.className = currentTheme === 'dark' ? "fa-solid fa-star text-amber-400" : (isCavanWeb ? "fa-solid fa-star text-[#800040]" : "fa-solid fa-star text-amber-500");
             } else {
-                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-blue-300 hover:text-amber-400" : "fa-regular fa-star text-amber-500";
+                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-blue-300 hover:text-amber-400" : (isCavanWeb ? "fa-regular fa-star text-[#800040]" : "fa-regular fa-star text-amber-500");
             }
         }
 
@@ -395,7 +400,7 @@
                     </button>`;
                 } else {
                     html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
-                        <span class="truncate"><i class="fa-solid fa-location-dot text-amber-500 mr-2 text-xs"></i>${city}</span>
+                        <span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span>
                         <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                     </button>`;
                 }
