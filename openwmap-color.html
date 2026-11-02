@@ -273,8 +273,8 @@
                             <i class="fa-solid fa-earth-americas"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-xs">
-                            <!-- Campo cerca con sfondo azzurrino (#728890) e scritte rossicce (#800040) per CavanWeb -->
-                            <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-1.5 ${isCavanWeb ? 'bg-[#728890] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-semibold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-sm">
+                            <!-- Campo cerca con il colore esatto #8FBBD0 e scritte rossicce #800040 per CavanWeb -->
+                            <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-1.5 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-semibold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-sm">
                             <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#800040] hover:text-black transition hidden"><i class="fa-solid fa-circle-xmark text-sm"></i></button>
                         </div>
                         <button onclick="handleSearchBtn()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
@@ -283,8 +283,8 @@
 
                     <div class="text-xs text-slate-200 flex items-center justify-between pb-1">
                         <span class="text-slate-900">Attuale: <span id="currentLocationLabel" class="font-bold text-slate-900">--</span></span>
-                        <!-- Bottone preferito con sfondo azzurrino (#728890) e scritte rossicce (#800040) per CavanWeb -->
-                        <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xs transition flex items-center gap-1 ${isCavanWeb ? 'bg-[#728890] text-[#800040] border-[#800040]/50 font-bold' : 'bg-white text-slate-800 border-slate-300 font-semibold'} px-2.5 py-1 rounded border shadow-sm">
+                        <!-- Pulsante preferito con il colore esatto #8FBBD0 e scritte rossicce #800040 per CavanWeb -->
+                        <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xs transition flex items-center gap-1 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/50 font-bold' : 'bg-white text-slate-800 border-slate-300 font-semibold'} px-2.5 py-1 rounded border shadow-sm">
                             <i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span>Preferito</span>
                         </button>
                     </div>
