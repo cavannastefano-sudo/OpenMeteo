@@ -3,454 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Archivio Storico Meteo Globale 1940-Oggi</title>
+    <title>MeteoCWEB - Dashboard Realtime</title>
+    <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2c3e50">
+    <meta name="theme-color" content="#f1f5f9">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <!-- FontAwesome per le icone -->
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; margin: 15px; background-color: #f4f4f9; color: #333; }
-        .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; background: white; padding: 12px 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .top-bar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-        .top-bar-right { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        h1 { margin: 0; font-size: 20px; width: 100%; color: #2c3e50; }
-        
-        .refresh-btn, .export-btn { background-color: #2c3e50; color: white; border: none; padding: 8px 12px; font-size: 14px; border-radius: 5px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-        .refresh-btn:hover, .export-btn:hover { background-color: #34495e; }
-        .export-btn { background-color: #27ae60; }
-        .export-btn:hover { background-color: #219653; }
-        .export-btn:disabled { background-color: #95a5a6; cursor: not-allowed; }
-        .export-multi-btn { background-color: #2980b9; }
-        .export-multi-btn:hover { background-color: #1c5980; }
-        
-        /* Contatori visite compatti */
-        .visit-counters { display: flex; align-items: center; gap: 8px; }
-        .visit-counter { color: #666; font-size: 11px; padding: 4px 8px; border-radius: 4px; background: #f8fafc; border: 1px solid #e2e8f0; white-space: nowrap; }
-        
-        /* Menu a tendina header */
-        .menu-container { position: relative; display: inline-block; }
-        .menu-toggle-btn { background-color: #d35400; color: white; border: none; padding: 8px 12px; font-size: 14px; border-radius: 5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-weight: bold; }
-        .menu-toggle-btn:hover { background-color: #e67e22; }
-        .dropdown-content { display: none; position: absolute; right: 0; top: 110%; background-color: #ffffff; min-width: 210px; box-shadow: 0 8px 16px rgba(0,0,0,0.15); border-radius: 6px; border: 1px solid #cbd5e1; z-index: 100; overflow: hidden; }
-        .dropdown-content.show { display: block; }
-        .dropdown-content a { color: #2c3e50; padding: 10px 14px; text-decoration: none; display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; border-bottom: 1px solid #f1f5f9; }
-        .dropdown-content a:last-child { border-bottom: none; }
-        .dropdown-content a:hover { background-color: #f8fafc; color: #d35400; }
-
-        /* Stile per il logo cliccabile di CavanWeb */
-        .logo-link {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-            background: transparent;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.2s;
+        body {
+            font-family: 'Inter', sans-serif;
         }
-        .logo-link:hover { transform: scale(1.05); }
-        .logo-link img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        
-        /* Barra di ricerca località globale con contenitore input e pulsante X */
-        .location-search-box { background: #eef2f7; padding: 12px 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #cbd5e1; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-        .search-input-wrapper { position: relative; flex-grow: 1; max-width: 350px; display: flex; align-items: center; }
-        .location-search-box input { width: 100%; padding: 8px 32px 8px 10px; font-size: 15px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box; }
-        
-        /* Pulsante X per svuotare il campo */
-        #clear-search-btn { position: absolute; right: 8px; background: none; border: none; color: #888; font-size: 16px; cursor: pointer; padding: 0; display: none; }
-        #clear-search-btn:hover { color: #333; }
-
-        .search-loc-btn { background-color: #2980b9; color: white; border: none; padding: 8px 15px; font-size: 15px; border-radius: 5px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-        .search-loc-btn:hover { background-color: #1c5980; }
-        
-        .gps-loc-btn { background-color: #16a085; color: white; border: none; padding: 8px 12px; font-size: 15px; border-radius: 5px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-        .gps-loc-btn:hover { background-color: #1abc9c; }
-
-        #currentLocationLabel { font-weight: bold; color: #2c3e50; margin-left: 5px; }
-
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; }
-
-        table { border-collapse: collapse; width: 100%; background: white; font-size: 14px; white-space: nowrap; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background-color: #2c3e50; color: white; font-size: 15px; }
-        
-        .clickable-date { color: #2980b9; font-weight: bold; cursor: pointer; text-decoration: underline; }
-        .clickable-date:hover { color: #1c5980; }
-
-        .controls { margin-bottom: 20px; font-size: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-        select { font-size: 16px; padding: 6px; }
-        .loading { font-size: 16px; color: #e67e22; font-weight: bold; }
-        .current-section { background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #cbd5e1; }
-        h2 { color: #2c3e50; margin-top: 0; font-size: 18px; }
-        .current-temp { color: #e74c3c; font-weight: bold; font-size: 16px; display: block; margin-top: 4px; }
-        .current-apparent { color: #008b8b; font-weight: bold; font-size: 16px; display: block; margin-top: 4px; }
-        .current-sub { color: #008b8b; font-weight: bold; font-size: 16px; display: block; margin-top: 4px; }
-        .legend { font-size: 13px; color: #555; margin-top: 10px; line-height: 1.5; font-style: italic; }
-        .legend-color { color: #008b8b; font-weight: bold; }
-        .legend-temp { color: #e74c3c; font-weight: bold; }
-
-        /* Pannello Download Multiplo Avanzato */
-        .multi-download-box { background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #cbd5e1; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; }
-        .multi-download-box label { font-weight: bold; color: #2c3e50; }
-
-        /* Finestra Modale (Zoom Giornaliero) ingrandita */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow-y: auto; }
-        .modal-content { background-color: #fff; margin: 5% auto; padding: 30px; border-radius: 10px; width: 95%; max-width: 750px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; }
-        .close-btn { color: #aaa; float: right; font-size: 32px; font-weight: bold; cursor: pointer; line-height: 20px; }
-        .close-btn:hover { color: #000; }
-        .modal-title { color: #2c3e50; margin-top: 0; font-size: 24px; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
-        .detail-table { width: 100%; border-collapse: collapse; margin-top: 20px; white-space: normal; font-size: 16px; }
-        .detail-table th, .detail-table td { padding: 12px 15px; text-align: left; border: 1px solid #ddd; }
-        .detail-table th { background-color: #2c3e50; color: white; width: 40%; font-size: 16px; }
-
-        .modal-temp-current { color: #e74c3c; font-weight: bold; font-size: 18px; }
-        .modal-sub-current { color: #008b8b; font-weight: bold; font-size: 18px; }
-        .modal-normal-val { font-size: 18px; font-weight: bold; }
-
-        @media screen and (max-width: 768px) {
-            body { margin: 10px; }
-            h1 { font-size: 18px; }
-            .top-bar { gap: 10px; padding: 10px; }
-            .current-section { padding: 10px; }
-            th, td { padding: 8px; font-size: 13px; }
-            .current-temp, .current-apparent, .current-sub { font-size: 14px; }
-            .modal-content { margin: 10% auto; width: 95%; padding: 15px; }
-            .detail-table { font-size: 14px; }
-            .detail-table th, .detail-table td { padding: 10px; }
-            .modal-temp-current, .modal-sub-current, .modal-normal-val { font-size: 15px; }
-            .multi-download-box { flex-direction: column; align-items: stretch; }
-            .location-search-box { flex-direction: column; align-items: stretch; }
-            .search-input-wrapper { max-width: none; }
+        input[type="search"]::-webkit-search-cancel-button {
+            display: none;
         }
     </style>
 </head>
-<body>
+<body class="bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between p-4 sm:p-8">
 
-    <div class="top-bar">
-        <div class="top-bar-left">
-            <a href="https://www.cavanweb.com/" target="_blank" class="logo-link" title="Visita CavanWeb">
-                <img src="SfondoN-512.png" alt="CavanWeb Logo">
+    <!-- Top Bar / Header ottimizzato per mobile senza sovrapposizioni -->
+    <header class="w-full max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 px-2 sm:px-4 relative">
+        <div class="flex items-center gap-3">
+            <!-- Logo Cliccabile verso CavanWeb -->
+            <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
             </a>
-            <button class="refresh-btn" onclick="location.reload();">🔄 Aggiorna</button>
+            <button onclick="refreshCurrent();" class="bg-slate-700 hover:bg-slate-800 px-4 py-2.5 rounded-xl text-white transition text-sm font-semibold shadow flex items-center gap-2">
+                <i class="fa-solid fa-rotate"></i> <span>Aggiorna</span>
+            </button>
         </div>
 
-        <div class="top-bar-right">
-            <div class="visit-counters">
-                <div class="visit-counter">Oggi: <span id="dailyVisits">0</span></div>
-                <div class="visit-counter">Mese: <span id="monthlyVisits">0</span></div>
-                <div class="visit-counter">Tot: <span id="totalVisits">0</span></div>
-            </div>
+        <!-- Titolo Centrale -->
+        <div class="text-center flex-grow mx-2 order-3 lg:order-2 w-full lg:w-auto">
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)
+            </h1>
+            <p class="text-slate-500 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
+        </div>
 
-            <!-- Menu a Tendina Navigazione App -->
-            <div class="menu-container">
-                <button class="menu-toggle-btn" onclick="toggleArchiveMenu()" title="Apri menu collegamenti">
+        <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
+            <!-- Menu a Tendina Navigazione App (Pulsante Arancione) -->
+            <div class="relative flex-shrink-0">
+                <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-amber-600 hover:bg-amber-700 px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
                     <i class="fa-solid fa-bars"></i> <span>Menu</span>
                 </button>
-                <div id="archiveDropdown" class="dropdown-content">
-                    <a href="openwmap2.html" title="Apri MeteoCWEB"><i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)</a>
-                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" title="Apri SunClock24"><i class="fa-solid fa-clock text-amber-500"></i> SunClock24</a>
-                    <a href="map.html" title="Apri Mappa Interattiva"><i class="fa-solid fa-earth-americas text-amber-500"></i> Mappa Interattiva</a>
-                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" title="Apri Meteo Europa"><i class="fa-solid fa-globe text-amber-500"></i> Meteo Europa</a>
+                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2">
+                    
+                    <!-- Sezione Preferiti Dinamica -->
+                    <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 border-b border-slate-100 flex items-center gap-1.5">
+                        <i class="fa-solid fa-star"></i> Preferiti
+                    </div>
+                    <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1">
+                        <span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span>
+                    </div>
+
+                    <div class="border-t border-slate-100 my-1"></div>
+
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                        <i class="fa-solid fa-calendar-days text-amber-500 w-5 text-center"></i>
+                        <span>Archivio Storico</span>
+                    </a>
+                    <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                        <i class="fa-solid fa-earth-americas text-amber-500 w-5 text-center"></i>
+                        <span>Mappa Interattiva</span>
+                    </a>
+                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                        <i class="fa-solid fa-clock text-amber-500 w-5 text-center"></i>
+                        <span>SunClock24</span>
+                    </a>
+                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                        <i class="fa-solid fa-globe text-amber-500 w-5 text-center"></i>
+                        <span>Meteo Europa</span>
+                    </a>
                 </div>
             </div>
         </div>
+    </header>
 
-        <h1 id="mainTitle">Archivio Storico Meteo Globale 1940-Oggi</h1>
-    </div>
+    <!-- Main Container -->
+    <main class="w-full max-w-6xl mx-auto space-y-4 flex-grow">
 
-    <!-- Barra di Ricerca Località Globale con Input, Pulsante X e GPS -->
-    <div class="location-search-box">
-        <label for="locationInput"><i class="fa-solid fa-earth-americas"></i> Località:</label>
-        <div class="search-input-wrapper">
-            <input type="text" id="locationInput" placeholder="Cerca città (es. Roma, Tokyo)..." value="Piacenza" oninput="handleSearchInput(this)">
-            <button id="clear-search-btn" onclick="clearLocationInput()" title="Svuota campo">✕</button>
+        <!-- Barra di Ricerca Località -->
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2 text-slate-800 font-semibold text-sm">
+                <i class="fa-solid fa-earth-americas text-slate-700"></i> Località:
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()"
+                    class="w-full pl-3 pr-8 py-1.5 bg-white border border-slate-300 rounded text-slate-800 placeholder-slate-400 focus:outline-none focus:border-slate-500 text-sm">
+                <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota campo" 
+                    class="absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400 hover:text-slate-600 transition hidden">
+                    <i class="fa-solid fa-circle-xmark text-sm"></i>
+                </button>
+            </div>
+            <!-- Pulsante Cerca Blu -->
+            <button onclick="handleSearchBtn()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition">
+                <i class="fa-solid fa-magnifying-glass"></i> Cerca
+            </button>
+            <!-- Pulsante GPS Verde -->
+            <button onclick="getGPSWeather()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition" title="Usa GPS">
+                <i class="fa-solid fa-location-crosshairs"></i> GPS
+            </button>
         </div>
-        <button class="search-loc-btn" onclick="searchCustomLocation()"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
-        <button class="gps-loc-btn" onclick="useCurrentGPS()"><i class="fa-solid fa-location-crosshairs"></i> GPS</button>
-        <span style="font-size: 13px; color: #555; width: 100%;">Attuale: <span id="currentLocationLabel">Piacenza (45.05°N, 9.70°E)</span></span>
-    </div>
-    
-    <!-- Sezione Dati Attuali / Oggi -->
-    <div class="current-section">
-        <h2>Meteo Attuale / Oggi (<span id="currentLocationTitle">Piacenza</span>)</h2>
-        <div class="table-responsive">
-            <table id="currentWeatherTable">
-                <thead>
-                    <tr>
-                        <th>Data</th><th>Temp. Attuale</th><th>Percepita Attuale</th><th>Max</th><th>Percepita</th><th>Min</th>
-                        <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th><th>Alba / Tramonto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td colspan="11">Caricamento dati attuali in corso...</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="legend">
-            ℹ️ <strong>Legenda:</strong><br>
-            • La temperatura attuale in alto è indicata in <span class="legend-temp">rosso grassetto</span> con l'orario di rilevazione.<br>
-            • I valori in <span class="legend-color">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).<br>
-            • Per la colonna pioggia/neve, i valori sono espressi in millimetri (mm) per la pioggia o in centimetri (cm) con l'icona ❄️ quando si registrano precipitazioni nevose o stimate con temperature prossime o inferiori a 1.5°C.<br>
-            • <em>Suggerimento:</em> Clicca sulla <strong>data</strong> (formato GG-MM-AAAA) per aprire la finestra di zoom con i dettagli verticali.
-        </div>
-    </div>
 
-    <!-- Pannello Selezione Anno Singolo -->
-    <div class="controls">
-        <label for="yearSelect">Seleziona Anno Singolo: </label>
-        <select id="yearSelect">
-            <option value="">-- Seleziona un anno --</option>
-        </select>
-        <span id="loadingStatus" class="loading" style="display: none;">Caricamento in corso...</span>
-        <button id="exportCsvBtn" class="export-btn" style="display: none;" onclick="exportData('csv')">📥 Scarica Anno (CSV)</button>
-        <button id="exportTxtBtn" class="export-btn" style="display: none;" onclick="exportData('txt')">📥 Scarica Anno (TXT)</button>
-    </div>
-
-    <!-- Pannello Selezione Intervallo Multiplo -->
-    <div class="multi-download-box">
-        <div>
-            <label for="startYearSelect">Da Anno:</label>
-            <select id="startYearSelect">
-                <option value="">-- Inizio --</option>
-            </select>
+        <div class="text-xs text-slate-600 flex items-center justify-between pb-1">
+            <span>Attuale: <span id="currentLocationLabel" class="font-bold text-slate-800">--</span></span>
+            <button onclick="toggleFavorite()" id="fav-btn" title="Aggiungi/Rimuovi dai preferiti" class="text-xs text-slate-600 hover:text-amber-600 transition flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-slate-300 shadow-sm">
+                <i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span>Preferito</span>
+            </button>
         </div>
-        <div>
-            <label for="endYearSelect">A Anno:</label>
-            <select id="endYearSelect">
-                <option value="">-- Fine --</option>
-            </select>
+
+        <!-- Loading State -->
+        <div id="loading" class="bg-white border border-slate-300 rounded p-12 text-center shadow-sm space-y-4">
+            <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-700 border-t-transparent mx-auto"></div>
+            <p id="loading-text" class="text-slate-600 font-medium text-sm">Caricamento dati meteo in corso...</p>
         </div>
-        <button id="viewMultiBtn" class="export-btn export-multi-btn" onclick="viewCustomRange()">👁️ Visualizza Intervallo in Tabella</button>
-        <span id="loadingMultiStatus" class="loading" style="display: none;">Elaborazione...</span>
-        <button id="exportMultiCsvBtn" class="export-btn" onclick="directDownloadCustomRange('csv')">📥 Scarica Intervallo (CSV)</button>
-        <button id="exportMultiTxtBtn" class="export-btn" onclick="directDownloadCustomRange('txt')">📥 Scarica Intervallo (TXT)</button>
-    </div>
 
-    <div class="table-responsive">
-        <table id="weatherTable">
-            <thead>
-                <tr>
-                    <th>Data</th><th>Max</th><th>Percepita</th><th>Min</th>
-                    <th>Pressione</th><th>Vento (Vel. e Dir.)</th><th>Umidità (%)</th><th>Pioggia / Neve</th><th>Alba / Tramonto</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td colspan="9">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
-            </tbody>
-        </table>
-    </div>
+        <!-- Error State -->
+        <div id="error-state" class="hidden bg-white border border-slate-300 rounded p-8 text-center shadow-sm space-y-4">
+            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl"></i>
+            <p id="error-message" class="text-slate-600 text-sm">Località non trovata o errore di connessione.</p>
+            <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-1.5 bg-[#0284c7] hover:bg-[#0369a1] font-semibold rounded text-white text-sm">
+                Carica Piacenza
+            </button>
+        </div>
 
-    <!-- Finestra Modale Zoom Giornaliero -->
-    <div id="dayModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h3 id="modalTitle" class="modal-title">Dettaglio Giorno</h3>
-            <div class="table-responsive">
-                <table class="detail-table" id="modalDetailTable">
-                    <tbody>
-                        <!-- I dati verticali verranno inseriti qui via JS -->
+        <!-- Sezione Tabella Verticale Dati Attuali -->
+        <div id="weather-content" class="hidden space-y-3">
+            <h2 class="text-base font-bold text-slate-900">
+                Meteo Attuale / Oggi (<span id="city-title">--</span>)
+            </h2>
+            <div class="w-full overflow-hidden rounded border border-slate-400 shadow-sm">
+                <table class="w-full text-left border-collapse text-sm bg-white">
+                    <tbody class="divide-y divide-slate-200 text-slate-800">
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold w-1/3 border-r border-slate-200">Data</td><td class="p-3 font-semibold text-[#0284c7] underline" id="table-date">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Attuale</td><td class="p-3 font-bold text-rose-600" id="table-temp-curr">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Attuale</td><td class="p-3 font-bold text-teal-600" id="table-feels-curr">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Max</td><td class="p-3 font-semibold" id="table-temp-max">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Max</td><td class="p-3 font-semibold" id="table-feels-max">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Min</td><td class="p-3 font-semibold" id="table-temp-min">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pressione (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-press-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-press-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Vento (Max / Attuale)</td><td class="p-3 font-semibold"><span id="table-wind-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-wind-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Umidità (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-hum-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-hum-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pioggia / Neve (Totale / Attuale)</td><td class="p-3 font-semibold"><span id="table-rain-sum">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-rain-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Alba / Tramonto</td><td class="p-3 font-semibold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
                     </tbody>
                 </table>
             </div>
+
+            <!-- Legenda in stile Archivio -->
+            <div class="text-xs text-slate-600 space-y-0.5 bg-white p-3 rounded border border-slate-300 shadow-sm">
+                <p>ℹ️ <strong>Legenda:</strong></p>
+                <p>• La temperatura attuale è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
+                <p>• I valori in <span class="text-teal-600 font-bold">turchese grassetto</span> rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità) affiancati ai valori giornalieri.</p>
+                <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-slate-700">--</span>.</p>
+            </div>
         </div>
-    </div>
 
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs text-slate-500 space-y-1">
+        <p>MeteoCWEB Realtime • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
     <script>
-        let currentLat = 45.0483;
-        let currentLon = 9.6953;
-        let currentPlaceName = "Piacenza";
+        const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
+        let lastFetchFunction = null;
+        let currentLoadedCity = "";
 
-        // Gestione visibilità pulsante X input ricerca
-        function handleSearchInput(input) {
-            const clearBtn = document.getElementById('clear-search-btn');
-            if (input.value.length > 0) {
-                clearBtn.style.display = 'block';
-            } else {
-                clearBtn.style.display = 'none';
-            }
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            menu.classList.toggle('hidden');
         }
 
-        function clearLocationInput() {
-            const input = document.getElementById('locationInput');
-            input.value = '';
-            document.getElementById('clear-search-btn').style.display = 'none';
-            input.focus();
-        }
-
-        // Gestione Menu a Tendina Archivio
-        function toggleArchiveMenu() {
-            const dropdown = document.getElementById('archiveDropdown');
-            dropdown.classList.toggle('show');
-        }
-
-        window.addEventListener('click', function(event) {
-            if (!event.target.closest('.menu-container')) {
-                const dropdown = document.getElementById('archiveDropdown');
-                if (dropdown && dropdown.classList.contains('show')) {
-                    dropdown.classList.remove('show');
-                }
+        window.addEventListener('click', function(e) {
+            const menu = document.getElementById('dropdown-menu');
+            const menuBtn = document.getElementById('menu-btn');
+            if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                menu.classList.add('hidden');
             }
         });
 
-        // Contatori visite
-        function updateVisitCounters() {
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
-            const currentMonthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-
-            if (!sessionStorage.getItem('cavanweb_visited_session')) {
-                sessionStorage.setItem('cavanweb_visited_session', 'true');
-                let totalVisits = parseInt(localStorage.getItem('cavanweb_meteo_total') || '0') + 1;
-                localStorage.setItem('cavanweb_meteo_total', totalVisits);
-
-                let lastMonth = localStorage.getItem('cavanweb_meteo_month_key');
-                let monthlyVisits = parseInt(localStorage.getItem('cavanweb_meteo_monthly') || '0');
-                if (lastMonth !== currentMonthStr) {
-                    monthlyVisits = 1;
-                    localStorage.setItem('cavanweb_meteo_month_key', currentMonthStr);
-                } else {
-                    monthlyVisits += 1;
-                }
-                localStorage.setItem('cavanweb_meteo_monthly', monthlyVisits);
-
-                let lastDay = localStorage.getItem('cavanweb_meteo_day_key');
-                let dailyVisits = parseInt(localStorage.getItem('cavanweb_meteo_daily') || '0');
-                if (lastDay !== todayStr) {
-                    dailyVisits = 1;
-                    localStorage.setItem('cavanweb_meteo_day_key', todayStr);
-                } else {
-                    dailyVisits += 1;
-                }
-                localStorage.setItem('cavanweb_meteo_daily', dailyVisits);
-            }
-
-            let totalVisits = parseInt(localStorage.getItem('cavanweb_meteo_total') || '0');
-            let lastMonth = localStorage.getItem('cavanweb_meteo_month_key');
-            let monthlyVisits = parseInt(localStorage.getItem('cavanweb_meteo_monthly') || '0');
-            if (lastMonth !== currentMonthStr) monthlyVisits = 0;
-
-            let lastDay = localStorage.getItem('cavanweb_meteo_day_key');
-            let dailyVisits = parseInt(localStorage.getItem('cavanweb_meteo_daily') || '0');
-            if (lastDay !== todayStr) dailyVisits = 0;
-
-            document.getElementById('dailyVisits').textContent = dailyVisits.toLocaleString('it-IT');
-            document.getElementById('monthlyVisits').textContent = monthlyVisits.toLocaleString('it-IT');
-            document.getElementById('totalVisits').textContent = totalVisits.toLocaleString('it-IT');
-        }
-        updateVisitCounters();
-
-        const currentYear = new Date().getFullYear();
-        let cachedYearData = null;
-        let cachedCurrentData = null;
-        let cachedMultiData = [];
-
-        const yearSelect = document.getElementById("yearSelect");
-        const startYearSelect = document.getElementById("startYearSelect");
-        const endYearSelect = document.getElementById("endYearSelect");
-
-        for (let y = currentYear; y >= 1940; y--) {
-            const opt1 = document.createElement("option"); opt1.value = y; opt1.textContent = y; yearSelect.appendChild(opt1);
-            const opt2 = document.createElement("option"); opt2.value = y; opt2.textContent = y; startYearSelect.appendChild(opt2);
-            const opt3 = document.createElement("option"); opt3.value = y; opt3.textContent = y; endYearSelect.appendChild(opt3);
-        }
-
-        // Ricerca località tramite Nominatim API
-        async function searchCustomLocation() {
-            const query = document.getElementById('locationInput').value.trim();
-            if (!query) {
-                alert("Inserisci il nome di una località.");
-                return;
-            }
-
+        function getFavorites() {
             try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&accept-language=it`);
-                const data = await response.json();
-                if (data && data.length > 0) {
-                    currentLat = parseFloat(data[0].lat);
-                    currentLon = parseFloat(data[0].lon);
-                    currentPlaceName = data[0].display_name.split(',')[0];
-
-                    updateLocationUI();
-                } else {
-                    alert("Località non trovata.");
-                }
+                return JSON.parse(localStorage.getItem('cavanweb_favorites')) || [];
             } catch (e) {
-                console.error(e);
-                alert("Errore di connessione durante la ricerca della località.");
+                return [];
             }
         }
 
-        // Rilevamento GPS del browser
-        function useCurrentGPS() {
-            if (!navigator.geolocation) {
-                alert("La geolocalizzazione non è supportata dal tuo browser.");
+        function saveFavorites(favorites) {
+            localStorage.setItem('cavanweb_favorites', JSON.stringify(favorites));
+            renderFavoritesMenu();
+        }
+
+        function toggleFavorite() {
+            if (!currentLoadedCity) return;
+            let favorites = getFavorites();
+            const index = favorites.indexOf(currentLoadedCity);
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(currentLoadedCity);
+            }
+            saveFavorites(favorites);
+            updateFavoriteIcon(currentLoadedCity);
+        }
+
+        function updateFavoriteIcon(cityName) {
+            const favIcon = document.getElementById('fav-icon');
+            const favorites = getFavorites();
+            if (favorites.includes(cityName)) {
+                favIcon.className = "fa-solid fa-star text-amber-500";
+            } else {
+                favIcon.className = "fa-regular fa-star text-amber-500";
+            }
+        }
+
+        function renderFavoritesMenu() {
+            const favListContainer = document.getElementById('favorites-list');
+            const favorites = getFavorites();
+
+            if (favorites.length === 0) {
+                favListContainer.innerHTML = '<span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span>';
                 return;
             }
-            document.getElementById('currentLocationLabel').textContent = "Rilevamento posizione GPS in corso...";
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    currentLat = position.coords.latitude;
-                    currentLon = position.coords.longitude;
-                    
-                    try {
-                        const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&accept-language=it`);
-                        const data = await res.json();
-                        if (data && data.address) {
-                            currentPlaceName = data.address.city || data.address.town || data.address.village || data.address.county || "Posizione GPS";
-                        } else {
-                            currentPlaceName = "Posizione GPS";
-                        }
-                    } catch (e) {
-                        currentPlaceName = "Posizione GPS";
-                    }
 
-                    document.getElementById('locationInput').value = currentPlaceName;
-                    handleSearchInput(document.getElementById('locationInput'));
-                    updateLocationUI();
-                },
-                (error) => {
-                    console.error(error);
-                    alert("Impossibile rilevare la posizione GPS. Assicurati di aver concesso i permessi.");
-                    document.getElementById('currentLocationLabel').textContent = `${currentPlaceName} (${currentLat.toFixed(2)}°N, ${currentLon.toFixed(2)}°E)`;
-                },
-                { timeout: 10000 }
-            );
+            let html = '';
+            favorites.forEach(city => {
+                html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
+                    <span class="truncate"><i class="fa-solid fa-location-dot text-amber-500 mr-2 text-xs"></i>${city}</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                </button>`;
+            });
+            favListContainer.innerHTML = html;
         }
 
-        function updateLocationUI() {
-            // Salva la posizione attiva in localStorage per sincronizzarla con MeteoCWEB
-            localStorage.setItem('cavanweb_active_lat', currentLat);
-            localStorage.setItem('cavanweb_active_lon', currentLon);
-            localStorage.setItem('cavanweb_active_name', currentPlaceName);
-
-            document.getElementById('currentLocationLabel').textContent = `${currentPlaceName} (${currentLat.toFixed(2)}°N, ${currentLon.toFixed(2)}°E)`;
-            document.getElementById('currentLocationTitle').textContent = currentPlaceName;
-            
-            loadCurrentWeather();
-            yearSelect.value = "";
-            startYearSelect.value = "";
-            endYearSelect.value = "";
-            document.querySelector("#weatherTable tbody").innerHTML = '<tr><td colspan="9">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>';
-            document.getElementById("exportCsvBtn").style.display = "none";
-            document.getElementById("exportTxtBtn").style.display = "none";
-            cachedYearData = null;
+        function loadFavoriteCity(cityName) {
+            document.getElementById('search-input').value = cityName;
+            toggleClearButton();
+            toggleMenu();
+            fetchWeatherDataByCity(cityName);
         }
 
-        function formatDateIT(isoDateStr) {
-            if (!isoDateStr) return "";
-            const parts = isoDateStr.split("-");
-            if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
-            return isoDateStr;
+        function formatTime(unixTimestamp) {
+            const date = new Date(unixTimestamp * 1000);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
 
-        function formatVal(val, decimals = 1) {
-            if (val === undefined || val === null || isNaN(val)) return "N/D";
-            return Number(val).toFixed(decimals).replace('.', ',');
+        function formatHourOnly(unixTimestamp) {
+            const date = new Date(unixTimestamp * 1000);
+            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            return ` (${timeStr})`;
         }
 
         function getWindDirection(degrees) {
-            if (degrees === undefined || degrees === null) return "N/D";
+            if (degrees === undefined || degrees === null) return "";
             const sectors = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
             degrees += 22.5;
             if (degrees < 0) degrees = 360 - (Math.abs(degrees) % 360);
@@ -458,593 +273,200 @@
             return sectors[parseInt(degrees / 45)];
         }
 
-        function formatTimeWithSeconds(isoString) {
-            if (!isoString) return "N/D";
-            const timePart = isoString.split("T")[1];
-            if (!timePart) return "N/D";
-            let cleanTime = timePart.replace("Z", "");
-            let parts = cleanTime.split(":");
-            if (parts.length === 2) return cleanTime + ":00";
-            return cleanTime.substring(0, 8);
-        }
-
-        function formatHourOnly(isoString) {
-            if (!isoString) return "";
-            const timePart = isoString.split("T")[1];
-            return timePart ? ` (${timePart.substring(0, 5)})` : "";
-        }
-
-        function formatPrecipitation(precip, snowfall, minTemp) {
-            let p = (precip !== undefined && precip !== null) ? precip : 0;
-            let s = (snowfall !== undefined && snowfall !== null) ? snowfall : 0;
-
-            if (s > 0) {
-                return `❄️ ${formatVal(s)} cm`;
-            } else if (p > 0 && minTemp !== undefined && minTemp !== null && minTemp <= 1.5) {
-                let estimatedSnow = formatVal(p * 1.0);
-                return `❄️ ~${estimatedSnow} cm (neve)`;
+        function toggleClearButton() {
+            const input = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-btn');
+            if (input.value.trim().length > 0) {
+                clearBtn.classList.remove('hidden');
             } else {
-                return `${formatVal(p)} mm`;
+                clearBtn.classList.add('hidden');
             }
         }
 
-        function loadCurrentWeather() {
-            const currentTbody = document.querySelector("#currentWeatherTable tbody");
-            const urlCurrent = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
-
-            currentTbody.innerHTML = '<tr><td colspan="11">Caricamento dati attuali in corso...</td></tr>';
-
-            fetch(urlCurrent)
-                .then(response => {
-                    if (!response.ok) throw new Error("Errore nel caricamento dati attuali");
-                    return response.json();
-                })
-                .then(data => {
-                    cachedCurrentData = data;
-                    const current = data.current;
-                    const daily = data.daily;
-                    if (!daily || !daily.time || daily.time.length === 0) {
-                        currentTbody.innerHTML = '<tr><td colspan="11" style="color: orange;">Dati attuali non disponibili.</td></tr>';
-                        return;
-                    }
-
-                    const i = 0;
-                    const currTimeStr = formatHourOnly(current ? current.time : null);
-                    const formattedDateIT = formatDateIT(daily.time[i]);
-
-                    const currentTemp = (current && current.temperature_2m !== undefined && current.temperature_2m !== null) ? formatVal(current.temperature_2m) + '°C' + currTimeStr : 'N/D';
-                    const currentApparent = (current && current.apparent_temperature !== undefined && current.apparent_temperature !== null) ? formatVal(current.apparent_temperature) + '°C' + currTimeStr : 'N/D';
-                    
-                    const currentPressure = (current && current.pressure_msl !== undefined && current.pressure_msl !== null) ? formatVal(current.pressure_msl, 1) + ' hPa' + currTimeStr : 'N/D';
-                    const dailyPressure = (daily.pressure_msl_mean[i] !== undefined && daily.pressure_msl_mean[i] !== null) ? formatVal(daily.pressure_msl_mean[i], 1) + ' hPa' : 'N/D';
-
-                    const currWindSpeed = (current && current.wind_speed_10m !== undefined && current.wind_speed_10m !== null) ? current.wind_speed_10m : null;
-                    const currWindDirDeg = (current && current.wind_direction_10m !== undefined && current.wind_direction_10m !== null) ? current.wind_direction_10m : null;
-                    const currDirStr = getWindDirection(currWindDirDeg);
-                    const currentWind = currWindSpeed !== null ? `${formatVal(currWindSpeed)} km/h ${currDirStr}${currTimeStr}` : 'N/D';
-                    const dailyDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
-                    const dailyWind = (daily.wind_speed_10m_max[i] !== undefined && daily.wind_speed_10m_max[i] !== null) ? formatVal(daily.wind_speed_10m_max[i]) + ' km/h ' + dailyDir : 'N/D';
-
-                    const currentHum = (current && current.relative_humidity_2m !== undefined && current.relative_humidity_2m !== null) ? formatVal(current.relative_humidity_2m) + '%' + currTimeStr : 'N/D';
-                    const dailyHum = (daily.relative_humidity_2m_mean[i] !== undefined && daily.relative_humidity_2m_mean[i] !== null) ? formatVal(daily.relative_humidity_2m_mean[i]) + '%' : 'N/D';
-
-                    const currentPrecip = (current && current.precipitation !== undefined && current.precipitation !== null) ? current.precipitation : 0;
-                    const currentSnowfall = (daily.snowfall_sum && daily.snowfall_sum[i] !== undefined && daily.snowfall_sum[i] !== null) ? daily.snowfall_sum[i] : 0;
-                    
-                    let currentPrecipText = `${formatVal(currentPrecip)} mm${currTimeStr}`;
-                    if (currentPrecip > 0 && current.temperature_2m !== undefined && current.temperature_2m <= 1.5) {
-                        currentPrecipText = `❄️ ~${formatVal(currentPrecip)} cm (neve)${currTimeStr}`;
-                    } else if (currentSnowfall > 0) {
-                        currentPrecipText = `❄️ ${formatVal(currentSnowfall)} cm${currTimeStr}`;
-                    }
-
-                    const dailyPrecip = formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i]);
-                    const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
-                    const sunset = formatTimeWithSeconds(daily.sunset[i]);
-                    
-                    currentTbody.innerHTML = `<tr>
-                        <td><span class="clickable-date" onclick="openCurrentModal()">${formattedDateIT} (Oggi)</span></td>
-                        <td><span class="current-temp">${currentTemp}</span></td>
-                        <td><span class="current-apparent">${currentApparent}</span></td>
-                        <td>${formatVal(daily.temperature_2m_max[i])}°C</td>
-                        <td>${formatVal(daily.apparent_temperature_max[i])}°C</td>
-                        <td>${formatVal(daily.temperature_2m_min[i])}°C</td>
-                        <td>${dailyPressure}<span class="current-sub">${currentPressure}</span></td>
-                        <td>${dailyWind}<span class="current-sub">${currentWind}</span></td>
-                        <td>${dailyHum}<span class="current-sub">${currentHum}</span></td>
-                        <td>${dailyPrecip}<span class="current-sub">${currentPrecipText}</span></td>
-                        <td>🌅 ${sunrise}<br>🌇 ${sunset}</td>
-                    </tr>`;
-                })
-                .catch(err => {
-                    console.error("Errore:", err);
-                    currentTbody.innerHTML = '<tr><td colspan="11" style="color: red;">Impossibile caricare i dati attuali.</td></tr>';
-                });
+        function clearSearchInput() {
+            const input = document.getElementById('search-input');
+            input.value = '';
+            toggleClearButton();
+            input.focus();
         }
 
-        // Inizializzazione posizione all'avvio (Priorità: URL params -> localStorage -> GPS -> Piacenza default)
-        function initLocation() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const urlLat = urlParams.get('lat');
-            const urlLon = urlParams.get('lon');
-            const urlName = urlParams.get('name');
+        async function fetchWeather(url) {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error-state');
+            const contentEl = document.getElementById('weather-content');
 
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            contentEl.classList.add('hidden');
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Località non trovata');
+                }
+                const data = await response.json();
+
+                const cityName = data.name;
+                const lat = data.coord.lat;
+                const lon = data.coord.lon;
+                const dt = data.dt;
+
+                currentLoadedCity = cityName;
+                updateFavoriteIcon(cityName);
+
+                localStorage.setItem('cavanweb_active_lat', lat);
+                localStorage.setItem('cavanweb_active_lon', lon);
+                localStorage.setItem('cavanweb_active_name', cityName);
+
+                document.getElementById('city-title').textContent = cityName;
+                document.getElementById('currentLocationLabel').textContent = `${cityName} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
+                
+                const todayDate = new Date(dt * 1000);
+                const dayStr = String(todayDate.getDate()).padStart(2, '0');
+                const monthStr = String(todayDate.getMonth() + 1).padStart(2, '0');
+                const yearStr = todayDate.getFullYear();
+                document.getElementById('table-date').textContent = `${dayStr}-${monthStr}-${yearStr} (Oggi)`;
+
+                const currTimeSuffix = formatHourOnly(dt);
+                document.getElementById('table-temp-curr').textContent = Number(data.main.temp).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
+                document.getElementById('table-feels-curr').textContent = Number(data.main.feels_like).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
+                
+                document.getElementById('table-press-curr').textContent = data.main.pressure + ' hPa' + currTimeSuffix;
+                
+                const windSpeedKmh = Number(data.wind.speed * 3.6).toFixed(1).replace('.', ',');
+                const windDirStr = getWindDirection(data.wind.deg);
+                document.getElementById('table-wind-curr').textContent = `${windSpeedKmh} km/h ${windDirStr}${currTimeSuffix}`;
+
+                const humCurr = data.main.humidity;
+                document.getElementById('table-hum-curr').textContent = humCurr.toFixed(1).replace('.', ',') + '%' + currTimeSuffix;
+
+                let rain1h = 0;
+                if (data.rain && data.rain['1h']) rain1h = data.rain['1h'];
+                document.getElementById('table-rain-curr').textContent = rain1h.toFixed(1).replace('.', ',') + ' mm' + currTimeSuffix;
+
+                document.getElementById('table-sunrise').textContent = formatTime(data.sys.sunrise);
+                document.getElementById('table-sunset').textContent = formatTime(data.sys.sunset);
+
+                const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
+
+                try {
+                    const omResponse = await fetch(openMeteoUrl);
+                    if (omResponse.ok) {
+                        const omData = await omResponse.json();
+                        if (omData.daily) {
+                            const d = omData.daily;
+                            document.getElementById('table-temp-max').textContent = Number(d.temperature_2m_max[0]).toFixed(1).replace('.', ',') + '°C';
+                            document.getElementById('table-feels-max').textContent = Number(d.apparent_temperature_max[0]).toFixed(1).replace('.', ',') + '°C';
+                            document.getElementById('table-temp-min').textContent = Number(d.temperature_2m_min[0]).toFixed(1).replace('.', ',') + '°C';
+                            document.getElementById('table-press-mean').textContent = Number(d.pressure_msl_mean[0]).toFixed(1).replace('.', ',') + ' hPa';
+                            document.getElementById('table-wind-mean').textContent = Number(d.wind_speed_10m_max[0]).toFixed(1).replace('.', ',') + ' km/h ' + getWindDirection(d.wind_direction_10m_dominant[0]);
+                            document.getElementById('table-hum-mean').textContent = Number(d.relative_humidity_2m_mean[0]).toFixed(1).replace('.', ',') + '%';
+                            document.getElementById('table-rain-sum').textContent = Number(d.precipitation_sum[0] || 0).toFixed(1).replace('.', ',') + ' mm';
+                        }
+                    }
+                } catch (omErr) {
+                    console.error("Errore Open-Meteo giornaliero:", omErr);
+                }
+
+                const now = new Date();
+                document.getElementById('update-time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                loadingEl.classList.add('hidden');
+                errorEl.classList.add('hidden');
+                contentEl.classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                document.getElementById('error-message').textContent = "Impossibile caricare i dati: " + err.message;
+            }
+        }
+
+        function fetchWeatherDataByCity(cityName) {
+            lastFetchFunction = () => fetchWeatherDataByCity(cityName);
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric&lang=it`;
+            fetchWeather(url);
+        }
+
+        function fetchWeatherDataByCoords(lat, lon) {
+            lastFetchFunction = () => fetchWeatherDataByCoords(lat, lon);
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
+            fetchWeather(url);
+        }
+
+        function refreshCurrent() {
+            if (lastFetchFunction) {
+                lastFetchFunction();
+            } else {
+                fetchWeatherDataByCity('Piacenza');
+            }
+        }
+
+        function handleSearchBtn() {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                fetchWeatherDataByCity(query);
+            } else {
+                alert("Inserisci il nome di una località.");
+            }
+        }
+
+        function getGPSWeather() {
+            if (!navigator.geolocation) {
+                alert("La geolocalizzazione non è supportata dal tuo browser.");
+                fetchWeatherDataByCity('Piacenza');
+                return;
+            }
+            document.getElementById('loading-text').textContent = "Rilevamento posizione GPS...";
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('weather-content').classList.add('hidden');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    fetchWeatherDataByCoords(lat, lon);
+                },
+                (error) => {
+                    console.error(error);
+                    alert("Impossibile rilevare la posizione GPS. Caricamento Piacenza di default.");
+                    fetchWeatherDataByCity('Piacenza');
+                },
+                { timeout: 10000 }
+            );
+        }
+
+        window.onload = () => {
+            renderFavoritesMenu();
+            const selectedCity = localStorage.getItem('selected_city');
             const savedLat = localStorage.getItem('cavanweb_active_lat');
             const savedLon = localStorage.getItem('cavanweb_active_lon');
             const savedName = localStorage.getItem('cavanweb_active_name');
 
-            if (urlLat && urlLon) {
-                currentLat = parseFloat(urlLat);
-                currentLon = parseFloat(urlLon);
-                if (urlName) currentPlaceName = decodeURIComponent(urlName);
-                document.getElementById('locationInput').value = currentPlaceName;
-                handleSearchInput(document.getElementById('locationInput'));
-                updateLocationUI();
+            if (selectedCity) {
+                localStorage.removeItem('selected_city');
+                document.getElementById('search-input').value = selectedCity;
+                toggleClearButton();
+                fetchWeatherDataByCity(selectedCity);
             } else if (savedLat && savedLon) {
-                currentLat = parseFloat(savedLat);
-                currentLon = parseFloat(savedLon);
-                if (savedName) currentPlaceName = savedName;
-                document.getElementById('locationInput').value = currentPlaceName;
-                handleSearchInput(document.getElementById('locationInput'));
-                updateLocationUI();
-            } else if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        currentLat = position.coords.latitude;
-                        currentLon = position.coords.longitude;
-                        try {
-                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${currentLat}&lon=${currentLon}&accept-language=it`);
-                            const data = await res.json();
-                            if (data && data.address) {
-                                currentPlaceName = data.address.city || data.address.town || data.address.village || data.address.county || "Posizione GPS";
-                            } else {
-                                currentPlaceName = "Posizione GPS";
-                            }
-                        } catch (e) {
-                            currentPlaceName = "Posizione GPS";
-                        }
-                        document.getElementById('locationInput').value = currentPlaceName;
-                        handleSearchInput(document.getElementById('locationInput'));
-                        updateLocationUI();
-                    },
-                    (error) => {
-                        updateLocationUI(); // Fallback su Piacenza di default
-                    },
-                    { timeout: 7000 }
-                );
+                if (savedName) {
+                    document.getElementById('search-input').value = savedName;
+                    toggleClearButton();
+                }
+                fetchWeatherDataByCoords(parseFloat(savedLat), parseFloat(savedLon));
             } else {
-                updateLocationUI();
+                fetchWeatherDataByCity('Piacenza');
             }
-        }
-
-        initLocation();
-
-        const loadingStatus = document.getElementById("loadingStatus");
-        const loadingMultiStatus = document.getElementById("loadingMultiStatus");
-        const tbody = document.querySelector("#weatherTable tbody");
-        const pageTitle = document.getElementById("pageTitle");
-        const mainTitle = document.getElementById("mainTitle");
-        const exportCsvBtn = document.getElementById("exportCsvBtn");
-        const exportTxtBtn = document.getElementById("exportTxtBtn");
-
-        yearSelect.onchange = function() {
-            const selectedYear = yearSelect.value;
-            if (!selectedYear) {
-                tbody.innerHTML = '<tr><td colspan="9">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>';
-                return;
-            }
-
-            cachedMultiData = [];
-            startYearSelect.value = "";
-            endYearSelect.value = "";
-
-            pageTitle.textContent = `Archivio Storico Meteo ${currentPlaceName} (${selectedYear})`;
-            mainTitle.textContent = `Archivio Storico Meteo ${currentPlaceName} (${selectedYear})`;
-
-            loadingStatus.style.display = "inline";
-            exportCsvBtn.style.display = "none";
-            exportTxtBtn.style.display = "none";
-            tbody.innerHTML = "";
-
-            let endDate = `${selectedYear}-12-31`;
-            if (selectedYear == currentYear) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                endDate = yesterday.toISOString().split("T")[0];
-            }
-
-            const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLat}&longitude=${currentLon}&start_date=${selectedYear}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
-
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) throw new Error("Errore nel caricamento dati");
-                    return response.json();
-                })
-                .then(data => {
-                    loadingStatus.style.display = "none";
-                    cachedYearData = data.daily;
-                    
-                    if (!cachedYearData || !cachedYearData.time || cachedYearData.time.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="9" style="color: orange;">Nessun dato disponibile per questo periodo.</td></tr>';
-                        return;
-                    }
-
-                    exportCsvBtn.style.display = "inline-flex";
-                    exportTxtBtn.style.display = "inline-flex";
-                    renderTableData();
-                })
-                .catch(err => {
-                    loadingStatus.style.display = "none";
-                    console.error("Errore:", err);
-                    tbody.innerHTML = '<tr><td colspan="9" style="color: red;">Errore durante il caricamento dei dati per questo anno.</td></tr>';
-                });
         };
-
-        function renderTableData() {
-            if (!cachedYearData) return;
-            tbody.innerHTML = "";
-            for (let i = cachedYearData.time.length - 1; i >= 0; i--) {
-                const dateIT = formatDateIT(cachedYearData.time[i]);
-                const dir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
-                const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[i]);
-                const sunset = formatTimeWithSeconds(cachedYearData.sunset[i]);
-                const precipText = formatPrecipitation(cachedYearData.precipitation_sum[i], cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[i] : 0, cachedYearData.temperature_2m_min[i]);
-                
-                tbody.innerHTML += `<tr>
-                    <td><span class="clickable-date" onclick="openDayModalSingle(${i})">${dateIT}</span></td>
-                    <td>${formatVal(cachedYearData.temperature_2m_max[i])}°C</td>
-                    <td>${formatVal(cachedYearData.apparent_temperature_max[i])}°C</td>
-                    <td>${formatVal(cachedYearData.temperature_2m_min[i])}°C</td>
-                    <td>${formatVal(cachedYearData.pressure_msl_mean[i], 1)} hPa</td>
-                    <td>${formatVal(cachedYearData.wind_speed_10m_max[i])} km/h ${dir}</td>
-                    <td>${formatVal(cachedYearData.relative_humidity_2m_mean[i])}%</td>
-                    <td>${precipText}</td>
-                    <td>🌅 ${sunrise} | 🌇 ${sunset}</td>
-                </tr>`;
-            }
-        }
-
-        function renderMultiTableData() {
-            if (!cachedMultiData || cachedMultiData.length === 0) return;
-            tbody.innerHTML = "";
-            for (let i = 0; i < cachedMultiData.length; i++) {
-                const row = cachedMultiData[i];
-                const dir = getWindDirection(row.windDirDeg);
-                const precipText = formatPrecipitation(row.precip, row.snow, row.tMin);
-                
-                tbody.innerHTML += `<tr>
-                    <td><span class="clickable-date" onclick="openDayModalMulti(${i})">${row.dateIT}</span></td>
-                    <td>${formatVal(row.tMax)}°C</td>
-                    <td>${formatVal(row.tApp)}°C</td>
-                    <td>${formatVal(row.tMin)}°C</td>
-                    <td>${formatVal(row.press, 1)} hPa</td>
-                    <td>${formatVal(row.windSpd)} km/h ${dir}</td>
-                    <td>${formatVal(row.hum)}%</td>
-                    <td>${precipText}</td>
-                    <td>🌅 ${row.sunrise} | 🌇 ${row.sunset}</td>
-                </tr>`;
-            }
-        }
-
-        function openCurrentModal() {
-            if (!cachedCurrentData) return;
-            const current = cachedCurrentData.current;
-            const daily = cachedCurrentData.daily;
-            const i = 0;
-
-            const dateIT = formatDateIT(daily.time[i]) + " (Oggi)";
-            const tCurr = `<span class="modal-temp-current">${formatVal(current.temperature_2m)}°C${formatHourOnly(current.time)}</span>`;
-            const tAppCurr = `<span class="modal-sub-current">${formatVal(current.apparent_temperature)}°C${formatHourOnly(current.time)}</span>`;
-            const tMax = `<span class="modal-normal-val">${formatVal(daily.temperature_2m_max[i])}°C</span>`;
-            const tAppMax = `<span class="modal-normal-val">${formatVal(daily.apparent_temperature_max[i])}°C</span>`;
-            const tMin = `<span class="modal-normal-val">${formatVal(daily.temperature_2m_min[i])}°C</span>`;
-            
-            const pressCurr = `<span class="modal-sub-current">${formatVal(current.pressure_msl, 1)} hPa${formatHourOnly(current.time)}</span>`;
-            const pressMean = `<span class="modal-normal-val">${formatVal(daily.pressure_msl_mean[i], 1)} hPa (Media giorno)</span>`;
-            
-            const windCurr = `<span class="modal-sub-current">${formatVal(current.wind_speed_10m)} km/h (${getWindDirection(current.wind_direction_10m)})${formatHourOnly(current.time)}</span>`;
-            const windMax = `<span class="modal-normal-val">${formatVal(daily.wind_speed_10m_max[i])} km/h (${getWindDirection(daily.wind_direction_10m_dominant[i])}) (Max giorno)</span>`;
-            
-            const humCurr = `<span class="modal-sub-current">${formatVal(current.relative_humidity_2m)}%${formatHourOnly(current.time)}</span>`;
-            const humMean = `<span class="modal-normal-val">${formatVal(daily.relative_humidity_2m_mean[i])}% (Media giorno)</span>`;
-            
-            let precipCurrText = `<span class="modal-sub-current">${formatVal(current.precipitation)} mm${formatHourOnly(current.time)}</span>`;
-            const precipDaily = `<span class="modal-normal-val">${formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i])}</span>`;
-
-            const sunrise = `<span class="modal-normal-val">🌅 ${formatTimeWithSeconds(daily.sunrise[i])}</span>`;
-            const sunset = `<span class="modal-normal-val">🌇 ${formatTimeWithSeconds(daily.sunset[i])}</span>`;
-
-            document.getElementById("modalTitle").textContent = `Dettaglio Meteo Attuale - ${dateIT}`;
-            
-            const detailTbody = document.querySelector("#modalDetailTable tbody");
-            detailTbody.innerHTML = `
-                <tr><th>Data</th><td><span class="modal-normal-val">${dateIT}</span></td></tr>
-                <tr><th>Temperatura Attuale</th><td>${tCurr}</td></tr>
-                <tr><th>Percepita Attuale</th><td>${tAppCurr}</td></tr>
-                <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
-                <tr><th>Percepita Max</th><td>${tAppMax}</td></tr>
-                <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
-                <tr><th>Pressione (Attuale / Media)</th><td>${pressCurr} / ${pressMean}</td></tr>
-                <tr><th>Vento (Attuale / Max)</th><td>${windCurr} / ${windMax}</td></tr>
-                <tr><th>Umidità (Attuale / Media)</th><td>${humCurr} / ${humMean}</td></tr>
-                <tr><th>Pioggia (Attuale / Totale)</th><td>${precipCurrText} / ${precipDaily}</td></tr>
-                <tr><th>Alba</th><td>${sunrise}</td></tr>
-                <tr><th>Tramonto</th><td>${sunset}</td></tr>
-            `;
-
-            document.getElementById("dayModal").style.display = "block";
-        }
-
-        function openDayModalSingle(index) {
-            if (!cachedYearData) return;
-            const dateIT = formatDateIT(cachedYearData.time[index]);
-            const tMax = `<span class="modal-normal-val">${formatVal(cachedYearData.temperature_2m_max[index])}°C</span>`;
-            const tApp = `<span class="modal-normal-val">${formatVal(cachedYearData.apparent_temperature_max[index])}°C</span>`;
-            const tMin = `<span class="modal-normal-val">${formatVal(cachedYearData.temperature_2m_min[index])}°C</span>`;
-            const pressure = `<span class="modal-normal-val">${formatVal(cachedYearData.pressure_msl_mean[index], 1)} hPa</span>`;
-            const windDirStr = getWindDirection(cachedYearData.wind_direction_10m_dominant[index]);
-            const windSpeed = `<span class="modal-normal-val">${formatVal(cachedYearData.wind_speed_10m_max[index])} km/h (${windDirStr})</span>`;
-            const humidity = `<span class="modal-normal-val">${formatVal(cachedYearData.relative_humidity_2m_mean[index])}%</span>`;
-            const precip = `<span class="modal-normal-val">${formatPrecipitation(cachedYearData.precipitation_sum[index], cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[index] : 0, cachedYearData.temperature_2m_min[index])}</span>`;
-            const sunrise = `<span class="modal-normal-val">🌅 ${formatTimeWithSeconds(cachedYearData.sunrise[index])}</span>`;
-            const sunset = `<span class="modal-normal-val">🌇 ${formatTimeWithSeconds(cachedYearData.sunset[index])}</span>`;
-
-            document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${dateIT}`;
-            const detailTbody = document.querySelector("#modalDetailTable tbody");
-            detailTbody.innerHTML = `
-                <tr><th>Data</th><td><span class="modal-normal-val">${dateIT}</span></td></tr>
-                <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
-                <tr><th>Temperatura Percepita</th><td>${tApp}</td></tr>
-                <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
-                <tr><th>Pressione Media</th><td>${pressure}</td></tr>
-                <tr><th>Vento Massimo</th><td>${windSpeed}</td></tr>
-                <tr><th>Umidità Media</th><td>${humidity}</td></tr>
-                <tr><th>Pioggia / Neve</th><td>${precip}</td></tr>
-                <tr><th>Alba</th><td>${sunrise}</td></tr>
-                <tr><th>Tramonto</th><td>${sunset}</td></tr>
-            `;
-            document.getElementById("dayModal").style.display = "block";
-        }
-
-        function openDayModalMulti(index) {
-            if (!cachedMultiData || !cachedMultiData[index]) return;
-            const row = cachedMultiData[index];
-            const tMax = `<span class="modal-normal-val">${formatVal(row.tMax)}°C</span>`;
-            const tApp = `<span class="modal-normal-val">${formatVal(row.tApp)}°C</span>`;
-            const tMin = `<span class="modal-normal-val">${formatVal(row.tMin)}°C</span>`;
-            const pressure = `<span class="modal-normal-val">${formatVal(row.press, 1)} hPa</span>`;
-            const windDirStr = getWindDirection(row.windDirDeg);
-            const windSpeed = `<span class="modal-normal-val">${formatVal(row.windSpd)} km/h (${windDirStr})</span>`;
-            const humidity = `<span class="modal-normal-val">${formatVal(row.hum)}%</span>`;
-            const precip = `<span class="modal-normal-val">${formatPrecipitation(row.precip, row.snow, row.tMin)}</span>`;
-            const sunrise = `<span class="modal-normal-val">🌅 ${row.sunrise}</span>`;
-            const sunset = `<span class="modal-normal-val">🌇 ${row.sunset}</span>`;
-
-            document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${row.dateIT}`;
-            const detailTbody = document.querySelector("#modalDetailTable tbody");
-            detailTbody.innerHTML = `
-                <tr><th>Data</th><td><span class="modal-normal-val">${dateIT}</span></td></tr>
-                <tr><th>Temperatura Max</th><td>${tMax}</td></tr>
-                <tr><th>Temperatura Percepita</th><td>${tApp}</td></tr>
-                <tr><th>Temperatura Min</th><td>${tMin}</td></tr>
-                <tr><th>Pressione Media</th><td>${pressure}</td></tr>
-                <tr><th>Vento Massimo</th><td>${windSpeed}</td></tr>
-                <tr><th>Umidità Media</th><td>${humidity}</td></tr>
-                <tr><th>Pioggia / Neve</th><td>${precip}</td></tr>
-                <tr><th>Alba</th><td>${sunrise}</td></tr>
-                <tr><th>Tramonto</th><td>${sunset}</td></tr>
-            `;
-            document.getElementById("dayModal").style.display = "block";
-        }
-
-        function closeModal() {
-            document.getElementById("dayModal").style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById("dayModal");
-            if (event.target === modal) closeModal();
-        }
-
-        function exportData(format) {
-            if (!cachedYearData || !cachedYearData.time) return;
-            const selectedYear = yearSelect.value;
-            let separator = format === 'csv' ? ';' : '\t';
-            let fileExtension = format === 'csv' ? 'csv' : 'txt';
-            
-            let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
-
-            for (let i = 0; i < cachedYearData.time.length; i++) {
-                const dateIT = formatDateIT(cachedYearData.time[i]);
-                const tMax = formatVal(cachedYearData.temperature_2m_max[i]);
-                const tApp = formatVal(cachedYearData.apparent_temperature_max[i]);
-                const tMin = formatVal(cachedYearData.temperature_2m_min[i]);
-                const press = formatVal(cachedYearData.pressure_msl_mean[i], 1);
-                const windSpd = formatVal(cachedYearData.wind_speed_10m_max[i]);
-                const windDir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
-                const hum = formatVal(cachedYearData.relative_humidity_2m_mean[i]);
-                
-                let p = cachedYearData.precipitation_sum[i] || 0;
-                let s = cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[i] : 0;
-                let precipStr = `${formatVal(p)} mm`;
-                if (s > 0) precipStr = `${formatVal(s)} cm neve`;
-                else if (p > 0 && cachedYearData.temperature_2m_min[i] <= 1.5) precipStr = `~${formatVal(p)} cm neve (stima)`;
-
-                const sunrise = formatTimeWithSeconds(cachedYearData.sunrise[i]);
-                const sunset = formatTimeWithSeconds(cachedYearData.sunset[i]);
-
-                rows.push([dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]);
-            }
-
-            let fileContent = rows.map(e => e.join(separator)).join("\n");
-            const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
-            const link = document.createElement("a");
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", `meteo_${currentPlaceName.toLowerCase()}_${selectedYear}.${fileExtension}`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        async function viewCustomRange() {
-            const startVal = parseInt(startYearSelect.value);
-            const endVal = parseInt(endYearSelect.value);
-
-            if (!startVal || !endVal) { alert("Seleziona sia l'anno di inizio che l'anno di fine."); return; }
-            if (startVal > endVal) { alert("L'anno di inizio non può essere successivo all'anno di fine."); return; }
-
-            const btn = document.getElementById("viewMultiBtn");
-            btn.disabled = true;
-            const originalText = btn.textContent;
-            loadingMultiStatus.style.display = "inline";
-
-            cachedMultiData = [];
-            tbody.innerHTML = '<tr><td colspan="9" style="color: #e67e22; font-weight: bold;">Caricamento dati intervallo in corso...</td></tr>';
-            yearSelect.value = "";
-            exportCsvBtn.style.display = "none";
-            exportTxtBtn.style.display = "none";
-            cachedYearData = null;
-
-            pageTitle.textContent = `Archivio Storico Meteo ${currentPlaceName} (${startVal}-${endVal})`;
-            mainTitle.textContent = `Archivio Storico Meteo ${currentPlaceName} (${startVal}-${endVal})`;
-
-            try {
-                for (let y = endVal; y >= startVal; y--) {
-                    btn.textContent = `Caricamento ${y}...`;
-                    let endDate = `${y}-12-31`;
-                    if (y === currentYear) {
-                        const yesterday = new Date();
-                        yesterday.setDate(yesterday.getDate() - 1);
-                        endDate = yesterday.toISOString().split("T")[0];
-                    }
-
-                    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLat}&longitude=${currentLon}&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
-
-                    const response = await fetch(url);
-                    if (!response.ok) continue;
-                    const data = await response.json();
-                    const daily = data.daily;
-
-                    if (daily && daily.time) {
-                        let yearRows = [];
-                        for (let i = 0; i < daily.time.length; i++) {
-                            yearRows.push({
-                                dateIT: formatDateIT(daily.time[i]),
-                                rawDate: daily.time[i],
-                                tMax: daily.temperature_2m_max[i],
-                                tApp: daily.apparent_temperature_max[i],
-                                tMin: daily.temperature_2m_min[i],
-                                press: daily.pressure_msl_mean[i],
-                                windSpd: daily.wind_speed_10m_max[i],
-                                windDirDeg: daily.wind_direction_10m_dominant[i],
-                                hum: daily.relative_humidity_2m_mean[i],
-                                precip: daily.precipitation_sum[i] || 0,
-                                snow: daily.snowfall_sum ? daily.snowfall_sum[i] : 0,
-                                sunrise: formatTimeWithSeconds(daily.sunrise[i]),
-                                sunset: formatTimeWithSeconds(daily.sunset[i])
-                            });
-                        }
-                        yearRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
-                        cachedMultiData.push(...yearRows);
-                    }
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                }
-
-                cachedMultiData.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
-                if (cachedMultiData.length > 0) renderMultiTableData();
-                else tbody.innerHTML = '<tr><td colspan="9" style="color: orange;">Nessun dato trovato per l\'intervallo selezionato.</td></tr>';
-            } catch (err) {
-                console.error(err);
-                tbody.innerHTML = '<tr><td colspan="9" style="color: red;">Errore durante il caricamento dei dati.</td></tr>';
-            } finally {
-                loadingMultiStatus.style.display = "none";
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        }
-
-        async function directDownloadCustomRange(format) {
-            const startVal = parseInt(startYearSelect.value);
-            const endVal = parseInt(endYearSelect.value);
-            if (!startVal || !endVal) { alert("Seleziona sia l'anno di inizio che l'anno di fine per il download."); return; }
-            if (startVal > endVal) { alert("L'anno di inizio non può essere successivo all'anno di fine."); return; }
-
-            const downloadBtnId = format === 'csv' ? 'exportMultiCsvBtn' : 'exportMultiTxtBtn';
-            const btn = document.getElementById(downloadBtnId);
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            loadingMultiStatus.style.display = "inline";
-
-            let tempDownloadRows = [];
-            try {
-                for (let y = endVal; y >= startVal; y--) {
-                    btn.textContent = `Scaricando ${y}...`;
-                    let endDate = `${y}-12-31`;
-                    if (y === currentYear) {
-                        const yesterday = new Date();
-                        yesterday.setDate(yesterday.getDate() - 1);
-                        endDate = yesterday.toISOString().split("T")[0];
-                    }
-
-                    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${currentLat}&longitude=${currentLon}&start_date=${y}-01-01&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
-
-                    const response =- await fetch(url);
-                    if (!response.ok) continue;
-                    const data = await response.json();
-                    const daily = data.daily;
-
-                    if (daily && daily.time) {
-                        for (let i = 0; i < daily.time.length; i++) {
-                            const dateIT = formatDateIT(daily.time[i]);
-                            const tMax = formatVal(daily.temperature_2m_max[i]);
-                            const tApp = formatVal(daily.apparent_temperature_max[i]);
-                            const tMin = formatVal(daily.temperature_2m_min[i]);
-                            const press = formatVal(daily.pressure_msl_mean[i], 1);
-                            const windSpd = formatVal(daily.wind_speed_10m_max[i]);
-                            const windDir = getWindDirection(daily.wind_direction_10m_dominant[i]);
-                            const hum = formatVal(daily.relative_humidity_2m_mean[i]);
-                            
-                            let p = daily.precipitation_sum[i] || 0;
-                            let s = daily.snowfall_sum ? daily.snowfall_sum[i] : 0;
-                            let precipStr = `${formatVal(p)} mm`;
-                            if (s > 0) precipStr = `${formatVal(s)} cm neve`;
-                            else if (p > 0 && daily.temperature_2m_min[i] <= 1.5) precipStr = `~${formatVal(p)} cm neve (stima)`;
-
-                            const sunrise = formatTimeWithSeconds(daily.sunrise[i]);
-                            const sunset = formatTimeWithSeconds(daily.sunset[i]);
-
-                            tempDownloadRows.push({
-                                rawDate: daily.time[i],
-                                cols: [dateIT, tMax, tApp, tMin, press, `${windSpd} km/h`, windDir, `${hum}%`, precipStr, sunrise, sunset]
-                            });
-                        }
-                    }
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                }
-
-                tempDownloadRows.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
-                let rows = [["Data", "Temp Max", "Temp Percepita Max", "Temp Min", "Pressione Media", "Vento Max", "Direzione Vento", "Umidita Media", "Pioggia/Neve", "Alba", "Tramonto"]];
-                tempDownloadRows.forEach(item => rows.push(item.cols));
-
-                let separator = format === 'csv' ? ';' : '\t';
-                let fileExtension = format === 'csv' ? 'csv' : 'txt';
-                let fileContent = rows.map(e => e.join(separator)).join("\n");
-                
-                const blob = new Blob([fileContent], { type: `text/${fileExtension};charset=utf-8;` });
-                const link = document.createElement("a");
-                link.setAttribute("href", URL.createObjectURL(blob));
-                link.setAttribute("download", `meteo_${currentPlaceName.toLowerCase()}_${startVal}_${endVal}.${fileExtension}`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (err) {
-                console.error(err);
-                alert("Si è verificato un errore durante il download dei dati.");
-            } finally {
-                loadingMultiStatus.style.display = "none";
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrato con successo:', reg.scope))
+                    .catch(err => console.log('Registrazione Service Worker fallita:', err));
+            });
         }
     </script>
 </body>
