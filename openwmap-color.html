@@ -22,7 +22,6 @@
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
         }
-        /* Stili dinamici per il cambio tema */
         body.theme-light {
             background-color: #f1f5f9;
             color: #1e293b;
@@ -35,10 +34,8 @@
 </head>
 <body class="theme-light min-h-screen flex flex-col justify-between p-3 sm:p-8" id="app-body">
 
-    <!-- Top Bar / Header riorganizzato per evitare sovrapposizioni -->
+    <!-- Top Bar / Header dinamico -->
     <header id="header-box" class="w-full max-w-6xl mx-auto mb-6 bg-white border border-slate-200 rounded-3xl p-4 shadow-sm space-y-4 relative transition-colors duration-300">
-        
-        <!-- Riga Superiore: Logo, Aggiorna, Pulsante Tema e Menu a destra -->
         <div class="flex items-center justify-between gap-3">
             <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <!-- Logo Cliccabile verso CavanWeb -->
@@ -48,57 +45,47 @@
                 <button onclick="refreshCurrent();" id="btn-refresh" class="bg-slate-700 hover:bg-slate-800 px-3.5 py-2.5 rounded-xl text-white transition text-sm font-semibold shadow flex items-center gap-2">
                     <i class="fa-solid fa-rotate"></i> <span>Aggiorna</span>
                 </button>
-                <!-- Pulsante Cambio Tema Rapido -->
-                <button onclick="toggleTheme()" id="btn-theme-toggle" title="Cambia tema chiaro/scuro" class="bg-amber-500 hover:bg-amber-600 px-3.5 py-2.5 rounded-xl text-white transition text-sm font-semibold shadow flex items-center gap-2">
+                <!-- Pulsante Cambio Tema -->
+                <button onclick="toggleTheme()" id="btn-theme-toggle" title="Cambia tema" class="bg-amber-500 hover:bg-amber-600 px-3.5 py-2.5 rounded-xl text-white transition text-sm font-semibold shadow flex items-center gap-2">
                     <i id="theme-icon" class="fa-solid fa-moon"></i> <span id="theme-text" class="hidden sm:inline">Tema Scuro</span>
                 </button>
             </div>
 
-            <!-- Menu a Tendina Navigazione App (Sempre ben visibile a destra) -->
+            <!-- Menu a Tendina -->
             <div class="relative flex-shrink-0">
                 <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-amber-600 hover:bg-amber-700 px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
                     <i class="fa-solid fa-bars"></i> <span>Menu</span>
                 </button>
                 <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-800">
-                    
-                    <!-- Sezione Preferiti Dinamica -->
                     <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 border-b border-slate-100 flex items-center gap-1.5">
                         <i class="fa-solid fa-star"></i> Preferiti
                     </div>
                     <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1">
                         <span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span>
                     </div>
-
                     <div class="border-t border-slate-100 my-1"></div>
-
                     <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
-                        <i class="fa-solid fa-calendar-days text-amber-500 w-5 text-center"></i>
-                        <span>Archivio Storico</span>
+                        <i class="fa-solid fa-calendar-days text-amber-500 w-5 text-center"></i> Archivio Storico
                     </a>
                     <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
-                        <i class="fa-solid fa-earth-americas text-amber-500 w-5 text-center"></i>
-                        <span>Mappa Interattiva</span>
+                        <i class="fa-solid fa-earth-americas text-amber-500 w-5 text-center"></i> Mappa Interattiva
                     </a>
                     <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
-                        <i class="fa-solid fa-clock text-amber-500 w-5 text-center"></i>
-                        <span>SunClock24</span>
+                        <i class="fa-solid fa-clock text-amber-500 w-5 text-center"></i> SunClock24
                     </a>
                     <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
-                        <i class="fa-solid fa-globe text-amber-500 w-5 text-center"></i>
-                        <span>Meteo Europa</span>
+                        <i class="fa-solid fa-globe text-amber-500 w-5 text-center"></i> Meteo Europa
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Riga Inferiore: Titolo e Sottotitolo puliti -->
         <div class="text-center border-t border-slate-200/40 pt-3">
             <h1 id="header-title" class="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5 transition-colors duration-300">
                 <i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)
             </h1>
             <p id="header-subtitle" class="text-slate-500 text-xs sm:text-sm transition-colors duration-300">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
         </div>
-
     </header>
 
     <!-- Main Container -->
@@ -117,11 +104,9 @@
                     <i class="fa-solid fa-circle-xmark text-sm"></i>
                 </button>
             </div>
-            <!-- Pulsante Cerca Blu -->
             <button onclick="handleSearchBtn()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition">
                 <i class="fa-solid fa-magnifying-glass"></i> Cerca
             </button>
-            <!-- Pulsante GPS Verde -->
             <button onclick="getGPSWeather()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-1.5 rounded text-white font-semibold text-sm flex items-center gap-1.5 shadow-sm transition" title="Usa GPS">
                 <i class="fa-solid fa-location-crosshairs"></i> GPS
             </button>
@@ -149,37 +134,8 @@
             </button>
         </div>
 
-        <!-- Sezione Tabella Verticale Dati Attuali -->
-        <div id="weather-content" class="hidden space-y-3">
-            <h2 id="table-heading" class="text-base font-bold text-slate-900 transition-colors duration-300">
-                Meteo Attuale / Oggi (<span id="city-title">--</span>)
-            </h2>
-            <div id="table-container-box" class="w-full overflow-hidden rounded-2xl border border-slate-300 shadow-sm bg-white transition-colors duration-300">
-                <table class="w-full text-left border-collapse text-sm">
-                    <tbody id="table-body" class="divide-y divide-slate-200 text-slate-800">
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold w-1/3 border-r border-slate-200">Data</td><td class="p-3 font-semibold text-[#0284c7] underline" id="table-date">--</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Attuale</td><td class="p-3 font-bold text-rose-600" id="table-temp-curr">--</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Attuale</td><td class="p-3 font-bold text-teal-600" id="table-feels-curr">--</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Max</td><td class="p-3 font-semibold" id="table-temp-max">--</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Max</td><td class="p-3 font-semibold" id="table-feels-max">--</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Min</td><td class="p-3 font-semibold" id="table-temp-min">--</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pressione (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-press-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-press-curr">(--)</span></td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Vento (Max / Attuale)</td><td class="p-3 font-semibold"><span id="table-wind-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-wind-curr">(--)</span></td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Umidità (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-hum-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-hum-curr">(--)</span></td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pioggia / Neve (Totale / Attuale)</td><td class="p-3 font-semibold"><span id="table-rain-sum">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-rain-curr">(--)</span></td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Alba / Tramonto</td><td class="p-3 font-semibold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Legenda in stile Archivio -->
-            <div id="legend-box" class="text-xs text-slate-600 space-y-0.5 bg-white p-3 rounded-2xl border border-slate-300 shadow-sm transition-colors duration-300">
-                <p>ℹ️ <strong>Legenda:</strong></p>
-                <p>• La temperatura attuale è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
-                <p>• I valori in <span class="text-teal-600 font-bold">turchese grassetto</span> rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità) affiancati ai valori giornalieri.</p>
-                <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-slate-700">--</span>.</p>
-            </div>
-        </div>
+        <!-- CONTENITORE DINAMICO: Struttura Tabella (Tema Chiaro) o Griglia Card (Tema Scuro) -->
+        <div id="weather-content" class="hidden space-y-3"></div>
 
     </main>
 
@@ -188,23 +144,20 @@
         <p id="footer-text">MeteoCWEB Realtime • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
     </footer>
 
-    <!-- JavaScript Logic & Theme Management -->
+    <!-- JavaScript Logica e Rendering Dinamico dei Temi -->
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
         let lastFetchFunction = null;
         let currentLoadedCity = "";
+        let latestWeatherData = null; // Memorizza i dati per ricreare la UI al cambio tema
 
-        // Gestione Cambio Tema (Chiaro / Scuro)
         function setTheme(themeName) {
             localStorage.setItem('cavanweb_theme', themeName);
             const body = document.getElementById('app-body');
             const headerBox = document.getElementById('header-box');
             const searchBox = document.getElementById('search-box');
-            const tableBox = document.getElementById('table-container-box');
-            const legendBox = document.getElementById('legend-box');
             const loadingBox = document.getElementById('loading');
             const errorBox = document.getElementById('error-state');
-            const tableHeading = document.getElementById('table-heading');
             const headerTitle = document.getElementById('header-title');
             const headerSubtitle = document.getElementById('header-subtitle');
             const locLabelText = document.getElementById('loc-label-text');
@@ -217,22 +170,16 @@
 
             if (themeName === 'dark') {
                 body.className = "theme-dark min-h-screen flex flex-col justify-between p-3 sm:p-8 text-white";
-                headerBox.className = "w-full max-w-6xl mx-auto mb-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-4 shadow-2xl space-y-4 relative transition-colors duration-300";
-                searchBox.className = "flex flex-wrap items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-2xl transition-colors duration-300";
-                if(tableBox) {
-                    tableBox.className = "w-full overflow-hidden rounded-2xl border border-white/20 shadow-2xl bg-slate-900/9it backdrop-blur-xl transition-colors duration-300";
-                    document.getElementById('table-body').className = "divide-y divide-white/10 text-blue-100";
-                }
-                if(legendBox) legendBox.className = "text-xs text-blue-200/80 space-y-0.5 bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20 shadow-2xl transition-colors duration-300";
-                if(loadingBox) loadingBox.className = "bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-12 text-center shadow-2xl space-y-4 transition-colors duration-300";
-                if(errorBox) errorBox.className = "hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-center shadow-2xl space-y-4 transition-colors duration-300";
+                headerBox.className = "w-full max-w-xl mx-auto mb-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-4 shadow-2xl space-y-4 relative transition-colors duration-300";
+                searchBox.className = "flex flex-wrap items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 shadow-2xl transition-colors duration-300 max-w-xl mx-auto w-full";
+                if(loadingBox) loadingBox.className = "bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-12 text-center max-w-xl mx-auto shadow-2xl space-y-4 transition-colors duration-300";
+                if(errorBox) errorBox.className = "hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 text-center max-w-xl mx-auto shadow-2xl space-y-4 transition-colors duration-300";
                 
-                if(tableHeading) tableHeading.className = "text-base font-bold text-white transition-colors duration-300";
                 if(headerTitle) headerTitle.className = "text-lg sm:text-2xl font-bold tracking-tight text-white mb-0.5 flex items-center justify-center gap-1.5 transition-colors duration-300";
                 if(headerSubtitle) headerSubtitle.className = "text-blue-200 text-xs sm:text-sm transition-colors duration-300";
                 if(locLabelText) locLabelText.className = "flex items-center gap-2 text-blue-200 font-semibold text-sm transition-colors duration-300";
                 if(searchInput) searchInput.className = "w-full pl-3 pr-8 py-1.5 bg-white/5 border border-white/20 rounded text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm transition-colors duration-300";
-                if(subInfoBar) subInfoBar.className = "text-xs text-blue-300 flex items-center justify-between pb-1 px-1";
+                if(subInfoBar) subInfoBar.className = "text-xs text-blue-300 flex items-center justify-between pb-1 px-1 max-w-xl mx-auto w-full";
                 if(footerText) footerText.className = "text-blue-300/60";
                 
                 themeIcon.className = "fa-solid fa-sun";
@@ -242,15 +189,9 @@
                 body.className = "theme-light min-h-screen flex flex-col justify-between p-3 sm:p-8 text-slate-800";
                 headerBox.className = "w-full max-w-6xl mx-auto mb-6 bg-white border border-slate-200 rounded-3xl p-4 shadow-sm space-y-4 relative transition-colors duration-300";
                 searchBox.className = "flex flex-wrap items-center gap-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm transition-colors duration-300";
-                if(tableBox) {
-                    tableBox.className = "w-full overflow-hidden rounded-2xl border border-slate-300 shadow-sm bg-white transition-colors duration-300";
-                    document.getElementById('table-body').className = "divide-y divide-slate-200 text-slate-800";
-                }
-                if(legendBox) legendBox.className = "text-xs text-slate-600 space-y-0.5 bg-white p-3 rounded-2xl border border-slate-300 shadow-sm transition-colors duration-300";
                 if(loadingBox) loadingBox.className = "bg-white border border-slate-300 rounded-2xl p-12 text-center shadow-sm space-y-4 transition-colors duration-300";
                 if(errorBox) errorBox.className = "hidden bg-white border border-slate-300 rounded-2xl p-8 text-center shadow-sm space-y-4 transition-colors duration-300";
                 
-                if(tableHeading) tableHeading.className = "text-base font-bold text-slate-900 transition-colors duration-300";
                 if(headerTitle) headerTitle.className = "text-lg sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5 transition-colors duration-300";
                 if(headerSubtitle) headerSubtitle.className = "text-slate-500 text-xs sm:text-sm transition-colors duration-300";
                 if(locLabelText) locLabelText.className = "flex items-center gap-2 text-slate-800 font-semibold text-sm transition-colors duration-300";
@@ -261,6 +202,11 @@
                 themeIcon.className = "fa-solid fa-moon";
                 themeText.textContent = "Tema Scuro";
                 metaTheme.setAttribute("content", "#f1f5f9");
+            }
+
+            // Se abbiamo già dati meteo caricati, ricostruiamo la UI per adattarla al nuovo tema
+            if (latestWeatherData) {
+                renderWeatherUI(latestWeatherData);
             }
         }
 
@@ -347,13 +293,12 @@
 
         function formatTime(unixTimestamp) {
             const date = new Date(unixTimestamp * 1000);
-            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
         function formatHourOnly(unixTimestamp) {
             const date = new Date(unixTimestamp * 1000);
-            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            return ` (${timeStr})`;
+            return ` (${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
         }
 
         function getWindDirection(degrees) {
@@ -363,6 +308,31 @@
             if (degrees < 0) degrees = 360 - (Math.abs(degrees) % 360);
             else degrees = degrees % 360;
             return sectors[parseInt(degrees / 45)];
+        }
+
+        function getWeatherIconClass(iconCode, isDark) {
+            const color = isDark ? "text-amber-400" : "text-amber-500";
+            const map = {
+                '01d': `fa-sun ${color}`,
+                '01n': 'fa-moon text-indigo-300',
+                '02d': `fa-cloud-sun ${color}`,
+                '02n': 'fa-cloud-moon text-indigo-300',
+                '03d': 'fa-cloud text-slate-400',
+                '03n': 'fa-cloud text-slate-400',
+                '04d': 'fa-cloud text-slate-400',
+                '04n': 'fa-cloud text-slate-400',
+                '09d': 'fa-cloud-showers-heavy text-blue-400',
+                '09n': 'fa-cloud-showers-heavy text-blue-500',
+                '10d': 'fa-cloud-rain text-blue-400',
+                '10n': 'fa-cloud-rain text-blue-500',
+                '11d': `fa-bolt ${color}`,
+                '11n': `fa-bolt ${color}`,
+                '13d': 'fa-snowflake text-blue-200',
+                '13n': 'fa-snowflake text-blue-300',
+                '50d': 'fa-smog text-slate-400',
+                '50n': 'fa-smog text-slate-400'
+            };
+            return map[iconCode] || `fa-cloud-sun ${color}`;
         }
 
         function toggleClearButton() {
@@ -393,15 +363,12 @@
 
             try {
                 const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Località non trovata');
-                }
+                if (!response.ok) throw new Error('Località non trovata');
                 const data = await response.json();
 
                 const cityName = data.name;
                 const lat = data.coord.lat;
                 const lon = data.coord.lon;
-                const dt = data.dt;
 
                 currentLoadedCity = cityName;
                 updateFavoriteIcon(cityName);
@@ -410,58 +377,198 @@
                 localStorage.setItem('cavanweb_active_lon', lon);
                 localStorage.setItem('cavanweb_active_name', cityName);
 
-                document.getElementById('city-title').textContent = cityName;
-                document.getElementById('currentLocationLabel').textContent = `${cityName} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
-                
-                const todayDate = new Date(dt * 1000);
-                const dayStr = String(todayDate.getDate()).padStart(2, '0');
-                const monthStr = String(todayDate.getMonth() + 1).padStart(2, '0');
-                const yearStr = todayDate.getFullYear();
-                document.getElementById('table-date').textContent = `${dayStr}-${monthStr}-${yearStr} (Oggi)`;
-
-                const currTimeSuffix = formatHourOnly(dt);
-                document.getElementById('table-temp-curr').textContent = Number(data.main.temp).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
-                document.getElementById('table-feels-curr').textContent = Number(data.main.feels_like).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
-                
-                document.getElementById('table-press-curr').textContent = data.main.pressure + ' hPa' + currTimeSuffix;
-                
-                const windSpeedKmh = Number(data.wind.speed * 3.6).toFixed(1).replace('.', ',');
-                const windDirStr = getWindDirection(data.wind.deg);
-                document.getElementById('table-wind-curr').textContent = `${windSpeedKmh} km/h ${windDirStr}${currTimeSuffix}`;
-
-                const humCurr = data.main.humidity;
-                document.getElementById('table-hum-curr').textContent = humCurr.toFixed(1).replace('.', ',') + '%' + currTimeSuffix;
-
-                let rain1h = 0;
-                if (data.rain && data.rain['1h']) rain1h = data.rain['1h'];
-                document.getElementById('table-rain-curr').textContent = rain1h.toFixed(1).replace('.', ',') + ' mm' + currTimeSuffix;
-
-                document.getElementById('table-sunrise').textContent = formatTime(data.sys.sunrise);
-                document.getElementById('table-sunset').textContent = formatTime(data.sys.sunset);
-
-                const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
-
+                let omData = {};
                 try {
-                    const omResponse = await fetch(openMeteoUrl);
-                    if (omResponse.ok) {
-                        const omData = await omResponse.json();
-                        if (omData.daily) {
-                            const d = omData.daily;
-                            document.getElementById('table-temp-max').textContent = Number(d.temperature_2m_max[0]).toFixed(1).replace('.', ',') + '°C';
-                            document.getElementById('table-feels-max').textContent = Number(d.apparent_temperature_max[0]).toFixed(1).replace('.', ',') + '°C';
-                            document.getElementById('table-temp-min').textContent = Number(d.temperature_2m_min[0]).toFixed(1).replace('.', ',') + '°C';
-                            document.getElementById('table-press-mean').textContent = Number(d.pressure_msl_mean[0]).toFixed(1).replace('.', ',') + ' hPa';
-                            document.getElementById('table-wind-mean').textContent = Number(d.wind_speed_10m_max[0]).toFixed(1).replace('.', ',') + ' km/h ' + getWindDirection(d.wind_direction_10m_dominant[0]);
-                            document.getElementById('table-hum-mean').textContent = Number(d.relative_humidity_2m_mean[0]).toFixed(1).replace('.', ',') + '%';
-                            document.getElementById('table-rain-sum').textContent = Number(d.precipitation_sum[0] || 0).toFixed(1).replace('.', ',') + ' mm';
-                        }
-                    }
-                } catch (omErr) {
-                    console.error("Errore Open-Meteo giornaliero:", omErr);
-                }
+                    const omRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`);
+                    if (omRes.ok) omData = await omRes.json();
+                } catch (e) {}
 
-                const now = new Date();
-                document.getElementById('update-time').textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                latestWeatherData = { data, omData, lat, lon };
+                renderWeatherUI(latestWeatherData);
+
+                loadingEl.classList.add('hidden');
+                errorEl.classList.add('hidden');
+                contentEl.classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+                document.getElementById('error-message').textContent = "Impossibile caricare i dati: " + err.message;
+            }
+        }
+
+        // Funzione che disegna la grafica in base al tema attivo (Tabella per Chiaro, Card a Griglia per Scuro)
+        function renderWeatherUI({ data, omData, lat, lon }) {
+            const contentEl = document.getElementById('weather-content');
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'light';
+            const cityName = data.name;
+            const dt = data.dt;
+            const tempCurr = Number(data.main.temp).toFixed(1).replace('.', ',');
+            const feelsCurr = Number(data.main.feels_like).toFixed(1).replace('.', ',');
+            const pressCurr = data.main.pressure + ' hPa';
+            const windCurr = `${Number(data.wind.speed * 3.6).toFixed(1).replace('.', ',')} km/h ${getWindDirection(data.wind.deg)}`;
+            const humCurr = data.main.humidity.toFixed(1).replace('.', ',') + '%';
+            const rainCurr = `${(data.rain && data.rain['1h'] ? data.rain['1h'] : 0).toFixed(1).replace('.', ',')} mm`;
+            const timeSuffix = formatHourOnly(dt);
+
+            document.getElementById('currentLocationLabel').textContent = `${cityName} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
+
+            let tMax = '--', tMin = '--', fMax = '--', pressMean = '--', windMean = '--', humMean = '--', rainSum = '0,0 mm', altitude = 'N/D';
+            if (omData && omData.daily) {
+                const d = omData.daily;
+                tMax = Number(d.temperature_2m_max[0]).toFixed(1).replace('.', ',') + '°C';
+                tMin = Number(d.temperature_2m_min[0]).toFixed(1).replace('.', ',') + '°C';
+                fMax = Number(d.apparent_temperature_max[0]).toFixed(1).replace('.', ',') + '°C';
+                pressMean = Number(d.pressure_msl_mean[0]).toFixed(1).replace('.', ',') + ' hPa';
+                windMean = `${Number(d.wind_speed_10m_max[0]).toFixed(1).replace('.', ',')} km/h ${getWindDirection(d.wind_direction_10m_dominant[0])}`;
+                humMean = Number(d.relative_humidity_2m_mean[0]).toFixed(1).replace('.', ',') + '%';
+                rainSum = Number(d.precipitation_sum[0] || 0).toFixed(1).replace('.', ',') + ' mm';
+            }
+            if (omData && omData.elevation !== undefined) altitude = Math.round(omData.elevation) + ' m s.l.m.';
+
+            const sunriseStr = formatTime(data.sys.sunrise);
+            const sunsetStr = formatTime(data.sys.sunset);
+            const solarNoon = formatTime((data.sys.sunrise + data.sys.sunset) / 2);
+            const solarMidnight = formatTime((data.sys.sunrise + data.sys.sunset) / 2 + 43200);
+
+            const todayDate = new Date(dt * 1000);
+            const dateStr = `${String(todayDate.getDate()).padStart(2, '0')}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${todayDate.getFullYear()} (Oggi)`;
+            const weatherDesc = data.weather[0].description;
+            const descFormatted = weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1);
+            const iconCode = data.weather[0].icon;
+            const nowTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            if (currentTheme === 'dark') {
+                // TEMA SCURO: Struttura a Card Centrali con griglia e icone colorate (come la tua seconda foto)
+                const iconClass = getWeatherIconClass(iconCode, true);
+                contentEl.innerHTML = `
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl w-full max-w-xl mx-auto space-y-6">
+                        <div class="flex justify-between items-start border-b border-white/10 pb-4">
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-2xl sm:text-3xl font-bold text-white">${cityName}</h2>
+                                    <button onclick="toggleFavorite()" class="text-xl text-amber-400 hover:text-white transition p-1"><i id="fav-icon" class="fa-solid fa-star"></i></button>
+                                </div>
+                                <p class="text-xs uppercase tracking-widest text-blue-300 font-semibold mt-1">${data.sys.country || 'IT'}</p>
+                            </div>
+                            <button onclick="refreshCurrent()" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition text-blue-200"><i class="fa-solid fa-rotate"></i></button>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="flex items-start">
+                                    <span class="text-6xl sm:text-7xl font-extrabold tracking-tighter text-white">${tempCurr}</span>
+                                    <span class="text-3xl sm:text-4xl font-light ml-1 text-amber-400">°C</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-5xl sm:text-6xl mb-1"><i class="fa-solid ${iconClass}"></i></div>
+                                <p class="text-base sm:text-lg font-medium capitalize text-blue-200">${descFormatted}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-amber-500/20 p-3 rounded-xl text-amber-400"><i class="fa-solid fa-temperature-arrow-up text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Min / Max Oggi</p><p class="text-sm font-bold text-white">${tMin} / ${tMax}</p></div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-emerald-500/20 p-3 rounded-xl text-emerald-400"><i class="fa-solid fa-mountain text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Altitudine</p><p class="text-base font-bold text-white">${altitude}</p></div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-rose-500/20 p-3 rounded-xl text-rose-400"><i class="fa-solid fa-temperature-half text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Percepita</p><p class="text-base font-bold text-white">${feelsCurr}°C</p></div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-indigo-500/20 p-3 rounded-xl text-indigo-400"><i class="fa-solid fa-gauge text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Pressione</p><p class="text-base font-bold text-white">${pressCurr}</p></div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-sky-500/20 p-3 rounded-xl text-sky-400"><i class="fa-solid fa-cloud-rain text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Pioggia (1h)</p><p class="text-base font-bold text-white">${rainCurr}</p></div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-teal-500/20 p-3 rounded-xl text-teal-400"><i class="fa-solid fa-wind text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Vento</p><p class="text-sm font-bold text-white">${windCurr}</p></div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-amber-500/20 p-3 rounded-xl text-amber-400"><i class="fa-solid fa-sun text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Alba</p><p class="text-sm font-bold text-white">${sunriseStr}</p></div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center space-x-3">
+                                <div class="bg-purple-500/20 p-3 rounded-xl text-purple-400"><i class="fa-solid fa-moon text-xl"></i></div>
+                                <div><p class="text-xs text-blue-300 font-medium">Tramonto</p><p class="text-sm font-bold text-white">${sunsetStr}</p></div>
+                            </div>
+                        </div>
+                        <div class="text-center pt-2 border-t border-white/10"><p class="text-xs text-blue-300/60">Ultimo aggiornamento: <span class="font-bold text-amber-300">${nowTimeStr}</span></p></div>
+                    </div>
+                `;
+            } else {
+                // TEMA CHIARO: Struttura a Tabella Verticale (come la tua prima foto)
+                contentEl.innerHTML = `
+                    <h2 class="text-base font-bold text-slate-900">Meteo Attuale / Oggi (${cityName})</h2>
+                    <div class="w-full overflow-hidden rounded-2xl border border-slate-300 shadow-sm bg-white">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <tbody class="divide-y divide-slate-200 text-slate-800">
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold w-1/3 border-r border-slate-200">Data</td><td class="p-3 font-semibold text-[#0284c7] underline">${dateStr}</td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Attuale</td><td class="p-3 font-bold text-rose-600">${tempCurr}°C${timeSuffix}</td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Attuale</td><td class="p-3 font-bold text-teal-600">${feelsCurr}°C${timeSuffix}</td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Max</td><td class="p-3 font-semibold">${tMax}</td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Max</td><td class="p-3 font-semibold">${fMax}</td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Min</td><td class="p-3 font-semibold">${tMin}</td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pressione (Media / Attuale)</td><td class="p-3 font-semibold">${pressMean} <span class="text-teal-600 font-bold text-xs ml-2">(${pressCurr}${timeSuffix})</span></td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Vento (Max / Attuale)</td><td class="p-3 font-semibold">${windMean} <span class="text-teal-600 font-bold text-xs ml-2">(${windCurr}${timeSuffix})</span></td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Umidità (Media / Attuale)</td><td class="p-3 font-semibold">${humMean} <span class="text-teal-600 font-bold text-xs ml-2">(${humCurr}${timeSuffix})</span></td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pioggia / Neve (Totale / Attuale)</td><td class="p-3 font-semibold">${rainSum} <span class="text-teal-600 font-bold text-xs ml-2">(${rainCurr}${timeSuffix})</span></td></tr>
+                                <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Alba / Tramonto</td><td class="p-3 font-semibold">🌅 ${sunriseStr} | 🌇 ${sunsetStr}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-xs text-slate-600 space-y-0.5 bg-white p-3 rounded-2xl border border-slate-300 shadow-sm">
+                        <p>ℹ️ <strong>Legenda:</strong></p>
+                        <p>• La temperatura attuale è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
+                        <p>• I valori in <span class="text-teal-600 font-bold">turchese grassetto</span> rappresentano i dati attuali con relativi orari.</p>
+                        <p>• Ultimo aggiornamento: <span class="font-bold text-slate-700">${nowTimeStr}</span>.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function fetchWeather(url) {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error-state');
+            const contentEl = document.getElementById('weather-content');
+
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            contentEl.classList.add('hidden');
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Località non trovata');
+                const data = await response.json();
+
+                const cityName = data.name;
+                const lat = data.coord.lat;
+                const lon = data.coord.lon;
+
+                currentLoadedCity = cityName;
+                updateFavoriteIcon(cityName);
+
+                localStorage.setItem('cavanweb_active_lat', lat);
+                localStorage.setItem('cavanweb_active_lon', lon);
+                localStorage.setItem('cavanweb_active_name', cityName);
+
+                let omData = {};
+                try {
+                    const omRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`);
+                    if (omRes.ok) omData = await omRes.json();
+                } catch (e) {}
+
+                latestWeatherData = { data, omData, lat, lon };
+                renderWeatherUI(latestWeatherData);
 
                 loadingEl.classList.add('hidden');
                 errorEl.classList.add('hidden');
@@ -477,31 +584,23 @@
 
         function fetchWeatherDataByCity(cityName) {
             lastFetchFunction = () => fetchWeatherDataByCity(cityName);
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric&lang=it`;
-            fetchWeather(url);
+            fetchWeather(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric&lang=it`);
         }
 
         function fetchWeatherDataByCoords(lat, lon) {
             lastFetchFunction = () => fetchWeatherDataByCoords(lat, lon);
-            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
-            fetchWeather(url);
+            fetchWeather(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`);
         }
 
         function refreshCurrent() {
-            if (lastFetchFunction) {
-                lastFetchFunction();
-            } else {
-                fetchWeatherDataByCity('Piacenza');
-            }
+            if (lastFetchFunction) lastFetchFunction();
+            else fetchWeatherDataByCity('Piacenza');
         }
 
         function handleSearchBtn() {
             const query = document.getElementById('search-input').value.trim();
-            if (query) {
-                fetchWeatherDataByCity(query);
-            } else {
-                alert("Inserisci il nome di una località.");
-            }
+            if (query) fetchWeatherDataByCity(query);
+            else alert("Inserisci il nome di una località.");
         }
 
         function getGPSWeather() {
@@ -515,13 +614,8 @@
             document.getElementById('weather-content').classList.add('hidden');
 
             navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const lat = position.coords.latitude;
-                    const lon = position.coords.longitude;
-                    fetchWeatherDataByCoords(lat, lon);
-                },
-                (error) => {
-                    console.error(error);
+                (pos) => fetchWeatherDataByCoords(pos.coords.latitude, pos.coords.longitude),
+                () => {
                     alert("Impossibile rilevare la posizione GPS. Caricamento Piacenza di default.");
                     fetchWeatherDataByCity('Piacenza');
                 },
@@ -530,11 +624,10 @@
         }
 
         window.onload = () => {
-            // Inizializza il tema salvato (default light)
             const savedTheme = localStorage.getItem('cavanweb_theme') || 'light';
             setTheme(savedTheme);
-
             renderFavoritesMenu();
+
             const selectedCity = localStorage.getItem('selected_city');
             const savedLat = localStorage.getItem('cavanweb_active_lat');
             const savedLon = localStorage.getItem('cavanweb_active_lon');
