@@ -46,13 +46,6 @@
         </div>
 
         <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
-            <!-- Badge superiori in stile Archivio -->
-            <div class="hidden sm:flex items-center gap-1.5 bg-white border border-slate-300 rounded-lg p-1 shadow-sm text-xs font-semibold text-slate-700">
-                <span class="bg-slate-100 px-2 py-1 rounded">Oggi: <span id="badge-oggi" class="text-amber-600 font-bold">1</span></span>
-                <span class="bg-slate-100 px-2 py-1 rounded">Mese: <span id="badge-mese" class="text-amber-600 font-bold">1</span></span>
-                <span class="bg-slate-100 px-2 py-1 rounded">Tot: <span id="badge-tot" class="text-amber-600 font-bold">1</span></span>
-            </div>
-
             <!-- Menu a Tendina Navigazione App (Pulsante Arancione) -->
             <div class="relative flex-shrink-0">
                 <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-amber-600 hover:bg-amber-700 px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-sm font-semibold">
@@ -139,57 +132,25 @@
             </button>
         </div>
 
-        <!-- Sezione Tabella Dati Attuali (Stile identico all'Archivio) -->
+        <!-- Sezione Tabella Verticale Dati Attuali -->
         <div id="weather-content" class="hidden space-y-3">
             <h2 class="text-base font-bold text-slate-900">
                 Meteo Attuale / Oggi (<span id="city-title">--</span>)
             </h2>
-            <div class="w-full overflow-x-auto rounded border border-slate-400 shadow-sm">
-                <table class="w-full text-left border-collapse text-xs whitespace-nowrap bg-white">
-                    <thead>
-                        <tr class="bg-[#1e293b] text-white border-b border-slate-500 text-center">
-                            <th class="p-2.5 border-r border-slate-600">Data</th>
-                            <th class="p-2.5 border-r border-slate-600">Temp. Attuale</th>
-                            <th class="p-2.5 border-r border-slate-600">Percepita Attuale</th>
-                            <th class="p-2.5 border-r border-slate-600">Max</th>
-                            <th class="p-2.5 border-r border-slate-600">Percepita</th>
-                            <th class="p-2.5 border-r border-slate-600">Min</th>
-                            <th class="p-2.5 border-r border-slate-600">Pressione</th>
-                            <th class="p-2.5 border-r border-slate-600">Vento (Vel. e Dir.)</th>
-                            <th class="p-2.5 border-r border-slate-600">Umidità (%)</th>
-                            <th class="p-2.5 border-r border-slate-600">Pioggia / Neve</th>
-                            <th class="p-2.5">Alba / Tramonto</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200 text-slate-800 text-center">
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-2.5 border-r border-slate-200 font-semibold text-[#0284c7] underline cursor-pointer" id="table-date">--</td>
-                            <td class="p-2.5 border-r border-slate-200 font-bold text-rose-600" id="table-temp-curr">--</td>
-                            <td class="p-2.5 border-r border-slate-200 font-bold text-teal-600" id="table-feels-curr">--</td>
-                            <td class="p-2.5 border-r border-slate-200" id="table-temp-max">--</td>
-                            <td class="p-2.5 border-r border-slate-200" id="table-feels-max">--</td>
-                            <td class="p-2.5 border-r border-slate-200" id="table-temp-min">--</td>
-                            <td class="p-2.5 border-r border-slate-200">
-                                <span id="table-press-mean">--</span><br>
-                                <span class="text-teal-600 font-bold" id="table-press-curr">--</span>
-                            </td>
-                            <td class="p-2.5 border-r border-slate-200">
-                                <span id="table-wind-max">--</span><br>
-                                <span class="text-teal-600 font-bold" id="table-wind-curr">--</span>
-                            </td>
-                            <td class="p-2.5 border-r border-slate-200">
-                                <span id="table-hum-mean">--</span><br>
-                                <span class="text-teal-600 font-bold" id="table-hum-curr">--</span>
-                            </td>
-                            <td class="p-2.5 border-r border-slate-200">
-                                <span id="table-rain-sum">--</span><br>
-                                <span class="text-teal-600 font-bold" id="table-rain-curr">--</span>
-                            </td>
-                            <td class="p-2.5">
-                                🌅 <span id="table-sunrise">--</span><br>
-                                🌇 <span id="table-sunset">--</span>
-                            </td>
-                        </tr>
+            <div class="w-full overflow-hidden rounded border border-slate-400 shadow-sm">
+                <table class="w-full text-left border-collapse text-sm bg-white">
+                    <tbody class="divide-y divide-slate-200 text-slate-800">
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold w-1/3 border-r border-slate-200">Data</td><td class="p-3 font-semibold text-[#0284c7] underline" id="table-date">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Attuale</td><td class="p-3 font-bold text-rose-600" id="table-temp-curr">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Attuale</td><td class="p-3 font-bold text-teal-600" id="table-feels-curr">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Max</td><td class="p-3 font-semibold" id="table-temp-max">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Percepita Max</td><td class="p-3 font-semibold" id="table-feels-max">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Temperatura Min</td><td class="p-3 font-semibold" id="table-temp-min">--</td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pressione (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-press-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-press-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Vento (Max / Attuale)</td><td class="p-3 font-semibold"><span id="table-wind-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-wind-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Umidità (Media / Attuale)</td><td class="p-3 font-semibold"><span id="table-hum-mean">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-hum-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Pioggia / Neve (Totale / Attuale)</td><td class="p-3 font-semibold"><span id="table-rain-sum">--</span> <span class="text-teal-600 font-bold text-xs ml-2" id="table-rain-curr">(--)</span></td></tr>
+                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold border-r border-slate-200">Alba / Tramonto</td><td class="p-3 font-semibold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -197,8 +158,8 @@
             <!-- Legenda in stile Archivio -->
             <div class="text-xs text-slate-600 space-y-0.5 bg-white p-3 rounded border border-slate-300 shadow-sm">
                 <p>ℹ️ <strong>Legenda:</strong></p>
-                <p>• La temperatura attuale in alto è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
-                <p>• I valori in <span class="text-teal-600 font-bold">turchese grassetto</span> sotto i dati giornalieri rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità).</p>
+                <p>• La temperatura attuale è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
+                <p>• I valori in <span class="text-teal-600 font-bold">turchese grassetto</span> rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità) affiancati ai valori giornalieri.</p>
                 <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-slate-700">--</span>.</p>
             </div>
         </div>
@@ -360,14 +321,12 @@
                 document.getElementById('city-title').textContent = cityName;
                 document.getElementById('currentLocationLabel').textContent = `${cityName} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
                 
-                // Data odierna formattata
                 const todayDate = new Date(dt * 1000);
                 const dayStr = String(todayDate.getDate()).padStart(2, '0');
                 const monthStr = String(todayDate.getMonth() + 1).padStart(2, '0');
                 const yearStr = todayDate.getFullYear();
                 document.getElementById('table-date').textContent = `${dayStr}-${monthStr}-${yearStr} (Oggi)`;
 
-                // Temperature attuali e percepite con orario
                 const currTimeSuffix = formatHourOnly(dt);
                 document.getElementById('table-temp-curr').textContent = Number(data.main.temp).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
                 document.getElementById('table-feels-curr').textContent = Number(data.main.feels_like).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
@@ -388,7 +347,6 @@
                 document.getElementById('table-sunrise').textContent = formatTime(data.sys.sunrise);
                 document.getElementById('table-sunset').textContent = formatTime(data.sys.sunset);
 
-                // Open-Meteo per dati giornalieri (Max, Min, Pressione media, ecc.)
                 const openMeteoUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`;
 
                 try {
@@ -513,4 +471,3 @@
     </script>
 </body>
 </html>
-```[cite: 2]
