@@ -6,7 +6,7 @@
     <title>MeteoCWEB - Dashboard Realtime</title>
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#f1f5f9">
+    <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,60 +23,60 @@
         }
     </style>
 </head>
-<body class="bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between p-4 sm:p-8">
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8">
 
     <!-- Top Bar / Header -->
-    <header class="w-full max-w-6xl mx-auto mb-6 bg-white border border-slate-200 rounded-3xl p-4 shadow-sm flex flex-wrap items-center justify-between gap-4 relative">
+    <header class="w-full max-w-6xl mx-auto mb-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-4 shadow-2xl flex flex-wrap items-center justify-between gap-4 relative">
         <div class="flex items-center gap-3">
             <!-- Logo Cliccabile verso CavanWeb -->
             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-200 shadow-sm group-hover:scale-105 transition">
+                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
             </a>
-            <button onclick="refreshCurrent();" class="bg-slate-100 hover:bg-slate-200 px-4 py-2.5 rounded-2xl border border-slate-200 transition text-slate-700 flex items-center gap-2 text-sm font-semibold shadow-sm">
-                <i class="fa-solid fa-rotate"></i> <span>Aggiorna</span>
+            <button onclick="refreshCurrent();" class="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 transition text-blue-200 hover:text-white flex items-center gap-2 text-sm font-semibold shadow">
+                <i class="fa-solid fa-rotate text-amber-400"></i> <span>Aggiorna</span>
             </button>
         </div>
 
         <!-- Titolo Centrale -->
         <div class="text-center flex-grow mx-2 order-3 lg:order-2 w-full lg:w-auto">
-            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
-                <i class="fa-solid fa-cloud-sun text-amber-500"></i> MeteoCWEB (Realtime)
+            <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mb-0.5 flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-cloud-sun text-amber-400"></i> MeteoCWEB (Realtime)
             </h1>
-            <p class="text-slate-500 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
+            <p class="text-blue-200 text-xs sm:text-sm">Dati in tempo reale da OpenWeatherMap & Open-Meteo</p>
         </div>
 
         <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
             <!-- Menu a Tendina Navigazione App (Pulsante Arancione) -->
             <div class="relative flex-shrink-0">
-                <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-amber-500 hover:bg-amber-600 px-4 py-2.5 rounded-2xl shadow transition text-white flex items-center gap-2 text-sm font-semibold">
-                    <i class="fa-solid fa-bars"></i> <span>Menu</span>
+                <button onclick="toggleMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-orange-500 hover:bg-orange-600 px-4 py-2.5 rounded-2xl shadow-lg transition text-white flex items-center gap-2 text-sm font-semibold">
+                    <i class="fa-solid fa-bars text-amber-200"></i> <span>Menu</span>
                 </button>
-                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2">
+                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
                     
                     <!-- Sezione Preferiti Dinamica -->
-                    <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 border-b border-slate-100 flex items-center gap-1.5">
-                        <i class="fa-solid fa-star"></i> Preferiti
+                    <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5">
+                        <i class="fa-solid fa-star text-amber-400"></i> Preferiti
                     </div>
                     <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1">
-                        <span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span>
+                        <span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span>
                     </div>
 
-                    <div class="border-t border-slate-100 my-1"></div>
+                    <div class="border-t border-white/10 my-1"></div>
 
-                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-sm font-semibold transition">
-                        <i class="fa-solid fa-calendar-days text-amber-500 w-5 text-center"></i>
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
+                        <i class="fa-solid fa-calendar-days text-amber-400 w-5 text-center"></i>
                         <span>Archivio Storico</span>
                     </a>
-                    <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-sm font-semibold transition">
-                        <i class="fa-solid fa-earth-americas text-amber-500 w-5 text-center"></i>
+                    <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
+                        <i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i>
                         <span>Mappa Interattiva</span>
                     </a>
-                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-sm font-semibold transition">
-                        <i class="fa-solid fa-clock text-amber-500 w-5 text-center"></i>
+                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
+                        <i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i>
                         <span>SunClock24</span>
                     </a>
-                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-slate-700 text-sm font-semibold transition">
-                        <i class="fa-solid fa-globe text-amber-500 w-5 text-center"></i>
+                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition">
+                        <i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i>
                         <span>Meteo Europa</span>
                     </a>
                 </div>
@@ -88,85 +88,85 @@
     <main class="w-full max-w-6xl mx-auto space-y-6 flex-grow">
 
         <!-- Barra di Ricerca Località -->
-        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-wrap items-center gap-3">
-            <div class="flex items-center gap-2 text-slate-700 font-semibold text-sm">
-                <i class="fa-solid fa-earth-americas text-amber-500"></i> Località:
+        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2 text-blue-200 font-semibold text-sm">
+                <i class="fa-solid fa-earth-americas text-amber-400"></i> Località:
             </div>
             <div class="relative flex-grow max-w-md">
                 <input type="text" id="search-input" placeholder="Cerca città (es. Roma, Tokyo)..." oninput="toggleClearButton()"
-                    class="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 text-sm transition">
+                    class="w-full pl-4 pr-10 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm transition">
                 <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota campo" 
-                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition hidden">
+                    class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-blue-300 hover:text-white transition hidden">
                     <i class="fa-solid fa-circle-xmark text-base"></i>
                 </button>
             </div>
             <!-- Pulsante Cerca Verde -->
-            <button onclick="handleSearchBtn()" class="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-2xl font-semibold text-white transition shadow-sm flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-magnifying-glass"></i> Cerca
+            <button onclick="handleSearchBtn()" class="bg-emerald-600 hover:bg-emerald-700 px-5 py-3 rounded-2xl font-semibold text-white transition shadow-lg flex items-center gap-2 text-sm">
+                <i class="fa-solid fa-magnifying-glass text-amber-300"></i> Cerca
             </button>
             <!-- Pulsante GPS Blu -->
-            <button onclick="getGPSWeather()" class="bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-2xl transition text-white flex items-center gap-2 text-sm font-semibold shadow-sm" title="Usa GPS">
-                <i class="fa-solid fa-location-crosshairs text-white"><span>GPS</span></i>
+            <button onclick="getGPSWeather()" class="bg-blue-600 hover:bg-blue-700 px-4 py-3 rounded-2xl border border-white/10 transition text-white flex items-center gap-2 text-sm font-semibold shadow-lg" title="Usa GPS">
+                <i class="fa-solid fa-location-crosshairs text-amber-300"><span>GPS</span></i>
             </button>
-            <div class="w-full text-xs text-slate-500 pt-1 flex items-center justify-between">
-                <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-slate-800">--</span></span>
-                <button onclick="toggleFavorite()" id="fav-btn" title="Aggiungi/Rimuovi dai preferiti" class="text-base text-slate-400 hover:text-amber-500 transition flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 rounded-xl border border-slate-200">
-                    <i id="fav-icon" class="fa-regular fa-star"></i> <span class="text-xs">Preferito</span>
+            <div class="w-full text-xs text-blue-300 pt-1 flex items-center justify-between">
+                <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-white">--</span></span>
+                <button onclick="toggleFavorite()" id="fav-btn" title="Aggiungi/Rimuovi dai preferiti" class="text-base text-blue-300 hover:text-amber-400 transition flex items-center gap-1.5 px-2 py-0.5 bg-white/5 rounded-xl border border-white/10">
+                    <i id="fav-icon" class="fa-regular fa-star text-amber-400"></i> <span class="text-xs">Preferito</span>
                 </button>
             </div>
         </div>
 
         <!-- Loading State -->
-        <div id="loading" class="bg-white border border-slate-200 rounded-3xl p-12 text-center shadow-sm space-y-4">
-            <div class="animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent mx-auto"></div>
-            <p id="loading-text" class="text-slate-600 font-medium">Caricamento dati meteo in corso...</p>
+        <div id="loading" class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-12 text-center shadow-2xl space-y-4">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-amber-400 border-t-transparent mx-auto"></div>
+            <p id="loading-text" class="text-blue-200 font-medium">Caricamento dati meteo in corso...</p>
         </div>
 
         <!-- Error State -->
-        <div id="error-state" class="hidden bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-sm space-y-4">
-            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-4xl"></i>
-            <p id="error-message" class="text-slate-600 text-sm">Località non trovata o errore di connessione.</p>
-            <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 font-semibold rounded-xl text-white transition shadow-sm text-sm">
+        <div id="error-state" class="hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 text-center shadow-2xl space-y-4">
+            <i class="fa-solid fa-triangle-exclamation text-amber-400 text-4xl"></i>
+            <p id="error-message" class="text-red-200 text-sm">Località non trovata o errore di connessione.</p>
+            <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 font-semibold rounded-xl text-white transition shadow-lg text-sm">
                 Carica Piacenza
             </button>
         </div>
 
         <!-- Sezione Dati Attuali / Dashboard (Tabella Verticale) -->
-        <div id="weather-content" class="hidden bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-bolt text-amber-500"></i> Condizioni Attuali (<span id="city-title">--</span>)
+        <div id="weather-content" class="hidden bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-bolt text-amber-400"></i> Condizioni Attuali (<span id="city-title" class="text-amber-300">--</span>)
             </h2>
-            <div class="w-full overflow-hidden rounded-2xl border border-slate-200">
+            <div class="w-full overflow-hidden rounded-2xl border border-white/10">
                 <table class="w-full text-left border-collapse text-sm">
-                    <tbody class="divide-y divide-slate-100 text-slate-700">
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold w-1/3">Condizione Meteo</td><td class="p-3 flex items-center gap-2 font-bold text-slate-900"><span id="weather-icon-container" class="text-xl text-amber-500"></span><span id="weather-desc">--</span></td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Temperatura Attuale</td><td class="p-3 text-rose-600 font-bold text-base"><span id="temp-value">--</span>°C</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Temperatura Percepita</td><td class="p-3 text-teal-600 font-bold"><span id="feels-like">--</span>°C</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Temperatura Min / Max Oggi</td><td class="p-3 font-semibold" id="min-max-value">--° / --°</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Altitudine</td><td class="p-3" id="altitude-value">-- m s.l.m.</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Pressione Atmosferica</td><td class="p-3" id="pressure-value">-- hPa</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Copertura Nuvolosa</td><td class="p-3" id="clouds-value">--%</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Pioggia (1h)</td><td class="p-3" id="rain-value">0 mm</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Umidità Relativa</td><td class="p-3" id="humidity-value">--%</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Vento</td><td class="p-3" id="wind-value">-- km/h</td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Alba / Tramonto</td><td class="p-3">🌅 <span id="sunrise-value">--:--</span> | 🌇 <span id="sunset-value">--:--</span></td></tr>
-                        <tr class="hover:bg-slate-50 transition"><td class="p-3 text-slate-500 font-semibold">Mezzogiorno / Mezzanotte Solare</td><td class="p-3">☀️ <span id="solar-noon-value">--:--</span> | 🌙 <span id="solar-midnight-value">--:--</span></td></tr>
+                    <tbody class="divide-y divide-white/10 text-blue-100">
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold w-1/3 flex items-center gap-2"><i class="fa-solid fa-cloud-sun text-amber-400 w-5"></i> Condizione Meteo</td><td class="p-3 flex items-center gap-2 font-bold text-white"><span id="weather-icon-container" class="text-xl text-amber-400"></span><span id="weather-desc">--</span></td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-temperature-three-quarters text-amber-400 w-5"></i> Temperatura Attuale</td><td class="p-3 text-rose-400 font-bold text-base"><span id="temp-value">--</span>°C</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-temperature-half text-amber-400 w-5"></i> Temperatura Percepita</td><td class="p-3 text-teal-300 font-bold"><span id="feels-like">--</span>°C</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-temperature-arrow-up text-amber-400 w-5"></i> Temperatura Min / Max Oggi</td><td class="p-3 font-semibold text-amber-300" id="min-max-value">--° / --°</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-mountain text-amber-400 w-5"></i> Altitudine</td><td class="p-3 font-semibold" id="altitude-value">-- m s.l.m.</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-gauge text-amber-400 w-5"></i> Pressione Atmosferica</td><td class="p-3 font-semibold" id="pressure-value">-- hPa</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-cloud text-amber-400 w-5"></i> Copertura Nuvolosa</td><td class="p-3 font-semibold" id="clouds-value">--%</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-cloud-rain text-amber-400 w-5"></i> Pioggia (1h)</td><td class="p-3 font-semibold" id="rain-value">0 mm</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-droplet text-amber-400 w-5"></i> Umidità Relativa</td><td class="p-3 font-semibold" id="humidity-value">--%</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-wind text-amber-400 w-5"></i> Vento</td><td class="p-3 font-semibold" id="wind-value">-- km/h</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-sun text-amber-400 w-5"></i> Alba / Tramonto</td><td class="p-3 font-semibold text-amber-200">🌅 <span id="sunrise-value">--:--</span> | 🌇 <span id="sunset-value">--:--</span></td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold flex items-center gap-2"><i class="fa-solid fa-clock text-amber-400 w-5"></i> Mezzogiorno / Mezzanotte Solare</td><td class="p-3 font-semibold text-amber-200">☀️ <span id="solar-noon-value">--:--</span> | 🌙 <span id="solar-midnight-value">--:--</span></td></tr>
                     </tbody>
                 </table>
             </div>
-            <div class="text-xs text-slate-500 space-y-1 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <p>ℹ️ <strong>Informazioni:</strong> Ultimo aggiornamento in tempo reale registrato alle <span id="update-time" class="font-bold text-slate-700">--</span>.</p>
+            <div class="text-xs text-blue-200/80 space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10">
+                <p>ℹ️ <strong>Informazioni:</strong> Ultimo aggiornamento in tempo reale registrato alle <span id="update-time" class="font-bold text-amber-300">--</span>.</p>
             </div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="w-full max-w-4xl mx-auto text-center mt-8 text-xs text-slate-500 space-y-2">
+    <footer class="w-full max-w-4xl mx-auto text-center mt-8 text-xs text-blue-300/60 space-y-2">
         <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
-            <p class="text-xs text-slate-600">Scarica la mia app ufficiale:</p>
-            <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 px-3.5 py-1.5 rounded-xl border border-slate-200 transition shadow-sm text-xs font-semibold text-slate-700 group" title="Scarica da Google Play">
-                <i class="fa-brands fa-google-play text-amber-500 text-sm group-hover:scale-110 transition"></i>
+            <p class="text-xs text-blue-200">Scarica la mia app ufficiale:</p>
+            <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group" title="Scarica da Google Play">
+                <i class="fa-brands fa-google-play text-amber-400 text-sm group-hover:scale-110 transition"></i>
                 <span>Google Play Store</span>
             </a>
         </div>
@@ -223,9 +223,9 @@
             const favIcon = document.getElementById('fav-icon');
             const favorites = getFavorites();
             if (favorites.includes(cityName)) {
-                favIcon.className = "fa-solid fa-star text-amber-500";
+                favIcon.className = "fa-solid fa-star text-amber-400";
             } else {
-                favIcon.className = "fa-regular fa-star text-slate-400 hover:text-amber-500";
+                favIcon.className = "fa-regular fa-star text-blue-300 hover:text-amber-400";
             }
         }
 
@@ -234,15 +234,15 @@
             const favorites = getFavorites();
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = '<span class="text-xs text-slate-400 px-3 py-1 italic">Nessun preferito salvato</span>';
+                favListContainer.innerHTML = '<span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span>';
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
-                html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-slate-100 text-slate-700 text-sm font-medium transition">
-                    <span class="truncate"><i class="fa-solid fa-location-dot text-amber-500 mr-2 text-xs"></i>${city}</span>
-                    <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-medium transition">
+                    <span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span>
+                    <i class="fa-solid fa-chevron-right text-xs text-blue-300/50"></i>
                 </button>`;
             });
             favListContainer.innerHTML = html;
@@ -262,26 +262,26 @@
 
         function getWeatherIcon(iconCode) {
             const iconMap = {
-                '01d': 'fa-sun text-amber-500',
-                '01n': 'fa-moon text-indigo-500',
-                '02d': 'fa-cloud-sun text-amber-500',
-                '02n': 'fa-cloud-moon text-indigo-500',
-                '03d': 'fa-cloud text-slate-400',
-                '03n': 'fa-cloud text-slate-500',
-                '04d': 'fa-cloud text-slate-400',
-                '04n': 'fa-cloud text-slate-500',
-                '09d': 'fa-cloud-showers-heavy text-blue-500',
-                '09n': 'fa-cloud-showers-heavy text-blue-600',
-                '10d': 'fa-cloud-rain text-blue-500',
-                '10n': 'fa-cloud-rain text-blue-600',
-                '11d': 'fa-bolt text-amber-500',
-                '11n': 'fa-bolt text-amber-600',
-                '13d': 'fa-snowflake text-blue-400',
-                '13n': 'fa-snowflake text-blue-500',
-                '50d': 'fa-smog text-slate-400',
-                '50n': 'fa-smog text-slate-500'
+                '01d': 'fa-sun text-amber-400',
+                '01n': 'fa-moon text-indigo-300',
+                '02d': 'fa-cloud-sun text-amber-300',
+                '02n': 'fa-cloud-moon text-indigo-300',
+                '03d': 'fa-cloud text-slate-300',
+                '03n': 'fa-cloud text-slate-400',
+                '04d': 'fa-cloud text-slate-300',
+                '04n': 'fa-cloud text-slate-400',
+                '09d': 'fa-cloud-showers-heavy text-blue-400',
+                '09n': 'fa-cloud-showers-heavy text-blue-500',
+                '10d': 'fa-cloud-rain text-blue-400',
+                '10n': 'fa-cloud-rain text-blue-500',
+                '11d': 'fa-bolt text-amber-400',
+                '11n': 'fa-bolt text-amber-500',
+                '13d': 'fa-snowflake text-blue-200',
+                '13n': 'fa-snowflake text-blue-300',
+                '50d': 'fa-smog text-slate-300',
+                '50n': 'fa-smog text-slate-400'
             };
-            return iconMap[iconCode] || 'fa-cloud-sun text-amber-500';
+            return iconMap[iconCode] || 'fa-cloud-sun text-amber-400';
         }
 
         function toggleClearButton() {
