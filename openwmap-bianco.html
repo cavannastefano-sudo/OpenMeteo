@@ -24,13 +24,13 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 min-h-screen text-slate-800 flex flex-col justify-between p-4 sm:p-8">
+<body class="bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between p-4 sm:p-8">
 
     <!-- Header con Logo, Titolo e Menu a Tendina -->
     <header class="w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative">
         <!-- Logo Cliccabile verso CavanWeb (Formato quadrato) -->
         <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-md group-hover:scale-105 transition">
+            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
         </a>
         
         <!-- Titolo Centrale -->
@@ -48,7 +48,7 @@
             </button>
 
             <!-- Contenuto della Tendina a scomparsa -->
-            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white/95 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2">
+            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-white backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2">
                 
                 <!-- Sezione Preferiti Dinamica -->
                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-600 border-b border-slate-100 flex items-center gap-1.5">
@@ -84,8 +84,8 @@
     <!-- Main Content Container -->
     <main class="w-full max-w-xl mx-auto flex-grow flex items-center justify-center">
         
-        <!-- Weather Card -->
-        <div id="weather-card" class="bg-white/80 backdrop-blur-md border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-xl w-full relative overflow-hidden transition-all duration-300 space-y-6">
+        <!-- Weather Card con tema chiaro -->
+        <div id="weather-card" class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-md w-full relative overflow-hidden transition-all duration-300 space-y-6">
             
             <!-- Search Bar Form -->
             <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2">
@@ -111,7 +111,7 @@
                 </button>
 
                 <!-- Pulsante GPS -->
-                <button type="button" onclick="getGPSWeather()" title="Usa posizione GPS" class="bg-slate-50 hover:bg-slate-100 px-4 py-3 rounded-2xl border border-slate-200 transition text-slate-600 flex items-center justify-center">
+                <button type="button" onclick="getGPSWeather()" title="Usa posizione GPS" class="bg-slate-100 hover:bg-slate-200 px-4 py-3 rounded-2xl border border-slate-200 transition text-slate-600 flex items-center justify-center">
                     <i class="fa-solid fa-location-crosshairs text-lg text-amber-500"></i>
                 </button>
             </form>
@@ -172,7 +172,7 @@
                 <!-- Grid Details -->
                 <div class="grid grid-cols-2 gap-3 pt-2">
                     <!-- Temp Min / Max (Open-Meteo) -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-amber-100 p-3 rounded-xl text-amber-600">
                             <i class="fa-solid fa-temperature-arrow-up text-xl"></i>
                         </div>
@@ -183,7 +183,7 @@
                     </div>
 
                     <!-- Altitudine (Open-Meteo) -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-emerald-100 p-3 rounded-xl text-emerald-600">
                             <i class="fa-solid fa-mountain text-xl"></i>
                         </div>
@@ -194,7 +194,7 @@
                     </div>
 
                     <!-- Percepita -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-rose-100 p-3 rounded-xl text-rose-600">
                             <i class="fa-solid fa-temperature-half text-xl"></i>
                         </div>
@@ -205,7 +205,7 @@
                     </div>
 
                     <!-- Pressione -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-indigo-100 p-3 rounded-xl text-indigo-600">
                             <i class="fa-solid fa-gauge text-xl"></i>
                         </div>
@@ -216,7 +216,7 @@
                     </div>
 
                     <!-- Nuvole -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-slate-200 p-3 rounded-xl text-slate-600">
                             <i class="fa-solid fa-cloud text-xl"></i>
                         </div>
@@ -227,7 +227,7 @@
                     </div>
 
                     <!-- Pioggia -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-sky-100 p-3 rounded-xl text-sky-600">
                             <i class="fa-solid fa-cloud-rain text-xl"></i>
                         </div>
@@ -238,7 +238,7 @@
                     </div>
 
                     <!-- Umidità -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-blue-100 p-3 rounded-xl text-blue-600">
                             <i class="fa-solid fa-droplet text-xl"></i>
                         </div>
@@ -249,7 +249,7 @@
                     </div>
 
                     <!-- Vento -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-teal-100 p-3 rounded-xl text-teal-600">
                             <i class="fa-solid fa-wind text-xl"></i>
                         </div>
@@ -260,7 +260,7 @@
                     </div>
 
                     <!-- Alba -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-amber-100 p-3 rounded-xl text-amber-600">
                             <i class="fa-solid fa-sun text-xl"></i>
                         </div>
@@ -271,7 +271,7 @@
                     </div>
 
                     <!-- Mezzogiorno Solare -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-orange-100 p-3 rounded-xl text-orange-600">
                             <i class="fa-solid fa-sun text-xl"></i>
                         </div>
@@ -282,7 +282,7 @@
                     </div>
 
                     <!-- Tramonto -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-purple-100 p-3 rounded-xl text-purple-600">
                             <i class="fa-solid fa-moon text-xl"></i>
                         </div>
@@ -293,7 +293,7 @@
                     </div>
 
                     <!-- Mezzanotte Solare -->
-                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 flex items-center space-x-3">
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 flex items-center space-x-3">
                         <div class="bg-indigo-100 p-3 rounded-xl text-indigo-500">
                             <i class="fa-solid fa-moon text-xl"></i>
                         </div>
