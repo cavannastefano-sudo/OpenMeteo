@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-theme="cavanweb">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mappa Meteo Mondiale</title>
+    <title>MeteoCWEB - Mappa Interattiva</title>
     <!-- PWA Manifest & Theme -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#728890" id="meta-theme-color">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,201 +14,328 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Leaflet CSS (Mappa) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
-        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow: hidden; background-color: #0f172a; }
-        #map { height: calc(100vh - 130px); width: 100vw; border-radius: 0; }
-        /* Personalizzazione popup mappa in stile scuro */
-        .leaflet-popup-content-wrapper { background: #1e293b; color: white; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.2); }
-        .leaflet-popup-tip { background: #1e293b; }
-        /* Stile personalizzato per il controllo dei layer (sfondo scuro) */
-        .leaflet-control-layers { background: #1e293b !important; color: white !important; border: 1px solid rgba(255,255,255,0.2) !important; border-radius: 1rem !important; padding: 8px 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); max-height: 80vh; overflow-y: auto; }
-        .leaflet-control-layers label { font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
-        .leaflet-control-layers-separator { border-top: 1px solid rgba(255,255,255,0.2); margin: 6px 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        #map {
+            height: 550px;
+            width: 100%;
+            border-radius: 1.5rem;
+            z-index: 10;
+        }
+        input[type="search"]::-webkit-search-cancel-button {
+            display: none;
+        }
     </style>
 </head>
-<body class="min-h-screen text-white flex flex-col justify-between">
+<body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
 
-    <!-- Header Full Width -->
-    <header class="w-full bg-slate-900/60 backdrop-blur-md border-b border-white/10 px-4 py-3 flex items-center justify-between z-[1000]">
-        <a href="openwmap2.html" class="bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-semibold flex-shrink-0">
-            <i class="fa-solid fa-arrow-left text-amber-400"></i>
-            <span>Torna al Meteo</span>
-        </a>
-        <div class="text-center flex-grow mx-2">
-            <h1 class="text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2">
-                <i class="fa-solid fa-earth-americas text-amber-400"></i> Mappa Meteo Interattiva
-            </h1>
-        </div>
-        <!-- Logo Quadrato e Simmetrico -->
-        <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-            <img src="SfondoN-512.png" alt="Logo" class="w-9 h-9 rounded-xl object-cover aspect-square border border-white/20 shadow group-hover:scale-105 transition">
-        </a>
-    </header>
+    <!-- HEADER DINAMICO -->
+    <div id="header-container" class="w-full max-w-6xl mx-auto mb-6">
+        <!-- Verrà iniettato via JS -->
+    </div>
 
-    <!-- Main Map Container Full Width -->
-    <main class="w-full flex-grow relative">
-        <div id="map"></div>
-        <!-- Istruzione fluttuante in basso -->
-        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-blue-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap">
-            📍 Clicca ovunque sulla mappa per scoprire il meteo della località
-        </div>
+    <!-- MAIN CONTAINER -->
+    <main id="main-container" class="w-full max-w-6xl mx-auto space-y-4 flex-grow flex flex-col justify-center">
+        <!-- Verrà iniettato via JS -->
     </main>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- FOOTER -->
+    <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs space-y-2">
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <p class="text-xs" id="footer-app-text">Scarica la mia app ufficiale:</p>
+            <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border transition shadow text-xs font-semibold group" title="Scarica da Google Play" id="playstore-btn">
+                <i class="fa-brands fa-google-play text-amber-400 text-sm group-hover:scale-110 transition"></i>
+                <span>Google Play Store</span>
+            </a>
+        </div>
+        <p id="footer-copy">MeteoCWEB • Sviluppato con Tailwind CSS & Leaflet</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
+        let map = null;
+        let marker = null;
+        let currentLat = 45.0483;
+        let currentLon = 9.6953;
+        let currentPlaceName = "Piacenza";
 
-        // Definizione dei Layer di base
-        const darkLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 16,
-            attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
-        });
+        function toggleTheme() {
+            const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            let next = 'light';
+            if (current === 'cavanweb') next = 'light';
+            else if (current === 'light') next = 'dark';
+            else next = 'cavanweb';
+            setTheme(next);
+        }
 
-        const lightLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
-            maxZoom: 16,
-            attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
-        });
+        function setTheme(themeName) {
+            localStorage.setItem('cavanweb_theme', themeName);
+            const body = document.getElementById('app-body');
+            const metaTheme = document.getElementById('meta-theme-color');
+            const footerAppText = document.getElementById('footer-app-text');
+            const playStoreBtn = document.getElementById('playstore-btn');
+            const footerCopy = document.getElementById('footer-copy');
 
-        const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxZoom: 17,
-            attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'
-        });
-
-        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        });
-
-        // Layer delle Situazioni Meteorologiche di OpenWeatherMap con Opacità Massima (1.0)
-        const tempLayer = L.tileLayer(`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
-        });
-
-        const precipLayer = L.tileLayer(`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
-        });
-
-        const windLayer = L.tileLayer(`https://tile.openweathermap.org/map/wind_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
-        });
-
-        const pressureLayer = L.tileLayer(`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
-        });
-
-        const cloudsLayer = L.tileLayer(`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
-        });
-
-        // Recupera la scelta precedente della mappa di base (default: dark)
-        const savedLayerType = localStorage.getItem('preferred_map_layer') || 'dark';
-        let defaultLayer = darkLayer;
-        if (savedLayerType === 'light') defaultLayer = lightLayer;
-        if (savedLayerType === 'topo') defaultLayer = topoLayer;
-        if (savedLayerType === 'osm') defaultLayer = osmLayer;
-
-        // Inizializzazione Mappa con zoom 5 centrata sull'Europa/Italia
-        const map = L.map('map', {
-            center: [45.0483, 9.6953],
-            zoom: 5,
-            layers: [defaultLayer]
-        });
-
-        // Mappe di base
-        const baseMaps = {
-            "🌙 Esri Dark (Scura)": darkLayer,
-            "☀️ Esri Light (Chiara)": lightLayer,
-            "⛰️ OpenTopoMap": topoLayer,
-            "🗺️ OpenStreetMap": osmLayer
-        };
-
-        // Livelli sovrapponibili con checkbox
-        const overlayMaps = {
-            "🌡️ Temperature": tempLayer,
-            "🌧️ Precipitazioni (Pioggia)": precipLayer,
-            "💨 Vento": windLayer,
-            "⏱️ Pressione Atmosferica": pressureLayer,
-            "☁️ Copertura Nuvolosa": cloudsLayer
-        };
-
-        // Aggiunge il selettore in alto a destra
-        L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
-
-        // Salva la preferenza della mappa di base scelta dall'utente
-        map.on('baselayerchange', function (e) {
-            if (e.name.includes("Dark")) {
-                localStorage.setItem('preferred_map_layer', 'dark');
-            } else if (e.name.includes("Light")) {
-                localStorage.setItem('preferred_map_layer', 'light');
-            } else if (e.name.includes("Topo")) {
-                localStorage.setItem('preferred_map_layer', 'topo');
+            if (themeName === 'dark') {
+                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8";
+                metaTheme.setAttribute("content", "#0f172a");
+                footerAppText.className = "text-xs text-blue-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-blue-300/60";
+            } else if (themeName === 'light') {
+                body.className = "bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#f1f5f9");
+                footerAppText.className = "text-xs text-slate-600";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 px-3.5 py-1.5 rounded-xl border border-slate-300 transition shadow text-xs font-semibold text-slate-800 group";
+                footerCopy.className = "text-slate-500";
             } else {
-                localStorage.setItem('preferred_map_layer', 'osm');
+                body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#728890");
+                footerAppText.className = "text-xs text-slate-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#D8D9D0]/40 hover:bg-[#D8D9D0]/70 px-3.5 py-1.5 rounded-xl border border-slate-600/30 transition shadow text-xs font-semibold text-slate-900 group";
+                footerCopy.className = "text-slate-200/80";
             }
-        });
 
-        let currentMarker = null;
+            renderLayout();
+            initMap();
+        }
 
-        // Funzione per caricare il meteo al click sulla mappa
-        async function getWeatherByCoords(lat, lon) {
-            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
-            
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error("Dati non disponibili");
-                const data = await response.json();
+        function renderLayout() {
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const headerContainer = document.getElementById('header-container');
+            const mainContainer = document.getElementById('main-container');
 
-                const cityName = data.name || "Località sconosciuta";
-                const country = data.sys.country || "";
-                const temp = Number(data.main.temp).toFixed(1);
-                const feelsLike = Number(data.main.feels_like).toFixed(1);
-                const desc = data.weather[0].description;
-                const humidity = data.main.humidity;
-                const wind = Number(data.wind.speed * 3.6).toFixed(1);
+            let themeIcon = "fa-palette";
+            let themeLabel = "Tema";
+            if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
+            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
+            else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
 
-                const popupContent = `
-                    <div class="p-2 space-y-1 text-left">
-                        <h3 class="font-bold text-base text-amber-400">${cityName} (${country})</h3>
-                        <p class="text-2xl font-extrabold">${temp}°C <span class="text-xs font-normal text-slate-300">(Percepita ${feelsLike}°C)</span></p>
-                        <p class="capitalize text-sm text-blue-200">${desc}</p>
-                        <hr class="border-white/10 my-1">
-                        <div class="text-xs text-slate-300 space-y-0.5">
-                            <p><i class="fa-solid fa-droplet text-blue-400"></i> Umidità: ${humidity}%</p>
-                            <p><i class="fa-solid fa-wind text-teal-400"></i> Vento: ${wind} km/h</p>
-                        </div>
-                        <div class="pt-2 text-center">
-                            <a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${cityName}')" class="inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold px-3 py-1 rounded-lg text-xs transition shadow">
-                                Visualizza nella Dashboard
-                            </a>
+            const themeButtonHTML = `
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
+                    <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
+                </button>
+            `;
+
+            if (currentTheme === 'dark') {
+                headerContainer.className = "w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative";
+                headerContainer.innerHTML = `
+                    <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                        <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
+                    </a>
+                    <div class="text-center flex-grow mx-2">
+                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-earth-americas text-amber-400"></i> Mappa Interattiva
+                        </h1>
+                        <p class="text-blue-200 text-xs sm:text-sm">Seleziona una località sulla mappa</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        ${themeButtonHTML}
+                        <div class="relative flex-shrink-0">
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center text-lg font-semibold">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Navigazione</div>
+                                <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-cloud-sun text-amber-400 w-5 text-center"></i> <span>Dashboard Meteo</span></a>
+                                <a href="archivio.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-calendar-days text-amber-400 w-5 text-center"></i> <span>Archivio Storico</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
+                            </div>
                         </div>
                     </div>
                 `;
 
-                if (currentMarker) {
-                    currentMarker.setLatLng([lat, lon]).setPopupContent(popupContent).openPopup();
-                } else {
-                    currentMarker = L.marker([lat, lon]).addTo(map).bindPopup(popupContent).openPopup();
-                }
+                mainContainer.className = "w-full max-w-4xl mx-auto space-y-4 flex-grow";
+                mainContainer.innerHTML = `
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl w-full space-y-4">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="relative flex-grow">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-blue-300"><i class="fa-solid fa-magnifying-glass text-sm"></i></span>
+                                <input type="text" id="search-input" placeholder="Cerca località sulla mappa..." class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm sm:text-base transition">
+                            </div>
+                            <button onclick="handleSearch()" class="bg-amber-500 hover:bg-amber-600 px-6 py-3 rounded-2xl font-semibold text-slate-900 transition shadow-lg text-sm sm:text-base">Cerca</button>
+                        </div>
+                        <div id="map"></div>
+                        <div class="text-center text-xs text-blue-200/80">Clicca un punto qualsiasi sulla mappa o cerca una città per selezionarla.</div>
+                    </div>
+                `;
+            } else {
+                const isCavanWeb = (currentTheme === 'cavanweb');
+                const headerBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400" : "bg-white border-slate-200";
+                const cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : "bg-white border-slate-300 text-slate-800";
+                const dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : "bg-white border-slate-200";
 
-            } catch (err) {
-                console.error(err);
-                if (currentMarker) {
-                    currentMarker.setLatLng([lat, lon]).setPopupContent("<p class='p-2 text-red-400'>Impossibile caricare il meteo per questa posizione.</p>").openPopup();
-                } else {
-                    currentMarker = L.marker([lat, lon]).addTo(map).bindPopup("<p class='p-2 text-red-400'>Impossibile caricare il meteo per questa posizione.</p>").openPopup();
-                }
+                headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${headerBgClass} border rounded-3xl p-4 shadow-sm space-y-4 relative`;
+                headerContainer.innerHTML = `
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
+                            </a>
+                            ${themeButtonHTML}
+                        </div>
+                        <div class="relative flex-shrink-0">
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-base font-semibold">
+                                <i class="fa-solid fa-bars"></i> <span>Menu</span>
+                            </button>
+                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-[#800040] text-base">
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b ${isCavanWeb ? 'border-[#800040]/30' : 'border-slate-100'} flex items-center gap-1.5"><i class="fa-solid fa-star text-[#800040]"></i> Navigazione</div>
+                                <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-cloud-sun text-[#800040] w-5 text-center"></i> <span>Dashboard Meteo</span></a>
+                                <a href="archivio.html" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-calendar-days text-[#800040] w-5 text-center"></i> <span>Archivio Storico</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center border-t border-slate-300/40 pt-3">
+                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-earth-americas ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> Mappa Interattiva
+                        </h1>
+                        <p class="text-slate-600 text-sm sm:text-base">Seleziona una località sulla mappa</p>
+                    </div>
+                `;
+
+                mainContainer.className = "w-full max-w-6xl mx-auto space-y-4 flex-grow";
+                mainContainer.innerHTML = `
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2 text-slate-900 font-semibold text-base">
+                            <i class="fa-solid fa-earth-americas"></i> Località:
+                        </div>
+                        <div class="relative flex-grow max-w-xs">
+                            <input type="text" id="search-input" placeholder="Cerca città..." class="w-full pl-3 pr-3 py-2 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-base">
+                        </div>
+                        <button onclick="handleSearch()" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-2 rounded text-white font-semibold text-base flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
+                    </div>
+
+                    <div class="${cardBgClass} border rounded p-6 shadow-sm space-y-4">
+                        <div id="map"></div>
+                        <div class="text-center text-sm text-slate-700 font-medium">Clicca un punto qualsiasi sulla mappa o cerca una città per selezionarla.</div>
+                    </div>
+                `;
             }
         }
 
-        // Evento click sulla mappa
-        map.on('click', function(e) {
-            const lat = e.latlng.lat;
-            const lon = e.latlng.lng;
-            getWeatherByCoords(lat, lon);
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const menu = document.getElementById('dropdown-menu');
+            const menuBtn = document.getElementById('menu-btn');
+            if (menu && menuBtn && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
         });
+
+        function initMap() {
+            const savedLat = parseFloat(localStorage.getItem('cavanweb_active_lat')) || 45.0483;
+            const savedLon = parseFloat(localStorage.getItem('cavanweb_active_lon')) || 9.6953;
+            const savedName = localStorage.getItem('cavanweb_active_name') || 'Piacenza';
+
+            currentLat = savedLat;
+            currentLon = savedLon;
+            currentPlaceName = savedName;
+
+            const input = document.getElementById('search-input');
+            if (input) input.value = currentPlaceName;
+
+            if (map) {
+                map.remove();
+                map = null;
+            }
+
+            map = L.map('map').setView([currentLat, currentLon], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            marker = L.marker([currentLat, currentLon], {draggable: true}).addTo(map);
+            marker.bindPopup(`<b>${currentPlaceName}</b><br>Lat: ${currentLat.toFixed(4)}, Lon: ${currentLon.toFixed(4)}`).openPopup();
+
+            marker.on('dragend', function(event) {
+                const position = marker.getLatLng();
+                currentLat = position.lat;
+                currentLon = position.lng;
+                reverseGeocode(currentLat, currentLon);
+            });
+
+            map.on('click', function(e) {
+                currentLat = e.latlng.lat;
+                currentLon = e.latlng.lng;
+                marker.setLatLng([currentLat, currentLon]);
+                reverseGeocode(currentLat, currentLon);
+            });
+        }
+
+        async function reverseGeocode(lat, lon) {
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=it`);
+                const data = await res.json();
+                if (data && data.address) {
+                    currentPlaceName = data.address.city || data.address.town || data.address.village || data.address.county || "Località selezionata";
+                } else {
+                    currentPlaceName = "Località selezionata";
+                }
+                const input = document.getElementById('search-input');
+                if (input) input.value = currentPlaceName;
+
+                marker.bindPopup(`<b>${currentPlaceName}</b><br>Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`).openPopup();
+
+                localStorage.setItem('cavanweb_active_lat', currentLat);
+                localStorage.setItem('cavanweb_active_lon', currentLon);
+                localStorage.setItem('cavanweb_active_name', currentPlaceName);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function handleSearch() {
+            const input = document.getElementById('search-input');
+            if (!input || !input.value.trim()) {
+                alert("Inserisci il nome di una località.");
+                return;
+            }
+            const query = input.value.trim();
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&accept-language=it`);
+                const data = await res.json();
+                if (data && data.length > 0) {
+                    currentLat = parseFloat(data[0].lat);
+                    currentLon = parseFloat(data[0].lon);
+                    currentPlaceName = data[0].display_name.split(',')[0];
+
+                    map.setView([currentLat, currentLon], 13);
+                    marker.setLatLng([currentLat, currentLon]);
+                    marker.bindPopup(`<b>${currentPlaceName}</b><br>Lat: ${currentLat.toFixed(4)}, Lon: ${currentLon.toFixed(4)}`).openPopup();
+
+                    localStorage.setItem('cavanweb_active_lat', currentLat);
+                    localStorage.setItem('cavanweb_active_lon', currentLon);
+                    localStorage.setItem('cavanweb_active_name', currentPlaceName);
+                } else {
+                    alert("Località non trovata.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Errore di connessione durante la ricerca.");
+            }
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            setTheme(savedTheme);
+        };
     </script>
 </body>
 </html>
