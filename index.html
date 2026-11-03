@@ -28,7 +28,7 @@
         }
     </style>
 </head>
-<body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
+<body class="bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8" id="app-body">
 
     <!-- HEADER DINAMICO -->
     <div id="header-container" class="w-full max-w-6xl mx-auto mb-6">
@@ -74,11 +74,11 @@
         let currentPlaceName = "Piacenza";
 
         function toggleTheme() {
-            const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const current = localStorage.getItem('cavanweb_theme') || 'dark';
             let next = 'light';
-            if (current === 'cavanweb') next = 'light';
-            else if (current === 'light') next = 'dark';
-            else next = 'cavanweb';
+            if (current === 'dark') next = 'cavanweb';
+            else if (current === 'cavanweb') next = 'light';
+            else next = 'dark';
             setTheme(next);
         }
 
@@ -116,15 +116,14 @@
         }
 
         function renderLayout() {
-            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'dark';
             const headerContainer = document.getElementById('header-container');
             const mainContainer = document.getElementById('main-container');
 
-            let themeIcon = "fa-palette";
-            let themeLabel = "Tema";
-            if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
-            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
-            else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
+            let themeIcon = "fa-moon";
+            let themeLabel = "Scuro";
+            if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
+            else if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
 
             const themeButtonHTML = `
                 <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
@@ -133,43 +132,60 @@
             `;
 
             if (currentTheme === 'dark') {
-                headerContainer.className = "w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative";
+                headerContainer.className = "w-full max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 px-2 sm:px-4 relative";
                 headerContainer.innerHTML = `
                     <div class="flex items-center gap-3">
                         <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-                            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
+                            <img src="SfondoN-512.png" alt="CavanWeb Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
                         </a>
-                        <button onclick="location.reload();" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center text-lg font-semibold" title="Aggiorna">
-                            <i class="fa-solid fa-rotate"></i>
+                        <button onclick="location.reload();" class="bg-white/10 hover:bg-white/20 px-4 py-2.5 rounded-2xl border border-white/20 transition text-blue-200 hover:text-white flex items-center gap-2 text-sm font-semibold shadow">
+                            <i class="fa-solid fa-rotate"></i> <span>Aggiorna</span>
                         </button>
                         ${themeButtonHTML}
                     </div>
-                    <div class="text-center flex-grow mx-2">
+                    <div class="text-center flex-grow mx-2 order-3 lg:order-2 w-full lg:w-auto">
                         <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-calendar-days text-amber-400"></i> Archivio Storico Meteo Globale 1940-Oggi
                         </h1>
                         <p class="text-blue-200 text-xs sm:text-sm">Dati storici e climatologici Open-Meteo</p>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center text-lg font-semibold">
+                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Apri menu collegamenti" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center text-lg font-semibold">
                                 <i class="fa-solid fa-bars"></i>
                             </button>
-                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 bg-slate-900 border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
-                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
-                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs text-white px-3 py-1 italic">Nessun preferito salvato</span></div>
+                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-star"></i> Preferiti
+                                </div>
+                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1">
+                                    <span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span>
+                                </div>
                                 <div class="border-t border-white/10 my-1"></div>
-                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-white text-sm font-semibold transition"><i class="fa-solid fa-cloud-sun text-amber-400 w-5 text-center"></i> <span>MeteoCWEB</span></a>
-                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-white text-sm font-semibold transition"><i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-white text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
-                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-white text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition" title="Apri MeteoCWEB">
+                                    <i class="fa-solid fa-cloud-sun text-amber-400 w-5 text-center"></i>
+                                    <span>MeteoCWEB (Realtime)</span>
+                                </a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition" title="Apri Mappa">
+                                    <i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i>
+                                    <span>Mappa Interattiva</span>
+                                </a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition" title="Apri SunClock24">
+                                    <i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i>
+                                    <span>SunClock24</span>
+                                </a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition" title="Apri Meteo Europa">
+                                    <i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i>
+                                    <span>Meteo Europa</span>
+                                </a>
                             </div>
                         </div>
                     </div>
                 `;
 
+                mainContainer.className = "w-full max-w-6xl mx-auto space-y-6 flex-grow";
                 mainContainer.innerHTML = `
-                    <div class="bg-white/15 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
                         <div class="flex items-center gap-2 text-blue-200 font-semibold text-sm">
                             <i class="fa-solid fa-earth-americas text-amber-400"></i> Località:
                         </div>
@@ -274,18 +290,24 @@
                 const cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : "bg-white border-slate-300 text-slate-800";
                 const dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : "bg-white border-slate-200";
 
-                headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${headerBgClass} border rounded-3xl p-4 shadow-sm space-y-4 relative`;
+                headerContainer.className = `w-full max-w-6xl mx-auto mb-6 flex flex-wrap items-center justify-between gap-4 px-2 sm:px-4 relative ${headerBgClass} border rounded-3xl p-4 shadow-sm`;
                 headerContainer.innerHTML = `
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-                                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
-                            </a>
-                            <button onclick="location.reload();" class="bg-slate-700 hover:bg-slate-800 w-12 h-12 rounded-2xl text-white transition shadow flex items-center justify-center text-lg flex-shrink-0" title="Aggiorna">
-                                <i class="fa-solid fa-rotate"></i>
-                            </button>
-                            ${themeButtonHTML}
-                        </div>
+                    <div class="flex items-center gap-3">
+                        <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                            <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
+                        </a>
+                        <button onclick="location.reload();" class="bg-slate-700 hover:bg-slate-800 w-12 h-12 rounded-2xl text-white transition shadow flex items-center justify-center text-lg flex-shrink-0" title="Aggiorna">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
+                        ${themeButtonHTML}
+                    </div>
+                    <div class="text-center flex-grow mx-2 order-3 lg:order-2 w-full lg:w-auto">
+                        <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-calendar-days ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> Archivio Storico Meteo Globale 1940-Oggi
+                        </h1>
+                        <p class="text-slate-600 text-sm sm:text-base">Dati storici e climatologici Open-Meteo</p>
+                    </div>
+                    <div class="flex items-center gap-3 order-2 lg:order-3 ml-auto">
                         <div class="relative flex-shrink-0">
                             <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-base font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
@@ -300,12 +322,6 @@
                                 <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-center border-t border-slate-300/40 pt-3">
-                        <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-calendar-days ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> Archivio Storico Meteo Globale 1940-Oggi
-                        </h1>
-                        <p class="text-slate-600 text-sm sm:text-base">Dati storici e climatologici Open-Meteo</p>
                     </div>
                 `;
 
@@ -445,15 +461,15 @@
         }
 
         function updateFavoriteIcon(cityName) {
-            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'dark';
             const favIcon = document.getElementById('fav-icon');
             if (!favIcon) return;
             const favorites = getFavorites();
 
             if (favorites.includes(cityName)) {
-                favIcon.className = "fa-solid fa-star text-blue-500";
+                favIcon.className = "fa-solid fa-star text-amber-400";
             } else {
-                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-amber-400" : "fa-regular fa-star text-blue-600";
+                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-blue-300 hover:text-amber-400" : "fa-regular fa-star text-blue-600";
             }
         }
 
@@ -461,18 +477,18 @@
             const favListContainer = document.getElementById('favorites-list');
             if (!favListContainer) return;
             const favorites = getFavorites();
-            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'dark';
             const isCavanWeb = (currentTheme === 'cavanweb');
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = `<span class="text-sm ${currentTheme === 'dark' ? 'text-white' : (isCavanWeb ? 'text-slate-500' : 'text-slate-400')} px-3 py-1 font-semibold italic">Nessun preferito salvato</span>`;
+                favListContainer.innerHTML = `<span class="text-xs ${currentTheme === 'dark' ? 'text-blue-300/60' : (isCavanWeb ? 'text-slate-500' : 'text-slate-400')} px-3 py-1 italic">Nessun preferito salvato</span>`;
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
                 if (currentTheme === 'dark') {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-white text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-white/50"></i></button>`;
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-medium transition"><span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-blue-300/50"></i></button>`;
                 } else {
                     html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs ${isCavanWeb ? 'text-[#800040]' : 'text-slate-400'}"></i></button>`;
                 }
@@ -594,7 +610,7 @@
             if (yearSelect) yearSelect.value = "";
             if (startYearSelect) startYearSelect.value = "";
             if (endYearSelect) endYearSelect.value = "";
-            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'dark';
             const isCavanWeb = (currentTheme === 'cavanweb');
             document.querySelector("#weatherTable tbody").innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-blue-300')} font-bold">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>`;
             const csvBtn = document.getElementById("exportCsvBtn");
@@ -652,10 +668,9 @@
         function loadCurrentWeather() {
             const currentTbody = document.querySelector("#currentWeatherTable tbody");
             if (!currentTbody) return;
-            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const urlCurrent = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
 
-            currentTbody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-slate-500">Caricamento dati attuali in corso...</td></tr>`;
+            currentTbody.innerHTML = '<tr><td colspan="2" class="p-4 text-center">Caricamento dati attuali in corso...</td></tr>';
 
             fetch(urlCurrent)
                 .then(res => res.json())
@@ -664,7 +679,7 @@
                     const current = data.current;
                     const daily = data.daily;
                     if (!daily || !daily.time || daily.time.length === 0) {
-                        currentTbody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-amber-500 font-bold">Dati attuali non disponibili.</td></tr>`;
+                        currentTbody.innerHTML = '<tr><td colspan="2" class="p-4 text-center text-amber-400">Dati attuali non disponibili.</td></tr>';
                         return;
                     }
                     const i = 0;
@@ -693,22 +708,22 @@
                     const dailyPrecip = formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i]);
 
                     currentTbody.innerHTML = `
-                        <tr><td class="p-3.5 font-semibold w-1/3 border-r border-slate-200">Data</td><td class="p-3.5"><span class="text-[#0284c7] font-bold cursor-pointer underline" onclick="openCurrentModal()">${formattedDateIT} (Oggi)</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Temperatura Attuale</td><td class="p-3.5 text-rose-600 font-extrabold text-lg">${currentTemp}</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Percepita Attuale</td><td class="p-3.5 text-teal-600 font-bold">${currentApparent}</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Temperatura Max</td><td class="p-3.5 font-bold">${formatVal(daily.temperature_2m_max[i])}°C</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Percepita Max</td><td class="p-3.5 font-bold">${formatVal(daily.apparent_temperature_max[i])}°C</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Temperatura Min</td><td class="p-3.5 font-bold">${formatVal(daily.temperature_2m_min[i])}°C</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Pressione (Media / Attuale)</td><td class="p-3.5 font-bold">${dailyPressure} <span class="text-teal-600 font-bold text-sm ml-2">(${currentPressure})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Vento (Max / Attuale)</td><td class="p-3.5 font-bold">${dailyWind} <span class="text-teal-600 font-bold text-sm ml-2">(${currentWind})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Umidità (Media / Attuale)</td><td class="p-3.5 font-bold">${dailyHum} <span class="text-teal-600 font-bold text-sm ml-2">(${currentHum})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Pioggia / Neve (Totale / Attuale)</td><td class="p-3.5 font-bold">${dailyPrecip} <span class="text-teal-600 font-bold text-sm ml-2">(${currentPrecipText})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Alba / Tramonto</td><td class="p-3.5 font-bold">🌅 ${formatTimeWithSeconds(daily.sunrise[i])} | 🌇 ${formatTimeWithSeconds(daily.sunset[i])}</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold w-1/3">Data</td><td class="p-3"><span class="text-amber-400 font-bold cursor-pointer underline" onclick="openCurrentModal()">${formattedDateIT} (Oggi)</span></td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Temperatura Attuale</td><td class="p-3 text-rose-400 font-bold">${currentTemp}</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Percepita Attuale</td><td class="p-3 text-teal-300 font-bold">${currentApparent}</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Temperatura Max</td><td class="p-3">${formatVal(daily.temperature_2m_max[i])}°C</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Percepita Max</td><td class="p-3">${formatVal(daily.apparent_temperature_max[i])}°C</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Temperatura Min</td><td class="p-3">${formatVal(daily.temperature_2m_min[i])}°C</td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Pressione (Media / Attuale)</td><td class="p-3">${dailyPressure} <span class="text-teal-300 font-semibold text-xs ml-2">(${currentPressure})</span></td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Vento (Max / Attuale)</td><td class="p-3">${dailyWind} <span class="text-teal-300 font-semibold text-xs ml-2">(${currentWind})</span></td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Umidità (Media / Attuale)</td><td class="p-3">${dailyHum} <span class="text-teal-300 font-semibold text-xs ml-2">(${currentHum})</span></td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Pioggia / Neve (Totale / Attuale)</td><td class="p-3">${dailyPrecip} <span class="text-teal-300 font-semibold text-xs ml-2">(${currentPrecipText})</span></td></tr>
+                        <tr class="hover:bg-white/5 transition"><td class="p-3 text-blue-300 font-semibold">Alba / Tramonto</td><td class="p-3">🌅 ${formatTimeWithSeconds(daily.sunrise[i])} | 🌇 ${formatTimeWithSeconds(daily.sunset[i])}</td></tr>
                     `;
                 })
                 .catch(err => {
                     console.error(err);
-                    currentTbody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-red-600 font-bold">Impossibile caricare i dati attuali.</td></tr>`;
+                    currentTbody.innerHTML = '<tr><td colspan="2" class="p-4 text-center text-red-400">Impossibile caricare i dati attuali.</td></tr>';
                 });
         }
 
@@ -746,7 +761,7 @@
                     const pageTitle = document.getElementById("pageTitle");
                     const mainTitle = document.getElementById("mainTitle");
                     if (pageTitle) pageTitle.textContent = `Archivio Storico Meteo ${currentPlaceName} (${selectedYear})`;
-                    if (mainTitle) mainTitle.innerHTML = `<i class="fa-solid fa-calendar-days text-amber-500"></i> Archivio Storico Meteo ${currentPlaceName} (${selectedYear})`;
+                    if (mainTitle) mainTitle.innerHTML = `<i class="fa-solid fa-calendar-days text-amber-400"></i> Archivio Storico Meteo ${currentPlaceName} (${selectedYear})`;
 
                     const loadingStatus = document.getElementById("loadingStatus");
                     const exportCsvBtn = document.getElementById("exportCsvBtn");
@@ -771,7 +786,7 @@
                         .then(data => {
                             if (loadingStatus) loadingStatus.classList.add("hidden");
                             cachedYearData = data.daily;
-                            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+                            const currentTheme = localStorage.getItem('cavanweb_theme') || 'dark';
                             const isCavanWeb = (currentTheme === 'cavanweb');
                             if (!cachedYearData || !cachedYearData.time) {
                                 if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-500')} font-bold">Nessun dato disponibile per questo periodo.</td></tr>`;
@@ -783,7 +798,7 @@
                         })
                         .catch(err => {
                             if (loadingStatus) loadingStatus.classList.add("hidden");
-                            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+                            const currentTheme = localStorage.getItem('cavanweb_theme') || 'dark';
                             const isCavanWeb = (currentTheme === 'cavanweb');
                             if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-red-400' : (isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento dei dati.</td></tr>`;
                         });
@@ -801,16 +816,16 @@
                 const dir = getWindDirection(cachedYearData.wind_direction_10m_dominant[i]);
                 const precipText = formatPrecipitation(cachedYearData.precipitation_sum[i], cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[i] : 0, cachedYearData.temperature_2m_min[i]);
                 
-                tbody.innerHTML += `<tr>
-                    <td class="p-3.5 text-center"><span class="text-[#0284c7] font-bold cursor-pointer underline" onclick="openDayModalSingle(${i})">${dateIT}</span></td>
-                    <td class="p-3.5 text-center">${formatVal(cachedYearData.temperature_2m_max[i])}°C</td>
-                    <td class="p-3.5 text-center">${formatVal(cachedYearData.apparent_temperature_max[i])}°C</td>
-                    <td class="p-3.5 text-center">${formatVal(cachedYearData.temperature_2m_min[i])}°C</td>
-                    <td class="p-3.5 text-center">${formatVal(cachedYearData.pressure_msl_mean[i], 1)} hPa</td>
-                    <td class="p-3.5 text-center">${formatVal(cachedYearData.wind_speed_10m_max[i])} km/h ${dir}</td>
-                    <td class="p-3.5 text-center">${formatVal(cachedYearData.relative_humidity_2m_mean[i])}%</td>
-                    <td class="p-3.5 text-center">${precipText}</td>
-                    <td class="p-3.5 text-center">🌅 ${formatTimeWithSeconds(cachedYearData.sunrise[i])} | 🌇 ${formatTimeWithSeconds(cachedYearData.sunset[i])}</td>
+                tbody.innerHTML += `<tr class="hover:bg-white/5 transition">
+                    <td class="p-3 text-center"><span class="text-amber-400 font-bold cursor-pointer underline" onclick="openDayModalSingle(${i})">${dateIT}</span></td>
+                    <td class="p-3 text-center">${formatVal(cachedYearData.temperature_2m_max[i])}°C</td>
+                    <td class="p-3 text-center">${formatVal(cachedYearData.apparent_temperature_max[i])}°C</td>
+                    <td class="p-3 text-center">${formatVal(cachedYearData.temperature_2m_min[i])}°C</td>
+                    <td class="p-3 text-center">${formatVal(cachedYearData.pressure_msl_mean[i], 1)} hPa</td>
+                    <td class="p-3 text-center">${formatVal(cachedYearData.wind_speed_10m_max[i])} km/h ${dir}</td>
+                    <td class="p-3 text-center">${formatVal(cachedYearData.relative_humidity_2m_mean[i])}%</td>
+                    <td class="p-3 text-center">${precipText}</td>
+                    <td class="p-3 text-center">🌅 ${formatTimeWithSeconds(cachedYearData.sunrise[i])} | 🌇 ${formatTimeWithSeconds(cachedYearData.sunset[i])}</td>
                 </tr>`;
             }
         }
@@ -825,16 +840,16 @@
                 const dir = getWindDirection(row.windDirDeg);
                 const precipText = formatPrecipitation(row.precip, row.snow, row.tMin);
                 
-                tbody.innerHTML += `<tr>
-                    <td class="p-3.5 text-center"><span class="text-[#0284c7] font-bold cursor-pointer underline" onclick="openDayModalMulti(${i})">${row.dateIT}</span></td>
-                    <td class="p-3.5 text-center">${formatVal(row.tMax)}°C</td>
-                    <td class="p-3.5 text-center">${formatVal(row.tApp)}°C</td>
-                    <td class="p-3.5 text-center">${formatVal(row.tMin)}°C</td>
-                    <td class="p-3.5 text-center">${formatVal(row.press, 1)} hPa</td>
-                    <td class="p-3.5 text-center">${formatVal(row.windSpd)} km/h ${dir}</td>
-                    <td class="p-3.5 text-center">${formatVal(row.hum)}%</td>
-                    <td class="p-3.5 text-center">${precipText}</td>
-                    <td class="p-3.5 text-center">🌅 ${row.sunrise} | 🌇 ${row.sunset}</td>
+                tbody.innerHTML += `<tr class="hover:bg-white/5 transition">
+                    <td class="p-3 text-center"><span class="text-amber-400 font-bold cursor-pointer underline" onclick="openDayModalMulti(${i})">${row.dateIT}</span></td>
+                    <td class="p-3 text-center">${formatVal(row.tMax)}°C</td>
+                    <td class="p-3 text-center">${formatVal(row.tApp)}°C</td>
+                    <td class="p-3 text-center">${formatVal(row.tMin)}°C</td>
+                    <td class="p-3 text-center">${formatVal(row.press, 1)} hPa</td>
+                    <td class="p-3 text-center">${formatVal(row.windSpd)} km/h ${dir}</td>
+                    <td class="p-3 text-center">${formatVal(row.hum)}%</td>
+                    <td class="p-3 text-center">${precipText}</td>
+                    <td class="p-3 text-center">🌅 ${row.sunrise} | 🌇 ${row.sunset}</td>
                 </tr>`;
             }
         }
@@ -855,7 +870,7 @@
 
             cachedMultiData = [];
             const tbody = document.querySelector("#weatherTable tbody");
-            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'dark';
             const isCavanWeb = (currentTheme === 'cavanweb');
             tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-500')} font-bold">Caricamento dati intervallo in corso...</td></tr>`;
             const yearSelect = document.getElementById("yearSelect");
@@ -1082,7 +1097,7 @@
         }
 
         window.onload = () => {
-            const savedTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const savedTheme = localStorage.getItem('cavanweb_theme') || 'dark';
             setTheme(savedTheme);
         };
     </script>
