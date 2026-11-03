@@ -307,22 +307,22 @@
                             <i class="fa-solid fa-earth-americas text-[#800040]"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-md">
-                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-2.5 ${isCavanWeb ? 'bg-[#8FBBD0]' : 'bg-white'} text-slate-800 placeholder-slate-500 border border-slate-300 rounded-xl focus:outline-none text-base font-semibold">
+                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-2.5 ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'} text-slate-800 placeholder-slate-500 border border-slate-300 rounded-xl focus:outline-none text-base font-semibold">
                             <button id="clear-search-btn" onclick="clearLocationInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-700 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
                         <button onclick="searchCustomLocation()" class="bg-[#0284c7] hover:bg-[#0369a1] px-5 py-2.5 rounded-xl font-semibold text-white transition shadow text-base flex items-center gap-2"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
                         <button onclick="useCurrentGPS()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-2.5 rounded-xl border border-emerald-600 transition text-white flex items-center gap-2 text-base font-semibold" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"><span>GPS</span></i></button>
                         <div class="w-full text-sm text-slate-700 pt-1 flex items-center justify-between font-semibold">
                             <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-slate-900">Piacenza (45.05°N, 9.70°E)</span></span>
-                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-lg border ${isCavanWeb ? 'bg-[#8FBBD0]' : 'bg-white'} text-slate-800 border-slate-300 font-semibold shadow-sm"><i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span class="text-xs">Preferito</span></button>
+                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-lg border ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'} text-slate-800 border-slate-300 font-semibold shadow-sm"><i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span class="text-xs">Preferito</span></button>
                         </div>
                     </div>
 
                     <div class="${cardBgClass} border rounded-3xl p-6 shadow-sm space-y-4">
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-bolt text-[#800040]"></i> Meteo Attuale / Oggi (<span id="currentLocationTitle">Piacenza</span>)</h2>
                         <div class="w-full overflow-hidden rounded-2xl border border-slate-300">
-                            <table id="currentWeatherTable" class="w-full text-left border-collapse text-base bg-white">
-                                <tbody class="divide-y divide-slate-200 text-slate-700 font-medium">
+                            <table id="currentWeatherTable" class="w-full text-left border-collapse text-base" style="background-color: ${isCavanWeb ? '#D8D9D0' : '#ffffff'};">
+                                <tbody class="divide-y divide-slate-300 text-slate-800 font-medium">
                                     <tr><td colspan="2" class="p-4 text-center text-slate-500">Caricamento dati attuali in corso...</td></tr>
                                 </tbody>
                             </table>
@@ -339,7 +339,7 @@
                             <div>
                                 <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2"><i class="fa-regular fa-calendar text-[#800040]"></i> Selezione Anno Singolo</h3>
                                 <div class="flex flex-wrap items-center gap-3">
-                                    <select id="yearSelect" class="w-full ${isCavanWeb ? 'bg-[#8FBBD0]' : 'bg-white'} text-slate-800 border border-slate-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-[#800040] text-base font-semibold">
+                                    <select id="yearSelect" class="w-full ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'} text-slate-800 border border-slate-300 rounded-2xl px-4 py-3 focus:outline-none focus:border-[#800040] text-base font-semibold">
                                         <option value="" class="bg-white text-slate-800">-- Seleziona un anno --</option>
                                     </select>
                                 </div>
@@ -357,13 +357,13 @@
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs text-slate-700 mb-1 font-bold">Da Anno:</label>
-                                        <select id="startYearSelect" class="w-full ${isCavanWeb ? 'bg-[#8FBBD0]' : 'bg-white'} text-slate-800 border border-slate-300 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-[#800040] text-sm font-semibold">
+                                        <select id="startYearSelect" class="w-full ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'} text-slate-800 border border-slate-300 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-[#800040] text-sm font-semibold">
                                             <option value="" class="bg-white text-slate-800">-- Inizio --</option>
                                         </select>
                                     </div>
                                     <div>
                                         <label class="block text-xs text-slate-700 mb-1 font-bold">A Anno:</label>
-                                        <select id="endYearSelect" class="w-full ${isCavanWeb ? 'bg-[#8FBBD0]' : 'bg-white'} text-slate-800 border border-slate-300 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-[#800040] text-sm font-semibold">
+                                        <select id="endYearSelect" class="w-full ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'} text-slate-800 border border-slate-300 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-[#800040] text-sm font-semibold">
                                             <option value="" class="bg-white text-slate-800">-- Fine --</option>
                                         </select>
                                     </div>
@@ -372,7 +372,7 @@
                             <div class="flex flex-wrap items-center gap-2 pt-2">
                                 <button id="viewMultiBtn" class="bg-amber-500 hover:bg-amber-600 px-4 py-2.5 rounded-xl font-semibold text-slate-900 transition shadow text-sm flex items-center gap-1.5" onclick="viewCustomRange()"><i class="fa-solid fa-eye"></i> Visualizza</button>
                                 <button id="exportMultiCsvBtn" class="bg-emerald-600 hover:bg-emerald-700 px-3.5 py-2.5 rounded-xl font-semibold text-white transition shadow text-xs flex items-center gap-1" onclick="directDownloadCustomRange('csv')"><i class="fa-solid fa-file-csv"></i> CSV</button>
-                                <button id="exportMultiTxtBtn" class="bg-blue-600 hover:bg-blue-700 px-3.5 py-2.5 rounded-xl font-semibold text-white transition shadow text-xs flex items-center gap-1" onclick="directDownloadCustomRange('txt')"><i class="fa-solid fa-file-lines"></i> TXT</button>
+                                <button id="exportMultiTxtBtn" class="bg-blue-600 hover:bg-blue-700 px-3.5 py-2.5 rounded-xl font-semibold text-white transition shadow text-xs flex items-center gap-1" onclick="directDownloadCustomRange('txt')"><i class="fa-solid fa-file-lines"></i> CSV</button>
                                 <span id="loadingMultiStatus" class="text-[#800040] font-bold text-xs hidden">Elaborazione...</span>
                             </div>
                         </div>
@@ -380,9 +380,9 @@
 
                     <div class="${cardBgClass} border rounded-3xl p-6 shadow-sm space-y-4">
                         <div class="w-full overflow-x-auto rounded-2xl border border-slate-300 max-h-[600px]">
-                            <table id="weatherTable" class="w-full text-left border-collapse text-base whitespace-nowrap bg-white">
+                            <table id="weatherTable" class="w-full text-left border-collapse text-base whitespace-nowrap" style="background-color: ${isCavanWeb ? '#D8D9D0' : '#ffffff'};">
                                 <thead>
-                                    <tr class="bg-slate-100 text-slate-700 font-bold border-b border-slate-300 sticky top-0">
+                                    <tr class="bg-slate-200 text-slate-800 font-bold border-b border-slate-300 sticky top-0">
                                         <th class="p-3.5 text-center">Data</th>
                                         <th class="p-3.5 text-center">Max</th>
                                         <th class="p-3.5 text-center">Percepita</th>
@@ -394,8 +394,8 @@
                                         <th class="p-3.5 text-center">Alba / Tramonto</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-200 text-slate-700 font-medium">
-                                    <tr><td colspan="9" class="p-6 text-center text-slate-500 font-semibold">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
+                                <tbody class="divide-y divide-slate-300 text-slate-800 font-medium">
+                                    <tr><td colspan="9" class="p-6 text-center text-slate-600 font-semibold">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
                                 </tbody>
                             </table>
                         </div>
