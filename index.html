@@ -22,6 +22,11 @@
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
         }
+        /* Stile pulito per i menu a tendina nativi nei vari temi */
+        select option {
+            background-color: #0f172a;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
@@ -1023,8 +1028,8 @@
                 <tr><th class="p-3 text-blue-300">Percepita Attuale</th><td class="p-3 text-teal-300 font-bold">${formatVal(current.apparent_temperature)}°C${formatHourOnly(current.time)}</td></tr>
                 <tr><th class="p-3 text-blue-300">Temperatura Max / Min</th><td class="p-3">${formatVal(daily.temperature_2m_max[i])}°C / ${formatVal(daily.temperature_2m_min[i])}°C</td></tr>
                 <tr><th class="p-3 text-blue-300">Pressione (Attuale / Media)</th><td class="p-3">${formatVal(current.pressure_msl, 1)} hPa / ${formatVal(daily.pressure_msl_mean[i], 1)} hPa</td></tr>
-                <tr><th class="p-3 text-blue-300">Vento (Attuale / Max)</th><td class="p-3">${formatVal(current.wind_speed_10m)} km/h (${getWindDirection(current.wind_direction_10m)}) / ${formatVal(daily.wind_speed_10m_max[i])} km/h</td></tr>
-                <tr><th class="p-3 text-blue-300">Umidità (Attuale / Media)</th><td class="p-3">${formatVal(current.relative_humidity_2m)}% / ${formatVal(daily.relative_humidity_2m_mean[i])}%</td></tr>
+                <tr><th class="p-3 text-blue-300">Vento (Attuale / Max)</th><td class="p-3">${formatVal(current.wind_speed_10m)} km/h (${getWindDirection(current.wind_direction_10m)}) /${formatVal(daily.wind_speed_10m_max[i])} km/h</td></tr>
+                <tr><th class="p-3 text-blue-300">Umidità (Attuale / Media)</th><td class="p-3">${formatVal(current.relative_humidity_2m)}% /${formatVal(daily.relative_humidity_2m_mean[i])}%</td></tr>
                 <tr><th class="p-3 text-blue-300">Alba / Tramonto</th><td class="p-3">🌅 ${formatTimeWithSeconds(daily.sunrise[i])} | 🌇 ${formatTimeWithSeconds(daily.sunset[i])}</td></tr>
             `;
             document.getElementById("dayModal").classList.remove("hidden");
@@ -1038,50 +1043,3 @@
             detailTbody.innerHTML = `
                 <tr><th class="p-3 text-blue-300 w-1/2">Data</th><td class="p-3">${dateIT}</td></tr>
                 <tr><th class="p-3 text-blue-300">Temperatura Max</th><td class="p-3">${formatVal(cachedYearData.temperature_2m_max[index])}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Percepita</th><td class="p-3">${formatVal(cachedYearData.apparent_temperature_max[index])}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Min</th><td class="p-3">${formatVal(cachedYearData.temperature_2m_min[index])}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Pressione Media</th><td class="p-3">${formatVal(cachedYearData.pressure_msl_mean[index], 1)} hPa</td></tr>
-                <tr><th class="p-3 text-blue-300">Vento Massimo</th><td class="p-3">${formatVal(cachedYearData.wind_speed_10m_max[index])} km/h (${getWindDirection(cachedYearData.wind_direction_10m_dominant[index])})</td></tr>
-                <tr><th class="p-3 text-blue-300">Umidità Media</th><td class="p-3">${formatVal(cachedYearData.relative_humidity_2m_mean[index])}%</td></tr>
-                <tr><th class="p-3 text-blue-300">Pioggia / Neve</th><td class="p-3">${formatPrecipitation(cachedYearData.precipitation_sum[index], cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[index] : 0, cachedYearData.temperature_2m_min[index])}</td></tr>
-                <tr><th class="p-3 text-blue-300">Alba / Tramonto</th><td class="p-3">🌅 ${formatTimeWithSeconds(cachedYearData.sunrise[index])} | 🌇 ${formatTimeWithSeconds(cachedYearData.sunset[index])}</td></tr>
-            `;
-            document.getElementById("dayModal").classList.remove("hidden");
-        }
-
-        function openDayModalMulti(index) {
-            if (!cachedMultiData || !cachedMultiData[index]) return;
-            const row = cachedMultiData[index];
-            document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${row.dateIT}`;
-            const detailTbody = document.querySelector("#modalDetailTable tbody");
-            detailTbody.innerHTML = `
-                <tr><th class="p-3 text-blue-300 w-1/2">Data</th><td class="p-3">${row.dateIT}</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Max</th><td class="p-3">${formatVal(row.tMax)}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Percepita</th><td class="p-3">${formatVal(row.tApp)}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Min</th><td class="p-3">${formatVal(row.tMin)}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Pressione Media</th><td class="p-3">${formatVal(row.press, 1)} hPa</td></tr>
-                <tr><th class="p-3 text-blue-300">Vento Massimo</th><td class="p-3">${formatVal(row.windSpd)} km/h (${getWindDirection(row.windDirDeg)})</td></tr>
-                <tr><th class="p-3 text-blue-300">Umidità Media</th><td class="p-3">${formatVal(row.hum)}%</td></tr>
-                <tr><th class="p-3 text-blue-300">Pioggia / Neve</th><td class="p-3">${formatPrecipitation(row.precip, row.snow, row.tMin)}</td></tr>
-                <tr><th class="p-3 text-blue-300">Alba / Tramonto</th><td class="p-3">🌅 ${row.sunrise} | 🌇 ${row.sunset}</td></tr>
-            `;
-            document.getElementById("dayModal").classList.remove("hidden");
-        }
-
-        function closeModal() {
-            const modal = document.getElementById("dayModal");
-            if (modal) modal.classList.add("hidden");
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById("dayModal");
-            if (event.target === modal) closeModal();
-        }
-
-        window.onload = () => {
-            const savedTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
-            setTheme(savedTheme);
-        };
-    </script>
-</body>
-</html>
