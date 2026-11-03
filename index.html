@@ -129,69 +129,63 @@
             `;
 
             if (currentTheme === 'dark') {
-                headerContainer.className = "w-full max-w-6xl mx-auto mb-6 bg-slate-900/60 backdrop-blur-md border border-white/20 rounded-3xl p-4 shadow-sm space-y-4 relative text-white";
+                headerContainer.className = "w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative";
                 headerContainer.innerHTML = `
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-                                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
-                            </a>
-                            <button onclick="location.reload();" class="bg-white/10 hover:bg-white/20 w-12 h-12 rounded-2xl text-blue-200 hover:text-white transition shadow flex items-center justify-center text-lg flex-shrink-0 border border-white/20" title="Aggiorna">
-                                <i class="fa-solid fa-rotate"></i>
-                            </button>
-                            ${themeButtonHTML}
-                        </div>
-                        <div class="relative flex-shrink-0">
-                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-base font-semibold">
-                                <i class="fa-solid fa-bars"></i> <span>Menu</span>
-                            </button>
-                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 bg-[#D8D9D0] border border-slate-400 rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-[#800040] text-base">
-                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b border-[#800040]/30 flex items-center gap-1.5"><i class="fa-solid fa-star text-[#800040]"></i> Preferiti</div>
-                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-sm text-slate-500 px-3 py-1 font-semibold italic">Nessun preferito salvato</span></div>
-                                <div class="border-t border-[#800040]/30 my-1"></div>
-                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#728890]/40 text-[#800040] text-base font-medium transition"><i class="fa-solid fa-cloud-sun text-[#800040] w-5 text-center"></i> <span>MeteoCWEB</span></a>
-                                <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#728890]/40 text-[#800040] text-base font-medium transition"><i class="fa-solid fa-earth-americas text-[#800040] w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#728890]/40 text-[#800040] text-base font-medium transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
-                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-[#728890]/40 text-[#800040] text-base font-medium transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center border-t border-white/10 pt-3">
+                    <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                        <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-white/20 shadow-lg group-hover:scale-105 transition">
+                    </a>
+                    <div class="text-center flex-grow mx-2">
                         <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-calendar-days text-amber-400"></i> Archivio Storico Meteo Globale 1940-Oggi
                         </h1>
                         <p class="text-blue-200 text-xs sm:text-sm">Dati storici e climatologici Open-Meteo</p>
                     </div>
+                    <div class="flex items-center gap-2">
+                        ${themeButtonHTML}
+                        <div class="relative flex-shrink-0">
+                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center text-lg font-semibold">
+                                <i class="fa-solid fa-bars"></i>
+                            </button>
+                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 bg-slate-900/95 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
+                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs text-blue-300/60 px-3 py-1 italic">Nessun preferito salvato</span></div>
+                                <div class="border-t border-white/10 my-1"></div>
+                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-cloud-sun text-amber-400 w-5 text-center"></i> <span>MeteoCWEB</span></a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
+                            </div>
+                        </div>
+                    </div>
                 `;
 
-                mainContainer.className = "w-full max-w-6xl mx-auto space-y-4 flex-grow";
                 mainContainer.innerHTML = `
-                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-sm flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2 text-blue-200 font-semibold text-base">
+                    <div class="bg-white/15 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2 text-blue-200 font-semibold text-sm">
                             <i class="fa-solid fa-earth-americas text-amber-400"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-md">
-                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-2.5 bg-slate-800 text-white placeholder-blue-300/60 border border-white/20 rounded-xl focus:outline-none text-base font-semibold">
+                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm transition">
                             <button id="clear-search-btn" onclick="clearLocationInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-blue-300 hover:text-white transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
-                        <button onclick="searchCustomLocation()" class="bg-[#0284c7] hover:bg-[#0369a1] px-5 py-2.5 rounded-xl font-semibold text-white transition shadow text-base flex items-center gap-2"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
-                        <button onclick="useCurrentGPS()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-2.5 rounded-xl border border-emerald-600 transition text-white flex items-center gap-2 text-base font-semibold" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"><span>GPS</span></i></button>
-                        <div class="w-full text-sm text-blue-200 pt-1 flex items-center justify-between font-semibold">
+                        <button onclick="searchCustomLocation()" class="bg-amber-500 hover:bg-amber-600 px-5 py-3 rounded-2xl font-semibold text-slate-900 transition shadow-lg flex items-center gap-2 text-sm"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
+                        <button onclick="useCurrentGPS()" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center gap-2 text-sm" title="Usa GPS"><i class="fa-solid fa-location-crosshairs text-amber-400"><span>GPS</span></i></button>
+                        <div class="w-full text-xs text-blue-300 pt-1 flex items-center justify-between">
                             <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-white">Piacenza (45.05°N, 9.70°E)</span></span>
-                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-lg border bg-slate-800 text-white border-white/20 font-semibold shadow-sm"><i id="fav-icon" class="fa-regular fa-star text-blue-400"></i> <span class="text-xs">Preferito</span></button>
+                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-base text-blue-300 hover:text-amber-400 transition flex items-center gap-1.5 px-2 py-0.5 bg-white/5 rounded-xl border border-white/10"><i id="fav-icon" class="fa-regular fa-star"></i> <span class="text-xs">Preferito</span></button>
                         </div>
                     </div>
 
-                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-sm space-y-4">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4">
                         <h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-400"></i> Meteo Attuale / Oggi (<span id="currentLocationTitle">Piacenza</span>)</h2>
-                        <div class="w-full overflow-hidden rounded-2xl border border-white/20">
-                            <table id="currentWeatherTable" class="w-full text-left border-collapse text-base bg-slate-900/80">
-                                <tbody class="divide-y divide-white/10 text-blue-100 font-medium">
-                                    <tr><td colspan="2" class="p-4 text-center text-blue-300">Caricamento dati attuali in corso...</td></tr>
+                        <div class="w-full overflow-hidden rounded-2xl border border-white/10">
+                            <table id="currentWeatherTable" class="w-full text-left border-collapse text-sm">
+                                <tbody class="divide-y divide-white/10 text-blue-100">
+                                    <tr><td colspan="2" class="p-4 text-center">Caricamento dati attuali in corso...</td></tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="text-sm text-blue-200 space-y-1 bg-white/5 p-4 rounded-2xl border border-white/25 shadow-sm font-medium">
+                        <div class="text-xs text-blue-200/80 space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10">
                             <p>ℹ️ <strong>Legenda:</strong></p>
                             <p>• La temperatura attuale è indicata in <span class="text-rose-400 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
                             <p>• I valori in <span class="text-teal-300 font-bold">turchese</span> rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità) affiancati ai valori giornalieri.</p>
@@ -199,67 +193,67 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between">
+                        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4 flex flex-col justify-between">
                             <div>
                                 <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-regular fa-calendar text-amber-400"></i> Selezione Anno Singolo</h3>
                                 <div class="flex flex-wrap items-center gap-3">
-                                    <select id="yearSelect" class="w-full bg-slate-800 text-white border border-white/20 rounded-2xl px-4 py-3 focus:outline-none focus:border-amber-400 text-base font-semibold">
-                                        <option value="" class="bg-slate-900 text-white">-- Seleziona un anno --</option>
+                                    <select id="yearSelect" class="bg-white/5 border border-white/20 rounded-2xl px-4 py-3 text-white focus:outline-none focus:border-amber-400 text-sm flex-grow">
+                                        <option value="" class="bg-slate-900">-- Seleziona un anno --</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-3 pt-2">
-                                <span id="loadingStatus" class="text-amber-400 font-bold text-base hidden flex items-center gap-2"><div class="animate-spin rounded-full h-4 w-4 border-2 border-amber-400 border-t-transparent"></div> Caricamento...</span>
-                                <button id="exportCsvBtn" class="hidden bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 rounded-xl font-semibold text-white transition shadow text-sm items-center gap-1.5" onclick="exportData('csv')"><i class="fa-solid fa-file-csv"></i> Scarica CSV</button>
-                                <button id="exportTxtBtn" class="hidden bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded-xl font-semibold text-white transition shadow text-sm items-center gap-1.5" onclick="exportData('txt')"><i class="fa-solid fa-file-lines"></i> Scarica TXT</button>
+                                <span id="loadingStatus" class="text-amber-400 font-medium text-sm hidden flex items-center gap-2"><div class="animate-spin rounded-full h-4 w-4 border-2 border-amber-400 border-t-transparent"></div> Caricamento...</span>
+                                <button id="exportCsvBtn" class="hidden bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 rounded-xl font-semibold text-white transition shadow text-xs items-center gap-1.5" onclick="exportData('csv')"><i class="fa-solid fa-file-csv"></i> Scarica CSV</button>
+                                <button id="exportTxtBtn" class="hidden bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded-xl font-semibold text-white transition shadow text-xs items-center gap-1.5" onclick="exportData('txt')"><i class="fa-solid fa-file-lines"></i> Scarica TXT</button>
                             </div>
                         </div>
 
-                        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between">
+                        <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4 flex flex-col justify-between">
                             <div>
                                 <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Intervallo Anni Multiplo</h3>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs text-blue-200 mb-1 font-bold">Da Anno:</label>
-                                        <select id="startYearSelect" class="w-full bg-slate-800 text-white border border-white/20 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-amber-400 text-sm font-semibold">
-                                            <option value="" class="bg-slate-900 text-white">-- Inizio --</option>
+                                        <label class="block text-xs text-blue-300 mb-1">Da Anno:</label>
+                                        <select id="startYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
+                                            <option value="" class="bg-slate-900">-- Inizio --</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs text-blue-200 mb-1 font-bold">A Anno:</label>
-                                        <select id="endYearSelect" class="w-full bg-slate-800 text-white border border-white/20 rounded-2xl px-3 py-2.5 focus:outline-none focus:border-amber-400 text-sm font-semibold">
-                                            <option value="" class="bg-slate-900 text-white">-- Fine --</option>
+                                        <label class="block text-xs text-blue-300 mb-1">A Anno:</label>
+                                        <select id="endYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 text-white focus:outline-none focus:border-amber-400 text-sm">
+                                            <option value="" class="bg-slate-900">-- Fine --</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
                             <div class="flex flex-wrap items-center gap-2 pt-2">
-                                <button id="viewMultiBtn" class="bg-amber-500 hover:bg-amber-600 px-4 py-2.5 rounded-xl font-semibold text-slate-900 transition shadow text-sm flex items-center gap-1.5" onclick="viewCustomRange()"><i class="fa-solid fa-eye"></i> Visualizza</button>
+                                <button id="viewMultiBtn" class="bg-amber-500 hover:bg-amber-600 px-4 py-2.5 rounded-xl font-semibold text-slate-900 transition shadow text-xs flex items-center gap-1.5" onclick="viewCustomRange()"><i class="fa-solid fa-eye"></i> Visualizza</button>
                                 <button id="exportMultiCsvBtn" class="bg-emerald-600 hover:bg-emerald-700 px-3.5 py-2.5 rounded-xl font-semibold text-white transition shadow text-xs flex items-center gap-1" onclick="directDownloadCustomRange('csv')"><i class="fa-solid fa-file-csv"></i> CSV</button>
                                 <button id="exportMultiTxtBtn" class="bg-blue-600 hover:bg-blue-700 px-3.5 py-2.5 rounded-xl font-semibold text-white transition shadow text-xs flex items-center gap-1" onclick="directDownloadCustomRange('txt')"><i class="fa-solid fa-file-lines"></i> TXT</button>
-                                <span id="loadingMultiStatus" class="text-amber-400 font-bold text-xs hidden">Elaborazione...</span>
+                                <span id="loadingMultiStatus" class="text-amber-400 font-medium text-xs hidden">Elaborazione...</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-sm space-y-4">
-                        <div class="w-full overflow-x-auto rounded-2xl border border-white/20 max-h-[600px]">
-                            <table id="weatherTable" class="w-full text-left border-collapse text-base whitespace-nowrap bg-slate-900/80">
+                    <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 shadow-2xl space-y-4">
+                        <div class="w-full overflow-x-auto rounded-2xl border border-white/10 max-h-[600px]">
+                            <table id="weatherTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
                                 <thead>
-                                    <tr class="bg-slate-800 text-blue-200 font-bold border-b border-white/20 sticky top-0">
-                                        <th class="p-3.5 text-center">Data</th>
-                                        <th class="p-3.5 text-center">Max</th>
-                                        <th class="p-3.5 text-center">Percepita</th>
-                                        <th class="p-3.5 text-center">Min</th>
-                                        <th class="p-3.5 text-center">Pressione</th>
-                                        <th class="p-3.5 text-center">Vento</th>
-                                        <th class="p-3.5 text-center">Umidità</th>
-                                        <th class="p-3.5 text-center">Pioggia / Neve</th>
-                                        <th class="p-3.5 text-center">Alba / Tramonto</th>
+                                    <tr class="bg-white/10 text-blue-200 border-b border-white/10 sticky top-0 backdrop-blur-md">
+                                        <th class="p-3 text-center">Data</th>
+                                        <th class="p-3 text-center">Max</th>
+                                        <th class="p-3 text-center">Percepita</th>
+                                        <th class="p-3 text-center">Min</th>
+                                        <th class="p-3 text-center">Pressione</th>
+                                        <th class="p-3 text-center">Vento</th>
+                                        <th class="p-3 text-center">Umidità</th>
+                                        <th class="p-3 text-center">Pioggia / Neve</th>
+                                        <th class="p-3 text-center">Alba / Tramonto</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-white/10 text-blue-100 font-medium">
-                                    <tr><td colspan="9" class="p-6 text-center text-blue-300 font-semibold">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
+                                <tbody class="divide-y divide-white/10 text-blue-100">
+                                    <tr><td colspan="9" class="p-6 text-center text-blue-300">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -269,7 +263,7 @@
                 const isCavanWeb = (currentTheme === 'cavanweb');
                 const headerBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400" : "bg-white border-slate-200";
                 const cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : "bg-white border-slate-300 text-slate-800";
-                const dropdownBgClass = isCavanWeb ? "bg-[#D8D9D0] border-[#800040]/50" : "bg-white border-slate-200";
+                const dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : "bg-white border-slate-200";
 
                 headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${headerBgClass} border rounded-3xl p-4 shadow-sm space-y-4 relative`;
                 headerContainer.innerHTML = `
@@ -320,7 +314,7 @@
                         <button onclick="useCurrentGPS()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-2.5 rounded-xl border border-emerald-600 transition text-white flex items-center gap-2 text-base font-semibold" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"><span>GPS</span></i></button>
                         <div class="w-full text-sm text-slate-700 pt-1 flex items-center justify-between font-semibold">
                             <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-slate-900">Piacenza (45.05°N, 9.70°E)</span></span>
-                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-lg border bg-[#8FBBD0] text-slate-800 border-slate-300 font-semibold shadow-sm"><i id="fav-icon" class="fa-regular fa-star text-blue-600"></i> <span class="text-xs">Preferito</span></button>
+                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-lg border bg-[#8FBBD0] text-slate-800 border-slate-300 font-semibold shadow-sm"><i id="fav-icon" class="fa-regular fa-star text-amber-500"></i> <span class="text-xs">Preferito</span></button>
                         </div>
                     </div>
 
@@ -401,7 +395,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-300 text-slate-800 font-medium">
-                                    <tr><td colspan="9" class="p-6 text-center text-slate-600 font-semibold">Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>
+                                    <tr><td colspan="9" class="p-6 text-center text-slate-600 font-semibold">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -446,11 +440,12 @@
             const favIcon = document.getElementById('fav-icon');
             if (!favIcon) return;
             const favorites = getFavorites();
+            const isCavanWeb = (currentTheme === 'cavanweb');
 
             if (favorites.includes(cityName)) {
-                favIcon.className = "fa-solid fa-star text-blue-500";
+                favIcon.className = currentTheme === 'dark' ? "fa-solid fa-star text-amber-400" : (isCavanWeb ? "fa-solid fa-star text-amber-500" : "fa-solid fa-star text-amber-500");
             } else {
-                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-blue-400" : "fa-regular fa-star text-blue-600";
+                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-blue-300 hover:text-amber-400" : (isCavanWeb ? "fa-regular fa-star text-amber-500" : "fa-regular fa-star text-amber-500");
             }
         }
 
@@ -462,14 +457,14 @@
             const isCavanWeb = (currentTheme === 'cavanweb');
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = `<span class="text-sm ${currentTheme === 'dark' ? 'text-slate-500' : (isCavanWeb ? 'text-slate-500' : 'text-slate-400')} px-3 py-1 font-semibold italic">Nessun preferito salvato</span>`;
+                favListContainer.innerHTML = `<span class="text-sm ${currentTheme === 'dark' ? 'text-blue-300/60' : (isCavanWeb ? 'text-slate-500' : 'text-slate-400')} px-3 py-1 font-semibold italic">Nessun preferito salvato</span>`;
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
                 if (currentTheme === 'dark') {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg hover:bg-[#728890]/40 text-[#800040] text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-[#800040]"></i></button>`;
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-blue-200 hover:text-white text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-blue-300/50"></i></button>`;
                 } else {
                     html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs ${isCavanWeb ? 'text-[#800040]' : 'text-slate-400'}"></i></button>`;
                 }
@@ -593,7 +588,7 @@
             if (endYearSelect) endYearSelect.value = "";
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const isCavanWeb = (currentTheme === 'cavanweb');
-            document.querySelector("#weatherTable tbody").innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-blue-300')} font-bold">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>`;
+            document.querySelector("#weatherTable tbody").innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isCavanWeb ? 'text-slate-600' : 'text-blue-300'} font-bold">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>`;
             const csvBtn = document.getElementById("exportCsvBtn");
             const txtBtn = document.getElementById("exportTxtBtn");
             if (csvBtn) csvBtn.classList.add("hidden");
@@ -650,6 +645,7 @@
             const currentTbody = document.querySelector("#currentWeatherTable tbody");
             if (!currentTbody) return;
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const isCavanWeb = (currentTheme === 'cavanweb');
             const urlCurrent = `https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,pressure_msl,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,sunrise,sunset,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum,snowfall_sum&timezone=auto`;
 
             currentTbody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-slate-500">Caricamento dati attuali in corso...</td></tr>`;
@@ -690,17 +686,17 @@
                     const dailyPrecip = formatPrecipitation(daily.precipitation_sum[i], daily.snowfall_sum ? daily.snowfall_sum[i] : 0, daily.temperature_2m_min[i]);
 
                     currentTbody.innerHTML = `
-                        <tr><td class="p-3.5 font-semibold w-1/3 border-r border-slate-500/30">Data</td><td class="p-3.5"><span class="text-[#0284c7] font-bold cursor-pointer underline" onclick="openCurrentModal()">${formattedDateIT} (Oggi)</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Temperatura Attuale</td><td class="p-3.5 text-rose-600 font-extrabold text-lg">${currentTemp}</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Percepita Attuale</td><td class="p-3.5 text-teal-600 font-bold">${currentApparent}</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Temperatura Max</td><td class="p-3.5 font-bold">${formatVal(daily.temperature_2m_max[i])}°C</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Percepita Max</td><td class="p-3.5 font-bold">${formatVal(daily.apparent_temperature_max[i])}°C</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Temperatura Min</td><td class="p-3.5 font-bold">${formatVal(daily.temperature_2m_min[i])}°C</td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Pressione (Media / Attuale)</td><td class="p-3.5 font-bold">${dailyPressure} <span class="text-teal-600 font-bold text-sm ml-2">(${currentPressure})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Vento (Max / Attuale)</td><td class="p-3.5 font-bold">${dailyWind} <span class="text-teal-600 font-bold text-sm ml-2">(${currentWind})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Umidità (Media / Attuale)</td><td class="p-3.5 font-bold">${dailyHum} <span class="text-teal-600 font-bold text-sm ml-2">(${currentHum})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Pioggia / Neve (Totale / Attuale)</td><td class="p-3.5 font-bold">${dailyPrecip} <span class="text-teal-600 font-bold text-sm ml-2">(${currentPrecipText})</span></td></tr>
-                        <tr><td class="p-3.5 font-semibold border-r border-slate-500/30">Alba / Tramonto</td><td class="p-3.5 font-bold">🌅 ${formatTimeWithSeconds(daily.sunrise[i])} | 🌇 ${formatTimeWithSeconds(daily.sunset[i])}</td></tr>
+                        <tr><td class="p-3.5 font-semibold w-1/3 border-r border-slate-200">Data</td><td class="p-3.5"><span class="text-[#0284c7] font-bold cursor-pointer underline" onclick="openCurrentModal()">${formattedDateIT} (Oggi)</span></td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Temperatura Attuale</td><td class="p-3.5 text-rose-600 font-extrabold text-lg">${currentTemp}</td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Percepita Attuale</td><td class="p-3.5 text-teal-600 font-bold">${currentApparent}</td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Temperatura Max</td><td class="p-3.5 font-bold">${formatVal(daily.temperature_2m_max[i])}°C</td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Percepita Max</td><td class="p-3.5 font-bold">${formatVal(daily.apparent_temperature_max[i])}°C</td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Temperatura Min</td><td class="p-3.5 font-bold">${formatVal(daily.temperature_2m_min[i])}°C</td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Pressione (Media / Attuale)</td><td class="p-3.5 font-bold">${dailyPressure} <span class="text-teal-600 font-bold text-sm ml-2">(${currentPressure})</span></td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Vento (Max / Attuale)</td><td class="p-3.5 font-bold">${dailyWind} <span class="text-teal-600 font-bold text-sm ml-2">(${currentWind})</span></td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Umidità (Media / Attuale)</td><td class="p-3.5 font-bold">${dailyHum} <span class="text-teal-600 font-bold text-sm ml-2">(${currentHum})</span></td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Pioggia / Neve (Totale / Attuale)</td><td class="p-3.5 font-bold">${dailyPrecip} <span class="text-teal-600 font-bold text-sm ml-2">(${currentPrecipText})</span></td></tr>
+                        <tr><td class="p-3.5 font-semibold border-r border-slate-200">Alba / Tramonto</td><td class="p-3.5 font-bold">🌅 ${formatTimeWithSeconds(daily.sunrise[i])} | 🌇 ${formatTimeWithSeconds(daily.sunset[i])}</td></tr>
                     `;
                 })
                 .catch(err => {
@@ -771,7 +767,7 @@
                             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
                             const isCavanWeb = (currentTheme === 'cavanweb');
                             if (!cachedYearData || !cachedYearData.time) {
-                                if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-500')} font-bold">Nessun dato disponibile per questo periodo.</td></tr>`;
+                                if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isCavanWeb ? 'text-slate-600' : 'text-amber-500'} font-bold">Nessun dato disponibile per questo periodo.</td></tr>`;
                                 return;
                             }
                             if (exportCsvBtn) { exportCsvBtn.classList.remove("hidden"); exportCsvBtn.classList.add("inline-flex"); }
@@ -782,7 +778,7 @@
                             if (loadingStatus) loadingStatus.classList.add("hidden");
                             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
                             const isCavanWeb = (currentTheme === 'cavanweb');
-                            if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-red-400' : (isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento dei dati.</td></tr>`;
+                            if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isCavanWeb ? 'text-slate-600' : 'text-red-600'} font-bold">Errore durante il caricamento dei dati.</td></tr>`;
                         });
                 };
             }
@@ -854,7 +850,7 @@
             const tbody = document.querySelector("#weatherTable tbody");
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const isCavanWeb = (currentTheme === 'cavanweb');
-            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-500')} font-bold">Caricamento dati intervallo in corso...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isCavanWeb ? 'text-slate-600' : 'text-amber-500'} font-bold">Caricamento dati intervallo in corso...</td></tr>`;
             const yearSelect = document.getElementById("yearSelect");
             if (yearSelect) yearSelect.value = "";
             document.getElementById("exportCsvBtn").classList.add("hidden");
@@ -898,10 +894,10 @@
                 }
                 cachedMultiData.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
                 if (cachedMultiData.length > 0) renderMultiTableData();
-                else tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-500')} font-bold">Nessun dato trovato.</td></tr>`;
+                else tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isCavanWeb ? 'text-slate-600' : 'text-amber-500'} font-bold">Nessun dato trovato.</td></tr>`;
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-red-400' : (isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isCavanWeb ? 'text-slate-600' : 'text-red-600'} font-bold">Errore durante il caricamento.</td></tr>`;
             } finally {
                 loadingMultiStatus.classList.add("hidden");
                 btn.disabled = false;
