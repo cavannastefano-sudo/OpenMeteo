@@ -133,9 +133,9 @@
             `;
 
             if (currentTheme === 'dark') {
-                headerContainer.className = "w-full max-w-6xl mx-auto mb-6 bg-slate-900/60 backdrop-blur-md border border-white/20 rounded-3xl p-4 shadow-2xl space-y-4 relative";
+                headerContainer.className = "w-full max-w-6xl mx-auto mb-6 space-y-4 relative";
                 headerContainer.innerHTML = `
-                    <!-- PRIMA RIGA: Logo, Pulsanti e Menu -->
+                    <!-- PRIMA RIGA: Logo, Pulsanti e Menu (Senza riquadro di sfondo) -->
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
@@ -161,7 +161,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- SECONDA RIGA: Titolo e Sottotitolo -->
+                    <!-- SECONDA RIGA: Titolo e Sottotitolo puliti -->
                     <div class="text-center border-t border-white/10 pt-3">
                         <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight text-white mb-0.5 flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-calendar-days text-amber-400"></i> Archivio Storico Meteo Globale 1940-Oggi
