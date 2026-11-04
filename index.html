@@ -276,6 +276,7 @@
 
                 headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${headerBgClass} border rounded-3xl p-4 shadow-sm space-y-4 relative`;
                 headerContainer.innerHTML = `
+                    <!-- PRIMA RIGA: Logo, Pulsante Aggiorna, Pulsante Tema e Menu a tendina -->
                     <div class="flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
                             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
@@ -290,7 +291,7 @@
                             <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-base font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
-                            <!-- Menu a tendina con scritte scure -->
+                            <!-- Menu a tendina con scritte scure (text-slate-900) -->
                             <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-900 text-base">
                                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b ${isCavanWeb ? 'border-[#800040]/30' : 'border-slate-100'} flex items-center gap-1.5"><i class="fa-solid fa-star text-[#800040]"></i> Preferiti</div>
                                 <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-sm text-slate-600 px-3 py-1 font-semibold italic">Nessun preferito salvato</span></div>
@@ -302,7 +303,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- TITOLO SPOSTATO SULLA RIGA SOTTOSTANTE -->
+                    <!-- SECONDA RIGA: Titolo e Sottotitolo abbassati e separati -->
                     <div class="text-center border-t border-slate-300/40 pt-3">
                         <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-calendar-days ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> Archivio Storico Meteo Globale 1940-Oggi
