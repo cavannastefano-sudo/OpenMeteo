@@ -22,13 +22,13 @@
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
         }
-        /* Forza lo schema scuro sui select nativi nel tema scuro */
-        body.dark-theme select {
+        /* Forza lo schema scuro sui select nativi nel tema scuro e verde */
+        body.dark-theme select, body.green-theme select {
             color-scheme: dark;
         }
-        body.dark-theme select option {
-            color: #34d399 !important; /* Testo verde (emerald-400) */
-            background-color: #0f172a !important; /* Sfondo scuro coerente */
+        body.dark-theme select option, body.green-theme select option {
+            color: #34d399 !important;
+            background-color: #0f172a !important;
         }
     </style>
 </head>
@@ -82,6 +82,7 @@
             let next = 'light';
             if (current === 'cavanweb') next = 'light';
             else if (current === 'light') next = 'dark';
+            else if (current === 'dark') next = 'green';
             else next = 'cavanweb';
             setTheme(next);
         }
@@ -94,8 +95,7 @@
             const playStoreBtn = document.getElementById('playstore-btn');
             const footerCopy = document.getElementById('footer-copy');
 
-            // Rimuoviamo la classe dark-theme di servizio per rileggerla pulita
-            body.classList.remove('dark-theme');
+            body.classList.remove('dark-theme', 'green-theme');
 
             if (themeName === 'dark') {
                 body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8 dark-theme";
@@ -103,11 +103,17 @@
                 footerAppText.className = "text-xs text-blue-200";
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
                 footerCopy.className = "text-blue-300/60";
+            } else if (themeName === 'green') {
+                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8 green-theme";
+                metaTheme.setAttribute("content", "#064e3b");
+                footerAppText.className = "text-xs text-emerald-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-emerald-300/60";
             } else if (themeName === 'light') {
-                body.className = "bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
-                metaTheme.setAttribute("content", "#f1f5f9");
+                body.className = "bg-[#f0f4f8] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#f0f4f8");
                 footerAppText.className = "text-xs text-slate-600";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 px-3.5 py-1.5 rounded-xl border border-slate-300 transition shadow text-xs font-semibold text-slate-800 group";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-amber-100 hover:bg-amber-200 px-3.5 py-1.5 rounded-xl border border-amber-300 transition shadow text-xs font-semibold text-slate-800 group";
                 footerCopy.className = "text-slate-500";
             } else {
                 body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
@@ -132,14 +138,16 @@
             if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
             else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
             else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
+            else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
 
             const themeButtonHTML = `
-                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : 'bg-[#800040] hover:bg-[#600030] text-white border-[#800040]'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
                     <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
                 </button>
             `;
 
-            if (currentTheme === 'dark') {
+            if (currentTheme === 'dark' || currentTheme === 'green') {
+                const isGreen = (currentTheme === 'green');
                 headerContainer.className = "w-full max-w-6xl mx-auto mb-6 space-y-4 relative";
                 headerContainer.innerHTML = `
                     <div class="flex items-center justify-between gap-3">
@@ -156,7 +164,7 @@
                             <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 px-4 py-2.5 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center gap-2 text-base font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
-                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 bg-slate-900 border border-white/20 rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2 text-emerald-400 text-base">
+                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : 'bg-slate-900 border border-white/20'} rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2 text-emerald-400 text-base">
                                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
                                 <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs text-emerald-400 px-3 py-1 italic">Nessun preferito salvato</span></div>
                                 <div class="border-t border-white/10 my-1"></div>
@@ -171,14 +179,14 @@
                         <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight text-white mb-0.5 flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-calendar-days text-amber-400"></i> Archivio Storico Meteo Globale 1940-Oggi
                         </h1>
-                        <p class="text-blue-200 text-sm sm:text-base">Dati storici e climatologici Open-Meteo</p>
+                        <p class="${isGreen ? 'text-emerald-200' : 'text-blue-200'} text-sm sm:text-base">Dati storici e climatologici Open-Meteo</p>
                     </div>
                 `;
 
                 mainContainer.className = "w-full max-w-6xl mx-auto space-y-6 flex-grow";
                 mainContainer.innerHTML = `
                     <div class="bg-white/15 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2 text-blue-200 font-semibold text-sm">
+                        <div class="flex items-center gap-2 ${isGreen ? 'text-emerald-200' : 'text-blue-200'} font-semibold text-sm">
                             <i class="fa-solid fa-earth-americas text-amber-400"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-md">
@@ -187,7 +195,7 @@
                         </div>
                         <button onclick="searchCustomLocation()" class="bg-amber-500 hover:bg-amber-600 px-5 py-3 rounded-2xl font-semibold text-slate-900 transition shadow-lg flex items-center gap-2 text-sm"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
                         <button onclick="useCurrentGPS()" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center gap-2 text-sm" title="Usa GPS"><i class="fa-solid fa-location-crosshairs text-amber-400"><span>GPS</span></i></button>
-                        <div class="w-full text-xs text-blue-300 pt-1 flex items-center justify-between">
+                        <div class="w-full text-xs ${isGreen ? 'text-emerald-200' : 'text-blue-300'} pt-1 flex items-center justify-between">
                             <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-white">Piacenza (45.05°N, 9.70°E)</span></span>
                             <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-base text-blue-300 hover:text-amber-400 transition flex items-center gap-1.5 px-2 py-0.5 bg-white/5 rounded-xl border border-white/10"><i id="fav-icon" class="fa-regular fa-star text-amber-400"></i> <span class="text-xs">Preferito</span></button>
                         </div>
@@ -202,7 +210,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="text-xs text-blue-200/80 space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10">
+                        <div class="text-xs ${isGreen ? 'text-emerald-200/80' : 'text-blue-200/80'} space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10">
                             <p>ℹ️ <strong>Legenda:</strong></p>
                             <p>• La temperatura attuale è indicata in <span class="text-rose-400 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
                             <p>• I valori in <span class="text-teal-300 font-bold">turchese</span> rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità) affiancati ai valori giornalieri.</p>
@@ -231,13 +239,13 @@
                                 <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Intervallo Anni Multiplo</h3>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs text-blue-300 mb-1">Da Anno:</label>
+                                        <label class="block text-xs ${isGreen ? 'text-emerald-200' : 'text-blue-300'} mb-1">Da Anno:</label>
                                         <select id="startYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 text-emerald-400 focus:outline-none focus:border-amber-400 text-sm">
                                             <option value="" class="bg-slate-900 text-emerald-400">-- Inizio --</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs text-blue-300 mb-1">A Anno:</label>
+                                        <label class="block text-xs ${isGreen ? 'text-emerald-200' : 'text-blue-300'} mb-1">A Anno:</label>
                                         <select id="endYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 text-emerald-400 focus:outline-none focus:border-amber-400 text-sm">
                                             <option value="" class="bg-slate-900 text-emerald-400">-- Fine --</option>
                                         </select>
@@ -295,17 +303,17 @@
                             ${themeButtonHTML}
                         </div>
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-base font-semibold">
+                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-xl shadow transition text-white flex items-center gap-2 text-base font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
-                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-900 text-base">
+                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-2xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-900 text-base">
                                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b ${isCavanWeb ? 'border-[#800040]/30' : 'border-amber-300'} flex items-center gap-1.5"><i class="fa-solid fa-star text-[#800040]"></i> Preferiti</div>
                                 <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-sm text-slate-600 px-3 py-1 font-semibold italic">Nessun preferito salvato</span></div>
                                 <div class="border-t ${isCavanWeb ? 'border-[#800040]/30' : 'border-amber-300'} my-1"></div>
-                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-cloud-sun text-[#800040] w-5 text-center"></i> <span>MeteoCWEB</span></a>
-                                <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-earth-americas text-[#800040] w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
-                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-cloud-sun text-[#800040] w-5 text-center"></i> <span>MeteoCWEB</span></a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-earth-americas text-[#800040] w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
                             </div>
                         </div>
                     </div>
@@ -324,21 +332,21 @@
                             <i class="fa-solid fa-earth-americas text-[#800040]"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-md">
-                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-2.5 ${isCavanWeb ? 'bg-[#8FBBD0] text-slate-800 placeholder-slate-500 border-slate-300' : 'bg-white text-slate-800 placeholder-slate-400 border-amber-300'} border rounded-xl focus:outline-none text-base font-semibold">
+                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-2.5 ${isCavanWeb ? 'bg-[#8FBBD0] text-slate-800 placeholder-slate-500 border-slate-300' : 'bg-white text-slate-800 placeholder-slate-400 border-amber-300'} border rounded-2xl focus:outline-none text-base font-semibold">
                             <button id="clear-search-btn" onclick="clearLocationInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-700 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
-                        <button onclick="searchCustomLocation()" class="bg-[#0284c7] hover:bg-[#0369a1] px-5 py-2.5 rounded-xl font-semibold text-white transition shadow text-base flex items-center gap-2"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
-                        <button onclick="useCurrentGPS()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-2.5 rounded-xl border border-emerald-600 transition text-white flex items-center gap-2 text-base font-semibold" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"><span>GPS</span></i></button>
+                        <button onclick="searchCustomLocation()" class="bg-[#0284c7] hover:bg-[#0369a1] px-5 py-2.5 rounded-2xl font-semibold text-white transition shadow text-base flex items-center gap-2"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
+                        <button onclick="useCurrentGPS()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-2.5 rounded-2xl border border-emerald-600 transition text-white flex items-center gap-2 text-base font-semibold" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"><span>GPS</span></i></button>
                         <div class="w-full text-sm text-slate-700 pt-1 flex items-center justify-between font-semibold">
                             <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-slate-900">Piacenza (45.05°N, 9.70°E)</span></span>
-                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-lg border ${isCavanWeb ? 'bg-[#8FBBD0] text-slate-800 border-slate-300' : 'bg-white text-slate-800 border-amber-300'} font-semibold shadow-sm"><i id="fav-icon" class="fa-regular fa-star text-blue-600"></i> <span class="text-xs">Preferito</span></button>
+                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-xl border ${isCavanWeb ? 'bg-[#8FBBD0] text-slate-800 border-slate-300' : 'bg-white text-slate-800 border-amber-300'} font-semibold shadow-sm"><i id="fav-icon" class="fa-regular fa-star text-blue-600"></i> <span class="text-xs">Preferito</span></button>
                         </div>
                     </div>
 
                     <div class="${cardBgClass} border rounded-3xl p-6 shadow-sm space-y-4">
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-bolt text-[#800040]"></i> Meteo Attuale / Oggi (<span id="currentLocationTitle">Piacenza</span>)</h2>
                         <div class="w-full overflow-hidden rounded-2xl border ${isCavanWeb ? 'border-slate-300' : 'border-amber-300'}">
-                            <table id="currentWeatherTable" class="w-full text-left border-collapse text-base" style="background-color: ${isCavanWeb ? '#D8D9D0' : '#fffacd'};">
+                            <table id="currentWeatherTable" class="w-full text-left border-collapse text-base" style="background-color: ${isCavanWeb ? '#D8D9D0' : '#fffde7'};">
                                 <tbody class="divide-y ${isCavanWeb ? 'divide-slate-300' : 'divide-amber-200'} text-slate-800 font-medium">
                                     <tr><td colspan="2" class="p-4 text-center text-slate-500">Caricamento dati attuali in corso...</td></tr>
                                 </tbody>
@@ -397,7 +405,7 @@
 
                     <div class="${cardBgClass} border rounded-3xl p-6 shadow-sm space-y-4">
                         <div class="w-full overflow-x-auto rounded-2xl border ${isCavanWeb ? 'border-slate-300' : 'border-amber-300'} max-h-[600px]">
-                            <table id="weatherTable" class="w-full text-left border-collapse text-base whitespace-nowrap" style="background-color: ${isCavanWeb ? '#D8D9D0' : '#fffacd'};">
+                            <table id="weatherTable" class="w-full text-left border-collapse text-base whitespace-nowrap" style="background-color: ${isCavanWeb ? '#D8D9D0' : '#fffde7'};">
                                 <thead>
                                     <tr class="${isCavanWeb ? 'bg-slate-200 text-slate-800 border-slate-300' : 'bg-amber-100 text-slate-800 border-amber-300'} font-bold border-b sticky top-0">
                                         <th class="p-3.5 text-center">Data</th>
@@ -461,7 +469,7 @@
             if (favorites.includes(cityName)) {
                 favIcon.className = "fa-solid fa-star text-blue-500";
             } else {
-                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-amber-400" : "fa-regular fa-star text-blue-600";
+                favIcon.className = (currentTheme === 'dark' || currentTheme === 'green') ? "fa-regular fa-star text-amber-400" : "fa-regular fa-star text-blue-600";
             }
         }
 
@@ -473,16 +481,16 @@
             const isCavanWeb = (currentTheme === 'cavanweb');
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = `<span class="text-sm ${currentTheme === 'dark' ? 'text-emerald-400' : (isCavanWeb ? 'text-slate-600' : 'text-slate-400')} px-3 py-1 font-semibold italic">Nessun preferito salvato</span>`;
+                favListContainer.innerHTML = `<span class="text-sm ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-emerald-400' : (isCavanWeb ? 'text-slate-600' : 'text-slate-400')} px-3 py-1 font-semibold italic">Nessun preferito salvato</span>`;
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
-                if (currentTheme === 'dark') {
+                if (currentTheme === 'dark' || currentTheme === 'green') {
                     html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-emerald-400 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-emerald-400/50"></i></button>`;
                 } else {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs ${isCavanWeb ? 'text-slate-600' : 'text-slate-400'}"></i></button>`;
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs ${isCavanWeb ? 'text-slate-600' : 'text-slate-400'}"></i></button>`;
                 }
             });
             favListContainer.innerHTML = html;
@@ -604,7 +612,7 @@
             if (endYearSelect) endYearSelect.value = "";
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const isCavanWeb = (currentTheme === 'cavanweb');
-            document.querySelector("#weatherTable tbody").innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-blue-300')} font-bold">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>`;
+            document.querySelector("#weatherTable tbody").innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-blue-300')} font-bold">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>`;
             const csvBtn = document.getElementById("exportCsvBtn");
             const txtBtn = document.getElementById("exportTxtBtn");
             if (csvBtn) csvBtn.classList.add("hidden");
@@ -741,6 +749,9 @@
             }
 
             const yearSelect = document.getElementById("yearSelect");
+            const startYearSelect = document.getElementById("startYearSelect");
+            const endYearSelect = document.getElementById("endYearSelect");
+
             if (yearSelect) {
                 yearSelect.onchange = function() {
                     const selectedYear = yearSelect.value;
@@ -784,7 +795,7 @@
                             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
                             const isCavanWeb = (currentTheme === 'cavanweb');
                             if (!cachedYearData || !cachedYearData.time) {
-                                if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato disponibile per questo periodo.</td></tr>`;
+                                if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato disponibile per questo periodo.</td></tr>`;
                                 return;
                             }
                             if (exportCsvBtn) { exportCsvBtn.classList.remove("hidden"); exportCsvBtn.classList.add("inline-flex"); }
@@ -795,7 +806,7 @@
                             if (loadingStatus) loadingStatus.classList.add("hidden");
                             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
                             const isCavanWeb = (currentTheme === 'cavanweb');
-                            if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-red-400' : (isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento dei dati.</td></tr>`;
+                            if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-red-400' : (isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento dei dati.</td></tr>`;
                         });
                 };
             }
@@ -867,7 +878,7 @@
             const tbody = document.querySelector("#weatherTable tbody");
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const isCavanWeb = (currentTheme === 'cavanweb');
-            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Caricamento dati intervallo in corso...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Caricamento dati intervallo in corso...</td></tr>`;
             const yearSelect = document.getElementById("yearSelect");
             if (yearSelect) yearSelect.value = "";
             document.getElementById("exportCsvBtn").classList.add("hidden");
@@ -911,10 +922,10 @@
                 }
                 cachedMultiData.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
                 if (cachedMultiData.length > 0) renderMultiTableData();
-                else tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato trovato.</td></tr>`;
+                else tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato trovato.</td></tr>`;
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${currentTheme === 'dark' ? 'text-red-400' : (isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-red-400' : (isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento.</td></tr>`;
             } finally {
                 loadingMultiStatus.classList.add("hidden");
                 btn.disabled = false;
