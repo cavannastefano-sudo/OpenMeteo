@@ -158,12 +158,13 @@
 
         let currentMarker = null;
 
-        // Gestione dei Temi (Scuro, Chiaro, CavanWeb)
+        // Gestione dei Temi (CavanWeb, Chiaro, Scuro, Verde) in ciclo sequenziale
         function toggleTheme() {
             const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             let next = 'light';
             if (current === 'cavanweb') next = 'light';
             else if (current === 'light') next = 'dark';
+            else if (current === 'dark') next = 'green';
             else next = 'cavanweb';
             setTheme(next);
         }
@@ -200,6 +201,24 @@
                     .leaflet-popup-content-wrapper { background: #1e293b !important; color: white !important; }
                     .leaflet-popup-tip { background: #1e293b !important; }
                     .leaflet-control-layers { background: #1e293b !important; color: white !important; border: 1px solid rgba(255,255,255,0.2) !important; }
+                    .leaflet-control-layers-separator { border-top: 1px solid rgba(255,255,255,0.2) !important; }
+                `;
+            } else if (themeName === 'green') {
+                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-white flex flex-col justify-between";
+                metaTheme.setAttribute("content", "#064e3b");
+                header.className = "w-full bg-emerald-950/80 backdrop-blur-md border-b border-emerald-500/20 px-4 py-3 flex items-center justify-between z-[1000] text-white";
+                mainTitle.className = "text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2 text-white";
+                titleIcon.className = "fa-solid fa-earth-americas text-amber-400";
+                backBtn.className = "bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl border border-white/20 shadow transition text-emerald-200 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-semibold";
+                themeToggleBtn.className = "bg-white/10 hover:bg-white/25 text-amber-400 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5 border border-white/20";
+                themeIcon.className = "fa-solid fa-leaf";
+                themeLabel.textContent = "Verde";
+                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-emerald-950/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-emerald-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap";
+
+                styleSheets.innerHTML = `
+                    .leaflet-popup-content-wrapper { background: #064e3b !important; color: white !important; }
+                    .leaflet-popup-tip { background: #064e3b !important; }
+                    .leaflet-control-layers { background: #064e3b !important; color: white !important; border: 1px solid rgba(255,255,255,0.2) !important; }
                     .leaflet-control-layers-separator { border-top: 1px solid rgba(255,255,255,0.2) !important; }
                 `;
             } else if (themeName === 'light') {
