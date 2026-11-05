@@ -138,24 +138,24 @@
                 const subText = isGreen ? 'text-emerald-200' : 'text-blue-200';
                 const borderCol = isGreen ? 'border-emerald-500/20' : 'border-white/20';
 
-                // Layout uniformato con header a blocco unico (stile bianco / CavanWeb) per accogliere comodamente logo, aggiorna, tema e menu
-                headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${isGreen ? 'bg-emerald-950/40 border-emerald-500/20' : 'bg-white/10 border-white/20'} backdrop-blur-md border rounded-3xl p-4 shadow-sm space-y-4 relative`;
+                headerContainer.className = "w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative";
                 headerContainer.innerHTML = `
-                    <div class="flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
-                                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${borderCol} shadow-sm group-hover:scale-105 transition">
-                            </a>
-                            <button onclick="refreshCurrent();" title="Aggiorna" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border ${borderCol} shadow transition ${subText} hover:text-white flex items-center justify-center text-lg flex-shrink-0">
-                                <i id="refresh-icon" class="fa-solid fa-rotate"></i>
-                            </button>
-                            ${themeButtonHTML}
-                        </div>
+                    <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                        <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${borderCol} shadow-lg group-hover:scale-105 transition">
+                    </a>
+                    <div class="text-center flex-grow mx-2">
+                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cloud-sun ${accentColor}"></i> MeteoCWEB
+                        </h1>
+                        <p class="${subText} text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        ${themeButtonHTML}
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 px-4 py-2.5 rounded-xl border ${borderCol} shadow transition ${subText} hover:text-white flex items-center gap-2 text-base font-semibold">
-                                <i class="fa-solid fa-bars"></i> <span>Menu</span>
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border ${borderCol} shadow transition ${subText} hover:text-white flex items-center justify-center text-lg font-semibold">
+                                <i class="fa-solid fa-bars"></i>
                             </button>
-                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-emerald-950/95 border-emerald-500/25 text-emerald-200' : 'bg-slate-900/95 border-white/20 text-blue-200'} backdrop-blur-xl border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
+                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-emerald-950/95 border-emerald-500/20 text-emerald-200' : 'bg-slate-900/95 border-white/20 text-blue-200'} backdrop-blur-xl border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
                                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${accentColor} border-b ${isGreen ? 'border-emerald-500/10' : 'border-white/10'} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
                                 <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs ${isGreen ? 'text-emerald-300/60' : 'text-blue-300/60'} px-3 py-1 italic">Nessun preferito salvato</span></div>
                                 <div class="border-t ${isGreen ? 'border-emerald-500/10' : 'border-white/10'} my-1"></div>
@@ -165,12 +165,6 @@
                                 <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 ${subText} hover:text-white text-sm font-semibold transition"><i class="fa-solid fa-calendar-days ${accentColor} w-5 text-center"></i> <span>Archivio Storico</span></a>
                             </div>
                         </div>
-                    </div>
-                    <div class="text-center border-t ${borderCol} pt-3">
-                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-cloud-sun ${accentColor}"></i> MeteoCWEB
-                        </h1>
-                        <p class="${subText} text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
                     </div>
                 `;
 
@@ -209,6 +203,7 @@
                                         <p id="country-name" class="text-xs uppercase tracking-widest ${subText} font-semibold mt-1">--</p>
                                     </div>
                                 </div>
+                                <button onclick="refreshCurrent()" title="Aggiorna" class="bg-white/10 hover:bg-white/20 p-2.5 rounded-full transition ${subText} hover:text-white flex-shrink-0"><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
                             </div>
 
                             <div class="flex items-center justify-between">
