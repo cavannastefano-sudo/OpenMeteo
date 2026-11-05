@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="cavanweb">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeteoCWEB - Archivio Storico</title>
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#728890" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
+
+    <!-- HEADER DINAMICO -->
+    <div id="header-container" class="w-full max-w-6xl mx-auto mb-6">
+        <!-- Verrà iniettato via JS -->
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main id="main-container" class="w-full max-w-4xl mx-auto space-y-6 flex-grow flex flex-col justify-center">
+        <!-- Verrà iniettato via JS -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs space-y-2">
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <p class="text-xs" id="footer-app-text">Scarica la mia app ufficiale:</p>
+            <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border transition shadow text-xs font-semibold group" title="Scarica da Google Play" id="playstore-btn">
+                <i class="fa-brands fa-google-play text-amber-400 text-sm group-hover:scale-110 transition"></i>
+                <span>Google Play Store</span>
+            </a>
+        </div>
+        <p id="footer-copy">MeteoCWEB • Archivio Storico Open-Meteo</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            let next = 'light';
+            if (current === 'cavanweb') next = 'light';
+            else if (current === 'light') next = 'dark';
+            else if (current === 'dark') next = 'green';
+            else next = 'cavanweb';
+            setTheme(next);
+        }
+
+        function setTheme(themeName) {
+            localStorage.setItem('cavanweb_theme', themeName);
+            const body = document.getElementById('app-body');
+            const metaTheme = document.getElementById('meta-theme-color');
+            const footerAppText = document.getElementById('footer-app-text');
+            const playStoreBtn = document.getElementById('playstore-btn');
+            const footerCopy = document.getElementById('footer-copy');
+
+            if (themeName === 'dark') {
+                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8";
+                metaTheme.setAttribute("content", "#0f172a");
+                footerAppText.className = "text-xs text-blue-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-blue-300/60";
+            } else if (themeName === 'green') {
+                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8";
+                metaTheme.setAttribute("content", "#064e3b");
+                footerAppText.className = "text-xs text-emerald-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-emerald-300/60";
+            } else if (themeName === 'light') {
+                body.className = "bg-white min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#ffffff");
+                footerAppText.className = "text-xs text-slate-700";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-amber-100 hover:bg-amber-200 px-3.5 py-1.5 rounded-xl border border-amber-300 transition shadow text-xs font-semibold text-slate-800 group";
+                footerCopy.className = "text-slate-600";
+            } else {
+                body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#728890");
+                footerAppText.className = "text-xs text-slate-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#D8D9D0]/40 hover:bg-[#D8D9D0]/70 px-3.5 py-1.5 rounded-xl border border-slate-600/30 transition shadow text-xs font-semibold text-slate-900 group";
+                footerCopy.className = "text-slate-200/80";
+            }
+
+            renderLayout();
+        }
+
+        function renderLayout() {
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const headerContainer = document.getElementById('header-container');
+            const mainContainer = document.getElementById('main-container');
+
+            let themeIcon = "fa-palette";
+            let themeLabel = "Tema";
+            if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
+            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
+            else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
+            else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
+
+            const themeButtonHTML = `
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
+                    <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
+                </button>
+            `;
+
+            const isGreen = currentTheme === 'green';
+            const isCavanWeb = currentTheme === 'cavanweb';
+            const isLight = currentTheme === 'light';
+
+            let accentColor = 'text-amber-400';
+            let subText = 'text-blue-200';
+            let borderCol = 'border-white/20';
+            let btnBg = 'bg-amber-500 hover:bg-amber-600 text-slate-900';
+            let cardBg = 'bg-white/10 backdrop-blur-md';
+            let inputBg = 'bg-white/5 text-white placeholder-blue-300/60 border-white/10';
+
+            if (isGreen) {
+                accentColor = 'text-amber-400';
+                subText = 'text-emerald-200';
+                borderCol = 'border-white/20';
+                btnBg = 'bg-amber-500 hover:bg-amber-600 text-slate-900';
+                cardBg = 'bg-white/10 backdrop-blur-md';
+                inputBg = 'bg-white/5 text-white placeholder-emerald-200/60 border-white/10';
+            } else if (isCavanWeb) {
+                accentColor = 'text-[#800040]';
+                subText = 'text-[#800040] font-medium';
+                borderCol = 'border-[#800040]/40';
+                btnBg = 'bg-[#800040] hover:bg-[#600030] text-white';
+                cardBg = 'bg-[#D8D9D0] backdrop-blur-none';
+                inputBg = 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold';
+            } else if (isLight) {
+                accentColor = 'text-amber-600';
+                subText = 'text-slate-700';
+                borderCol = 'border-amber-300';
+                btnBg = 'bg-amber-500 hover:bg-amber-600 text-white';
+                cardBg = 'bg-white backdrop-blur-none shadow-xl';
+                inputBg = 'bg-slate-50 text-slate-800 placeholder-slate-400 border-amber-300';
+            }
+
+            if (isCavanWeb) {
+                headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative bg-[#D8D9D0] border border-slate-400 rounded-3xl p-4 shadow-sm`;
+            } else {
+                headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative`;
+            }
+
+            headerContainer.innerHTML = `
+                <a href="openwmap2.html" class="flex items-center group flex-shrink-0" title="Torna alla Dashboard">
+                    <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${isLight ? 'border-amber-300' : borderCol} shadow-lg group-hover:scale-105 transition">
+                </a>
+                <div class="text-center flex-grow mx-2">
+                    <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : 'text-white'}">
+                        <i class="fa-solid fa-calendar-days ${accentColor}"></i> Archivio Storico
+                    </h1>
+                    <p class="${subText} text-xs sm:text-sm">Dati climatici storici Open-Meteo</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    ${themeButtonHTML}
+                </div>
+            `;
+
+            mainContainer.innerHTML = `
+                <div class="${cardBg} border ${borderCol} rounded-3xl p-6 sm:p-8 shadow-2xl w-full space-y-6 ${isLight ? 'text-slate-800' : isCavanWeb ? 'text-[#800040]' : 'text-white'}">
+                    <div class="space-y-4">
+                        <h2 class="text-lg font-bold">Seleziona Periodo e Località</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium mb-1">Data Inizio</label>
+                                <input type="date" id="start-date" class="w-full px-4 py-2.5 rounded-2xl border ${inputBg} focus:outline-none text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium mb-1">Data Fine</label>
+                                <input type="date" id="end-date" class="w-full px-4 py-2.5 rounded-2xl border ${inputBg} focus:outline-none text-sm">
+                            </div>
+                        </div>
+                        <button onclick="fetchArchiveData()" class="w-full py-3 ${btnBg} font-semibold rounded-2xl transition shadow-lg text-sm sm:text-base flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass"></i> Carica Dati Storici
+                        </button>
+                    </div>
+                    <div id="archive-results" class="hidden space-y-4 pt-4 border-t ${borderCol}">
+                        <!-- Risultati caricati via script -->
+                    </div>
+                </div>
+            `;
+        }
+
+        async function fetchArchiveData() {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            if (!startDate || !endDate) {
+                alert("Seleziona una data di inizio e di fine.");
+                return;
+            }
+            const lat = localStorage.getItem('cavanweb_active_lat') || 45.0483;
+            const lon = localStorage.getItem('cavanweb_active_lon') || 9.6953;
+
+            const resultsContainer = document.getElementById('archive-results');
+            resultsContainer.classList.remove('hidden');
+            resultsContainer.innerHTML = `<p class="text-center py-4 text-xs animate-pulse">Caricamento archivio in corso...</p>`;
+
+            try {
+                const res = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=auto`);
+                if (!res.ok) throw new Error("Errore nel recupero dati storici");
+                const data = await res.json();
+
+                let html = `<h3 class="font-bold text-sm">Risultati Archivio:</h3><div class="max-h-60 overflow-y-auto space-y-2 text-xs">`;
+                data.daily.time.forEach((date, index) => {
+                    html += `<div class="flex justify-between p-2 rounded-xl bg-black/5 border border-current/10">
+                        <span>${date}</span>
+                        <span>Max: <b>${data.daily.temperature_2m_max[index]}°C</b> | Min: <b>${data.daily.temperature_2m_min[index]}°C</b> | Pioggia: <b>${data.daily.precipitation_sum[index]} mm</b></span>
+                    </div>`;
+                });
+                html += `</div>`;
+                resultsContainer.innerHTML = html;
+            } catch (err) {
+                resultsContainer.innerHTML = `<p class="text-red-400 text-xs text-center">Impossibile recuperare i dati storici.</p>`;
+            }
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            setTheme(savedTheme);
+        };
+    </script>
+</body>
+</html>
