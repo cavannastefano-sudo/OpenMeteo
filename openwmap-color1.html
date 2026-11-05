@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="cavanweb">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeteoCWEB - Dashboard</title>
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#728890" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        input[type="search"]::-webkit-search-cancel-button {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
+
+    <!-- HEADER DINAMICO -->
+    <div id="header-container" class="w-full max-w-6xl mx-auto mb-6">
+        <!-- Verrà iniettato via JS -->
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main id="main-container" class="w-full max-w-6xl mx-auto space-y-4 flex-grow flex flex-col justify-center">
+        <!-- Verrà iniettato via JS -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs space-y-2">
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <p class="text-xs" id="footer-app-text">Scarica la mia app ufficiale:</p>
+            <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border transition shadow text-xs font-semibold group" title="Scarica da Google Play" id="playstore-btn">
+                <i class="fa-brands fa-google-play text-amber-400 text-sm group-hover:scale-110 transition"></i>
+                <span>Google Play Store</span>
+            </a>
+        </div>
+        <p id="footer-copy">MeteoCWEB • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
+    </footer>
+
+    <!-- JAVASCRIPT UNIFICATO (4 TEMI) -->
+    <script>
+        const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
+        let lastFetchFunction = null;
+        let currentLoadedCity = "";
+        let latestWeatherData = null;
+
+        function toggleTheme() {
+            const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            let next = 'light';
+            if (current === 'cavanweb') next = 'light';
+            else if (current === 'light') next = 'dark';
+            else if (current === 'dark') next = 'green';
+            else next = 'cavanweb';
+            setTheme(next);
+        }
+
+        function setTheme(themeName) {
+            localStorage.setItem('cavanweb_theme', themeName);
+            const body = document.getElementById('app-body');
+            const metaTheme = document.getElementById('meta-theme-color');
+            const footerAppText = document.getElementById('footer-app-text');
+            const playStoreBtn = document.getElementById('playstore-btn');
+            const footerCopy = document.getElementById('footer-copy');
+
+            body.classList.remove('dark-theme', 'green-theme');
+
+            if (themeName === 'dark') {
+                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8 dark-theme";
+                metaTheme.setAttribute("content", "#0f172a");
+                footerAppText.className = "text-xs text-blue-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-blue-300/60";
+            } else if (themeName === 'green') {
+                body.className = "bg-gradient-to-br from-[#022c22] via-[#064e3b] to-[#115e59] min-h-screen text-white flex flex-col justify-between p-4 sm:p-8 green-theme";
+                metaTheme.setAttribute("content", "#022c22");
+                footerAppText.className = "text-xs text-[#20b2aa]";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#064e3b] hover:bg-[#115e59] px-3.5 py-1.5 rounded-xl border border-[#20b2aa]/40 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-[#20b2aa]/80";
+            } else if (themeName === 'light') {
+                body.className = "bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#f1f5f9");
+                footerAppText.className = "text-xs text-slate-600";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-slate-200 hover:bg-slate-300 px-3.5 py-1.5 rounded-xl border border-slate-300 transition shadow text-xs font-semibold text-slate-800 group";
+                footerCopy.className = "text-slate-500";
+            } else {
+                body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#728890");
+                footerAppText.className = "text-xs text-slate-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#D8D9D0]/40 hover:bg-[#D8D9D0]/70 px-3.5 py-1.5 rounded-xl border border-slate-600/30 transition shadow text-xs font-semibold text-slate-900 group";
+                footerCopy.className = "text-slate-200/80";
+            }
+
+            renderLayout();
+            if (latestWeatherData) {
+                const loadingEl = document.getElementById('loading');
+                const contentEl = document.getElementById('weather-content');
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (contentEl) contentEl.classList.remove('hidden');
+                updateUIWithData(latestWeatherData);
+                updateFavoriteIcon(currentLoadedCity);
+            } else if (currentLoadedCity) {
+                fetchWeatherDataByCity(currentLoadedCity);
+            } else {
+                fetchWeatherDataByCity('Piacenza');
+            }
+        }
+
+        function renderLayout() {
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const headerContainer = document.getElementById('header-container');
+            const mainContainer = document.getElementById('main-container');
+
+            let themeIcon = "fa-palette";
+            let themeLabel = "Tema";
+            if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
+            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
+            else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
+            else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
+
+            const themeButtonHTML = `
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'green' ? 'bg-[#064e3b] hover:bg-[#115e59] text-[#20b2aa] border-[#20b2aa]/40' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
+                    <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
+                </button>
+            `;
+
+            if (currentTheme === 'dark' || currentTheme === 'green') {
+                const isGreen = currentTheme === 'green';
+                const textColor = isGreen ? "text-[#20b2aa]" : "text-emerald-400";
+                const iconColor = isGreen ? "text-[#20b2aa]" : "text-amber-400";
+                const subTextClass = isGreen ? "text-[#20b2aa]" : "text-blue-200";
+                const boxBg = isGreen ? "bg-[#022c22]/90 border-[#20b2aa]/40" : "bg-white/10 border-white/20";
+
+                headerContainer.className = "w-full max-w-6xl mx-auto mb-6 space-y-4 relative";
+                headerContainer.innerHTML = `
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/20'} shadow-lg group-hover:scale-105 transition">
+                            </a>
+                            <button onclick="refreshCurrent();" class="${isGreen ? 'bg-[#064e3b] border-[#20b2aa]/40 text-[#20b2aa]' : 'bg-white/10 border-white/20 text-blue-200'} hover:bg-white/25 w-12 h-12 rounded-2xl border shadow transition hover:text-white flex items-center justify-center text-lg font-semibold" title="Aggiorna">
+                                <i id="refresh-icon" class="fa-solid fa-rotate"></i>
+                            </button>
+                            ${themeButtonHTML}
+                        </div>
+                        <div class="relative flex-shrink-0">
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isGreen ? 'bg-[#064e3b] border-[#20b2aa]/40 text-[#20b2aa]' : 'bg-white/10 border-white/20 text-blue-200'} hover:bg-white/25 px-4 py-2.5 rounded-xl border shadow transition hover:text-white flex items-center gap-2 text-base font-semibold">
+                                <i class="fa-solid fa-bars"></i> <span>Menu</span>
+                            </button>
+                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-[#022c22] border-[#20b2aa]' : 'bg-slate-900 border-white/20'} rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2 ${textColor} text-base">
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${iconColor} border-b ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
+                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs ${textColor} px-3 py-1 italic">Nessun preferito salvato</span></div>
+                                <div class="border-t ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'} my-1"></div>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 ${textColor} text-sm font-semibold transition"><i class="fa-solid fa-earth-americas ${iconColor} w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 ${textColor} text-sm font-semibold transition"><i class="fa-solid fa-clock ${iconColor} w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 ${textColor} text-sm font-semibold transition"><i class="fa-solid fa-globe ${iconColor} w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 ${textColor} text-sm font-semibold transition"><i class="fa-solid fa-calendar-days ${iconColor} w-5 text-center"></i> <span>Archivio Storico</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center border-t ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'} pt-3">
+                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight text-white mb-0.5 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cloud-sun ${iconColor}"></i> MeteoCWEB
+                        </h1>
+                        <p class="${subTextClass} font-semibold text-sm sm:text-base">Dati da OpenWeatherMap & Open-Meteo</p>
+                    </div>
+                `;
+
+                mainContainer.className = "w-full max-w-6xl mx-auto space-y-6 flex-grow";
+                mainContainer.innerHTML = `
+                    <div class="${boxBg} backdrop-blur-md rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2 ${subTextClass} font-bold text-sm">
+                            <i class="fa-solid fa-earth-americas ${iconColor}"></i> Località:
+                        </div>
+                        <div class="relative flex-grow max-w-md">
+                            <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2 w-full">
+                                <input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca località..." class="w-full pl-4 pr-10 py-3 ${isGreen ? 'bg-[#064e3b] text-white placeholder-[#20b2aa]/60 border-[#20b2aa]/40' : 'bg-white/5 text-white placeholder-blue-300/60 border-white/10'} border rounded-2xl focus:outline-none focus:border-[${isGreen ? '#20b2aa' : '#fbbf24'}] text-sm transition font-semibold">
+                                <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-24 pr-2 flex items-center ${subTextClass} hover:text-white transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
+                                <button type="submit" class="${isGreen ? 'bg-[#20b2aa] hover:bg-[#178a83] text-slate-950 font-bold' : 'bg-amber-500 hover:bg-amber-600 text-slate-900'} px-5 py-3 rounded-2xl transition shadow-lg flex items-center gap-2 text-sm flex-shrink-0"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
+                            </form>
+                        </div>
+                        <button onclick="getGPSWeather()" class="${isGreen ? 'bg-[#064e3b] border-[#20b2aa]/40 text-[#20b2aa]' : 'bg-white/10 border-white/10 text-blue-200'} hover:bg-white/20 px-4 py-3 rounded-2xl border transition hover:text-white flex items-center gap-2 text-sm font-semibold flex-shrink-0" title="Usa GPS"><i class="fa-solid fa-location-crosshairs ${iconColor}"></i> <span>GPS</span></button>
+                        <div class="w-full text-xs ${subTextClass} pt-1 flex items-center justify-between font-semibold">
+                            <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-white">--</span></span>
+                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-base ${subTextClass} hover:${iconColor} transition flex items-center gap-1.5 px-2.5 py-1 ${isGreen ? 'bg-[#064e3b] border-[#20b2aa]/40' : 'bg-white/5 border-white/10'} rounded-xl border"><i id="fav-icon" class="fa-regular fa-star ${iconColor}"></i> <span class="text-xs">Preferito</span></button>
+                        </div>
+                    </div>
+
+                    <div id="loading" class="${boxBg} backdrop-blur-md rounded-3xl p-12 text-center shadow-2xl space-y-4">
+                        <div class="animate-spin rounded-full h-12 w-12 border-4 border-[${isGreen ? '#20b2aa' : '#fbbf24'}] border-t-transparent mx-auto"></div>
+                        <p id="loading-text" class="${subTextClass} font-medium text-base">Caricamento dati meteo in corso...</p>
+                    </div>
+
+                    <div id="error-state" class="hidden ${boxBg} backdrop-blur-md rounded-3xl p-8 text-center shadow-2xl space-y-4">
+                        <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl"></i>
+                        <p id="error-message" class="text-red-200 text-sm">Località non trovata o errore di connessione.</p>
+                        <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 font-semibold rounded-xl text-slate-900 transition shadow-lg text-sm">Carica Piacenza</button>
+                    </div>
+
+                    <div id="weather-content" class="hidden space-y-6">
+                        <div class="${boxBg} backdrop-blur-md rounded-3xl p-6 shadow-2xl space-y-4">
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-bolt ${iconColor}"></i> Meteo Attuale / Oggi (<span id="city-title">--</span>)</h2>
+                            <div class="w-full overflow-hidden rounded-2xl border ${isGreen ? 'border-[#20b2aa]/40' : 'border-white/10'}">
+                                <table class="w-full text-left border-collapse text-sm">
+                                    <tbody class="divide-y ${isGreen ? 'divide-[#20b2aa]/20' : 'divide-white/10'} text-white font-semibold">
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 w-1/3 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Data</td><td class="p-3.5 font-bold text-sky-400 underline" id="table-date">--</td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Temperatura Attuale</td><td class="p-3.5 text-rose-400 font-extrabold text-lg" id="table-temp-curr">--</td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Percepita Attuale</td><td class="p-3.5 text-teal-300 font-bold" id="table-feels-curr">--</td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Temperatura Max</td><td class="p-3.5 font-bold" id="table-temp-max">--</td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Percepita Max</td><td class="p-3.5 font-bold" id="table-feels-max">--</td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Temperatura Min</td><td class="p-3.5 font-bold" id="table-temp-min">--</td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Pressione (Media / Attuale)</td><td class="p-3.5 font-bold"><span id="table-press-mean">--</span> <span class="text-teal-300 font-bold text-sm ml-2" id="table-press-curr">(--)</span></td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Vento (Max / Attuale)</td><td class="p-3.5 font-bold"><span id="table-wind-mean">--</span> <span class="text-teal-300 font-bold text-sm ml-2" id="table-wind-curr">(--)</span></td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Umidità (Media / Attuale)</td><td class="p-3.5 font-bold"><span id="table-hum-mean">--</span> <span class="text-teal-300 font-bold text-sm ml-2" id="table-hum-curr">(--)</span></td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Pioggia / Neve (Totale / Attuale)</td><td class="p-3.5 font-bold"><span id="table-rain-sum">--</span> <span class="text-teal-300 font-bold text-sm ml-2" id="table-rain-curr">(--)</span></td></tr>
+                                        <tr class="hover:bg-white/5 transition"><td class="p-3.5 border-r ${isGreen ? 'border-[#20b2aa]/30' : 'border-white/10'}">Alba / Tramonto</td><td class="p-3.5 font-bold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-xs ${subTextClass} space-y-1 ${isGreen ? 'bg-[#064e3b] border-[#20b2aa]/40' : 'bg-white/5 border-white/10'} p-4 rounded-2xl border font-semibold">
+                                <p>ℹ️ <strong>Legenda:</strong></p>
+                                <p>• La temperatura attuale è indicata in <span class="text-rose-400 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
+                                <p>• I valori in <span class="text-teal-300 font-bold">turchese</span> rappresentano i dati attuali con relativi orari.</p>
+                                <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-white">--</span>.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                const isCavanWeb = (currentTheme === 'cavanweb');
+                const headerBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400" : "bg-white border-slate-200";
+                const cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : "bg-white border-slate-300 text-slate-800";
+                const dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : "bg-white border-slate-200";
+
+                headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${headerBgClass} border rounded-3xl p-4 shadow-sm space-y-4 relative`;
+                headerContainer.innerHTML = `
+                    <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                                <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border border-slate-300 shadow-sm group-hover:scale-105 transition">
+                            </a>
+                            <button onclick="refreshCurrent();" title="Aggiorna" class="bg-slate-700 hover:bg-slate-800 w-12 h-12 rounded-2xl text-white transition shadow flex items-center justify-center text-lg flex-shrink-0">
+                                <i id="refresh-icon" class="fa-solid fa-rotate"></i>
+                            </button>
+                            ${themeButtonHTML}
+                        </div>
+                        <div class="relative flex-shrink-0">
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-[#800040] hover:bg-[#600030] px-4 py-2.5 rounded-lg shadow transition text-white flex items-center gap-2 text-base font-semibold">
+                                <i class="fa-solid fa-bars"></i> <span>Menu</span>
+                            </button>
+                            <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-[#800040] text-base">
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b ${isCavanWeb ? 'border-[#800040]/30' : 'border-slate-100'} flex items-center gap-1.5"><i class="fa-solid fa-star text-[#800040]"></i> Preferiti</div>
+                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-sm ${isCavanWeb ? 'text-[#800040]/70' : 'text-slate-400'} px-3 py-1 italic">Nessun preferito salvato</span></div>
+                                <div class="border-t ${isCavanWeb ? 'border-[#800040]/30' : 'border-slate-100'} my-1"></div>
+                                <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-calendar-days text-[#800040] w-5 text-center"></i> <span>Archivio Storico</span></a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-earth-americas text-[#800040] w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-clock text-[#800040] w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition"><i class="fa-solid fa-globe text-[#800040] w-5 text-center"></i> <span>Meteo Europa</span></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center border-t border-slate-300/40 pt-3">
+                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-0.5 flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-cloud-sun ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> MeteoCWEB
+                        </h1>
+                        <p class="text-slate-600 text-sm sm:text-base">Dati da OpenWeatherMap & Open-Meteo</p>
+                    </div>
+                `;
+
+                mainContainer.className = "w-full max-w-6xl mx-auto space-y-4 flex-grow";
+                mainContainer.innerHTML = `
+                    <div class="${cardBgClass} border rounded-3xl p-5 shadow-sm flex flex-wrap items-center gap-3">
+                        <div class="flex items-center gap-2 text-slate-900 font-semibold text-base">
+                            <i class="fa-solid fa-earth-americas"></i> Località:
+                        </div>
+                        <div class="relative flex-grow max-w-md">
+                            <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2 w-full">
+                                <input type="text" id="search-input" placeholder="Cerca città..." oninput="toggleClearButton()" class="w-full pl-3 pr-8 py-2 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold' : 'bg-white text-slate-800 placeholder-slate-400 border-slate-300'} border rounded focus:outline-none text-base">
+                                <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-28 pr-2.5 flex items-center text-[#800040] hover:text-black transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
+                                <button type="submit" class="bg-[#0284c7] hover:bg-[#0369a1] px-4 py-2 rounded text-white font-semibold text-base flex items-center gap-1.5 shadow-sm transition flex-shrink-0"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
+                            </form>
+                        </div>
+                        <button onclick="getGPSWeather()" class="bg-[#10b981] hover:bg-[#059669] px-4 py-2 rounded text-white font-semibold text-base flex items-center gap-1.5 shadow-sm transition flex-shrink-0" title="Usa GPS"><i class="fa-solid fa-location-crosshairs"></i> GPS</button>
+                        <div class="w-full text-sm text-slate-700 pt-1 flex items-center justify-between font-semibold">
+                            <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-slate-900">--</span></span>
+                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 ${isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/50 font-bold' : 'bg-white text-slate-800 border-slate-300 font-semibold'} px-3 py-1.5 rounded border shadow-sm">
+                                <i id="fav-icon" class="fa-regular fa-star ${isCavanWeb ? 'text-[#800040]' : 'text-amber-500'}"></i> <span>Preferito</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="loading" class="${cardBgClass} border rounded p-12 text-center shadow-sm space-y-4">
+                        <div class="animate-spin rounded-full h-10 w-10 border-4 border-slate-700 border-t-transparent mx-auto"></div>
+                        <p id="loading-text" class="text-slate-700 font-medium text-base">Caricamento dati meteo in corso...</p>
+                    </div>
+
+                    <div id="error-state" class="hidden ${cardBgClass} border rounded p-8 text-center shadow-sm space-y-4">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-3xl"></i>
+                        <p id="error-message" class="text-slate-700 text-base">Località non trovata o errore di connessione.</p>
+                        <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] font-semibold rounded text-white text-base">Carica Piacenza</button>
+                    </div>
+
+                    <div id="weather-content" class="hidden space-y-3">
+                        <h2 class="text-lg font-bold text-slate-900">Meteo Attuale / Oggi (<span id="city-title">--</span>)</h2>
+                        <div class="w-full overflow-hidden rounded border border-slate-400 shadow-sm">
+                            <table class="w-full text-left border-collapse text-base ${isCavanWeb ? 'bg-[#D8D9D0]' : 'bg-white'}">
+                                <tbody class="divide-y divide-slate-300 text-slate-900">
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold w-1/3 border-r border-slate-300">Data</td><td class="p-3.5 font-bold text-[#0284c7] underline" id="table-date">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Temperatura Attuale</td><td class="p-3.5 font-extrabold text-rose-600 text-lg" id="table-temp-curr">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Percepita Attuale</td><td class="p-3.5 font-bold text-teal-700" id="table-feels-curr">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Temperatura Max</td><td class="p-3.5 font-bold" id="table-temp-max">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Percepita Max</td><td class="p-3.5 font-bold" id="table-feels-max">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Temperatura Min</td><td class="p-3.5 font-bold" id="table-temp-min">--</td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Pressione (Media / Attuale)</td><td class="p-3.5 font-bold"><span id="table-press-mean">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-press-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Vento (Max / Attuale)</td><td class="p-3.5 font-bold"><span id="table-wind-mean">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-wind-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Umidità (Media / Attuale)</td><td class="p-3.5 font-bold"><span id="table-hum-mean">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-hum-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Pioggia / Neve (Totale / Attuale)</td><td class="p-3.5 font-bold"><span id="table-rain-sum">--</span> <span class="text-teal-700 font-bold text-sm ml-2" id="table-rain-curr">(--)</span></td></tr>
+                                    <tr class="hover:bg-slate-50/50 transition"><td class="p-3.5 text-slate-700 font-semibold border-r border-slate-300">Alba / Tramonto</td><td class="p-3.5 font-bold">🌅 <span id="table-sunrise">--</span> | 🌇 <span id="table-sunset">--</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-sm text-slate-700 space-y-1 ${cardBgClass} p-3.5 rounded border border-slate-400 shadow-sm">
+                            <p>ℹ️ <strong>Legenda:</strong></p>
+                            <p>• La temperatura attuale è indicata in <span class="text-rose-600 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
+                            <p>• I valori in <span class="text-teal-700 font-bold">turchese grassetto</span> rappresentano i dati attuali con relativi orari.</p>
+                            <p>• Ultimo aggiornamento: <span id="update-time" class="font-bold text-slate-900">--</span>.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderFavoritesMenu();
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const menu = document.getElementById('dropdown-menu');
+            const menuBtn = document.getElementById('menu-btn');
+            if (menu && menuBtn && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function getFavorites() {
+            try { return JSON.parse(localStorage.getItem('cavanweb_favorites')) || []; } catch (e) { return []; }
+        }
+
+        function saveFavorites(favorites) {
+            localStorage.setItem('cavanweb_favorites', JSON.stringify(favorites));
+            renderFavoritesMenu();
+        }
+
+        function toggleFavorite() {
+            if (!currentLoadedCity) return;
+            let favorites = getFavorites();
+            const index = favorites.indexOf(currentLoadedCity);
+            if (index > -1) { favorites.splice(index, 1); } else { favorites.push(currentLoadedCity); }
+            saveFavorites(favorites);
+            updateFavoriteIcon(currentLoadedCity);
+        }
+
+        function updateFavoriteIcon(cityName) {
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const favIcon = document.getElementById('fav-icon');
+            if (!favIcon) return;
+            const favorites = getFavorites();
+            const isCavanWeb = (currentTheme === 'cavanweb');
+
+            if (favorites.includes(cityName)) {
+                favIcon.className = (currentTheme === 'dark' || currentTheme === 'green') ? "fa-solid fa-star text-amber-400" : (isCavanWeb ? "fa-solid fa-star text-[#800040]" : "fa-solid fa-star text-amber-500");
+            } else {
+                favIcon.className = (currentTheme === 'dark' || currentTheme === 'green') ? "fa-regular fa-star text-[#20b2aa]" : (isCavanWeb ? "fa-regular fa-star text-[#800040]" : "fa-regular fa-star text-amber-500");
+            }
+        }
+
+        function renderFavoritesMenu() {
+            const favListContainer = document.getElementById('favorites-list');
+            if (!favListContainer) return;
+            const favorites = getFavorites();
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const isCavanWeb = (currentTheme === 'cavanweb');
+
+            if (favorites.length === 0) {
+                favListContainer.innerHTML = `<span class="text-sm ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-[#20b2aa]' : (isCavanWeb ? 'text-[#800040]/70' : 'text-slate-400')} px-3 py-1 italic">Nessun preferito salvato</span>`;
+                return;
+            }
+
+            let html = '';
+            favorites.forEach(city => {
+                if (currentTheme === 'dark' || currentTheme === 'green') {
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-[#20b2aa] text-base font-semibold transition">
+                        <span class="truncate"><i class="fa-solid fa-location-dot text-[#20b2aa] mr-2 text-xs"></i>${city}</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-[#20b2aa]/50"></i>
+                    </button>`;
+                } else {
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-lg ${isCavanWeb ? 'hover:bg-[#728890]/40' : 'hover:bg-slate-100'} text-[#800040] text-base font-medium transition">
+                        <span class="truncate"><i class="fa-solid fa-location-dot text-[#800040] mr-2 text-xs"></i>${city}</span>
+                        <i class="fa-solid fa-chevron-right text-xs ${isCavanWeb ? 'text-[#800040]/70' : 'text-slate-400'}"></i>
+                    </button>`;
+                }
+            });
+            favListContainer.innerHTML = html;
+        }
+
+        function loadFavoriteCity(cityName) {
+            const input = document.getElementById('search-input');
+            if (input) input.value = cityName;
+            toggleClearButton();
+            toggleMenu();
+            fetchWeatherDataByCity(cityName);
+        }
+
+        function formatTime(unixTimestamp) {
+            const date = new Date(unixTimestamp * 1000);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatHourOnly(unixTimestamp) {
+            const date = new Date(unixTimestamp * 1000);
+            return ` (${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
+        }
+
+        function getWindDirection(degrees) {
+            if (degrees === undefined || degrees === null) return "";
+            const sectors = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+            degrees += 22.5;
+            if (degrees < 0) degrees = 360 - (Math.abs(degrees) % 360);
+            else degrees = degrees % 360;
+            return sectors[parseInt(degrees / 45)];
+        }
+
+        function toggleClearButton() {
+            const input = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-btn');
+            if (!input || !clearBtn) return;
+            if (input.value.trim().length > 0) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+        }
+
+        function clearSearchInput() {
+            const input = document.getElementById('search-input');
+            if (!input) return;
+            input.value = '';
+            toggleClearButton();
+            input.focus();
+        }
+
+        async function fetchWeather(url) {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error-state');
+            const contentEl = document.getElementById('weather-content');
+            const refreshIcon = document.getElementById('refresh-icon');
+
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (contentEl) contentEl.classList.add('hidden');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Località non trovata');
+                const data = await response.json();
+
+                const cityName = data.name;
+                const lat = data.coord.lat;
+                const lon = data.coord.lon;
+                const dt = data.dt;
+
+                currentLoadedCity = cityName;
+                updateFavoriteIcon(cityName);
+
+                localStorage.setItem('cavanweb_active_lat', lat);
+                localStorage.setItem('cavanweb_active_lon', lon);
+                localStorage.setItem('cavanweb_active_name', cityName);
+
+                let omData = {};
+                try {
+                    const omRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`);
+                    if (omRes.ok) omData = await omRes.json();
+                } catch (e) {}
+
+                latestWeatherData = { data, omData, lat, lon };
+                updateUIWithData(latestWeatherData);
+
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (errorEl) errorEl.classList.add('hidden');
+                if (contentEl) contentEl.classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (errorEl) errorEl.classList.remove('hidden');
+                const errMsg = document.getElementById('error-message');
+                if (errMsg) errMsg.textContent = "Impossibile caricare i dati: " + err.message;
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        function updateUIWithData({ data, omData, lat, lon }) {
+            const cityName = data.name;
+            const dt = data.dt;
+
+            document.getElementById('city-title').textContent = cityName;
+            document.getElementById('currentLocationLabel').textContent = `${cityName} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
+
+            const todayDate = new Date(dt * 1000);
+            document.getElementById('table-date').textContent = `${String(todayDate.getDate()).padStart(2, '0')}-${String(todayDate.getMonth() + 1).padStart(2, '0')}-${todayDate.getFullYear()} (Oggi)`;
+
+            const currTimeSuffix = formatHourOnly(dt);
+            document.getElementById('table-temp-curr').textContent = Number(data.main.temp).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
+            document.getElementById('table-feels-curr').textContent = Number(data.main.feels_like).toFixed(1).replace('.', ',') + '°C' + currTimeSuffix;
+            document.getElementById('table-press-curr').textContent = data.main.pressure + ' hPa' + currTimeSuffix;
+            document.getElementById('table-wind-curr').textContent = `${Number(data.wind.speed * 3.6).toFixed(1).replace('.', ',')} km/h ${getWindDirection(data.wind.deg)}${currTimeSuffix}`;
+            document.getElementById('table-hum-curr').textContent = data.main.humidity.toFixed(1).replace('.', ',') + '%' + currTimeSuffix;
+
+            let rain1h = 0;
+            if (data.rain && data.rain['1h']) rain1h = data.rain['1h'];
+            document.getElementById('table-rain-curr').textContent = rain1h.toFixed(1).replace('.', ',') + ' mm' + currTimeSuffix;
+
+            document.getElementById('table-sunrise').textContent = formatTime(data.sys.sunrise);
+            document.getElementById('table-sunset').textContent = formatTime(data.sys.sunset);
+
+            if (omData && omData.daily) {
+                const d = omData.daily;
+                document.getElementById('table-temp-max').textContent = Number(d.temperature_2m_max[0]).toFixed(1).replace('.', ',') + '°C';
+                document.getElementById('table-feels-max').textContent = Number(d.apparent_temperature_max[0]).toFixed(1).replace('.', ',') + '°C';
+                document.getElementById('table-temp-min').textContent = Number(d.temperature_2m_min[0]).toFixed(1).replace('.', ',') + '°C';
+                document.getElementById('table-press-mean').textContent = Number(d.pressure_msl_mean[0]).toFixed(1).replace('.', ',') + ' hPa';
+                document.getElementById('table-wind-mean').textContent = Number(d.wind_speed_10m_max[0]).toFixed(1).replace('.', ',') + ' km/h ' + getWindDirection(d.wind_direction_10m_dominant[0]);
+                document.getElementById('table-hum-mean').textContent = Number(d.relative_humidity_2m_mean[0]).toFixed(1).replace('.', ',') + '%';
+                document.getElementById('table-rain-sum').textContent = Number(d.precipitation_sum[0] || 0).toFixed(1).replace('.', ',') + ' mm';
+            }
+
+            document.querySelectorAll('#update-time').forEach(el => {
+                el.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            });
+        }
+
+        function fetchWeatherDataByCity(cityName) {
+            lastFetchFunction = () => fetchWeatherDataByCity(cityName);
+            fetchWeather(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric&lang=it`);
+        }
+
+        function fetchWeatherDataByCoords(lat, lon) {
+            lastFetchFunction = () => fetchWeatherDataByCoords(lat, lon);
+            fetchWeather(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`);
+        }
+
+        function refreshCurrent() {
+            if (lastFetchFunction) lastFetchFunction();
+            else fetchWeatherDataByCity('Piacenza');
+        }
+
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-input').value.trim();
+            if (query) fetchWeatherDataByCity(query);
+        }
+
+        function getGPSWeather() {
+            if (!navigator.geolocation) {
+                alert("La geolocalizzazione non è supportata dal tuo browser.");
+                fetchWeatherDataByCity('Piacenza');
+                return;
+            }
+            const loadingText = document.getElementById('loading-text');
+            if (loadingText) loadingText.textContent = "Rilevamento posizione GPS...";
+            
+            navigator.geolocation.getCurrentPosition(
+                (pos) => fetchWeatherDataByCoords(pos.coords.latitude, pos.coords.longitude),
+                () => {
+                    alert("Impossibile rilevare la posizione GPS. Caricamento Piacenza di default.");
+                    fetchWeatherDataByCity('Piacenza');
+                },
+                { timeout: 10000 }
+            );
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            setTheme(savedTheme);
+
+            const selectedCity = localStorage.getItem('selected_city');
+            const savedLat = localStorage.getItem('cavanweb_active_lat');
+            const savedLon = localStorage.getItem('cavanweb_active_lon');
+            const savedName = localStorage.getItem('cavanweb_active_name');
+
+            if (selectedCity) {
+                localStorage.removeItem('selected_city');
+                const input = document.getElementById('search-input');
+                if (input) input.value = selectedCity;
+                toggleClearButton();
+                fetchWeatherDataByCity(selectedCity);
+            } else if (savedLat && savedLon) {
+                if (savedName) {
+                    const input = document.getElementById('search-input');
+                    if (input) input.value = savedName;
+                    toggleClearButton();
+                }
+                fetchWeatherDataByCoords(parseFloat(savedLat), parseFloat(savedLon));
+            } else {
+                fetchWeatherDataByCity('Piacenza');
+            }
+        };
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrato con successo:', reg.scope))
+                    .catch(err => console.log('Registrazione Service Worker fallita:', err));
+            });
+        }
+    </script>
+</body>
+</html>
