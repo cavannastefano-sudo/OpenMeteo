@@ -127,7 +127,7 @@
             else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
 
             const themeButtonHTML = `
-                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-emerald-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
                     <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
                 </button>
             `;
@@ -151,14 +151,18 @@
                 let searchInputBg = 'bg-white/5 text-white placeholder-blue-300/60 border-white/10';
 
                 if (isGreen) {
-                    accentColor = 'text-emerald-400';
+                    accentColor = 'text-amber-400';
                     subText = 'text-emerald-200';
                     borderCol = 'border-white/20';
-                    focusBorder = 'focus:border-emerald-400';
-                    spinnerColor = 'border-emerald-400';
-                    btnBg = 'bg-emerald-500 hover:bg-emerald-600 text-slate-900';
-                    boxIconBg = 'bg-emerald-500/20 text-emerald-400';
-                    iconColor = 'text-emerald-300';
+                    focusBorder = 'focus:border-amber-400';
+                    spinnerColor = 'border-amber-400';
+                    btnBg = 'bg-amber-500 hover:bg-amber-600 text-slate-900';
+                    boxIconBg = 'bg-amber-500/20 text-amber-400';
+                    iconColor = 'text-amber-300';
+                    cardBg = 'bg-white/10 backdrop-blur-md';
+                    innerBoxBg = 'bg-white/5';
+                    innerBorder = 'border-white/10';
+                    searchInputBg = 'bg-white/5 text-white placeholder-emerald-200/60 border-white/10';
                 } else if (isCavanWeb) {
                     accentColor = 'text-[#800040]';
                     subText = 'text-[#800040] font-medium';
@@ -181,9 +185,9 @@
                     btnBg = 'bg-amber-500 hover:bg-amber-600 text-white';
                     boxIconBg = 'bg-amber-500/20 text-amber-600';
                     iconColor = 'text-amber-500';
-                    cardBg = 'bg-[#fffacd] backdrop-blur-none';
-                    innerBoxBg = 'bg-amber-100/60';
-                    innerBorder = 'border-amber-300';
+                    cardBg = 'bg-[#fffacd] backdrop-blur-none'; // Giallo esterno scheda
+                    innerBoxBg = 'bg-[#fffde7]'; // Giallo interno quadranti (più chiaro)
+                    innerBorder = 'border-amber-300/80';
                     searchInputBg = 'bg-white text-slate-800 placeholder-slate-400 border-amber-300';
                 }
 
@@ -198,7 +202,7 @@
                         <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${isLight ? 'border-amber-300' : borderCol} shadow-lg group-hover:scale-105 transition">
                     </a>
                     <div class="text-center flex-grow mx-2">
-                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : ''}">
+                        <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : 'text-white'}">
                             <i class="fa-solid fa-cloud-sun ${accentColor}"></i> MeteoCWEB
                         </h1>
                         <p class="${subText} text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
@@ -206,7 +210,7 @@
                     <div class="flex items-center gap-2">
                         ${themeButtonHTML}
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : 'bg-white/10 hover:bg-white/25 text-blue-200'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold">
+                            <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : 'bg-white/10 hover:bg-white/25 text-amber-400'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold">
                                 <i class="fa-solid fa-bars"></i>
                             </button>
                             <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : isCavanWeb ? 'bg-[#8FBBD0] border-[#800040]/50 text-[#800040]' : isLight ? 'bg-[#fffacd] border-amber-300 text-slate-800' : 'bg-slate-900/95 border-white/20 text-blue-200'} backdrop-blur-xl border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2">
@@ -232,7 +236,7 @@
                                 <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center ${subText} hover:opacity-100 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                             </div>
                             <button type="submit" class="${btnBg} px-4 py-3 rounded-2xl font-semibold transition shadow-lg flex items-center justify-center gap-1.5 text-sm sm:text-base">Cerca</button>
-                            <button type="button" onclick="getGPSWeather()" title="GPS" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : 'bg-white/10 hover:bg-white/20 text-blue-200'} px-4 py-3 rounded-2xl border ${borderCol} transition flex items-center justify-center"><i class="fa-solid fa-location-crosshairs text-lg"></i></button>
+                            <button type="button" onclick="getGPSWeather()" title="GPS" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : 'bg-white/10 hover:bg-white/20 text-amber-400'} px-4 py-3 rounded-2xl border ${borderCol} transition flex items-center justify-center"><i class="fa-solid fa-location-crosshairs text-lg"></i></button>
                         </form>
 
                         <div id="loading" class="flex flex-col items-center justify-center py-12 space-y-4">
@@ -257,7 +261,7 @@
                                         <p id="country-name" class="text-xs uppercase tracking-widest ${subText} font-semibold mt-1">--</p>
                                     </div>
                                 </div>
-                                <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : 'bg-white/10 hover:bg-white/20 text-blue-200'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0"><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
+                                <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : 'bg-white/10 hover:bg-white/20 text-amber-400'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0"><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
                             </div>
 
                             <div class="flex items-center justify-between">
@@ -334,9 +338,9 @@
             const favorites = getFavorites();
 
             if (favorites.includes(cityName)) {
-                favIcon.className = currentTheme === 'dark' ? "fa-solid fa-star text-amber-400" : currentTheme === 'green' ? "fa-solid fa-star text-emerald-400" : currentTheme === 'cavanweb' ? "fa-solid fa-star text-[#800040]" : "fa-solid fa-star text-amber-500";
+                favIcon.className = currentTheme === 'dark' || currentTheme === 'green' ? "fa-solid fa-star text-amber-400" : currentTheme === 'cavanweb' ? "fa-solid fa-star text-[#800040]" : "fa-solid fa-star text-amber-500";
             } else {
-                favIcon.className = currentTheme === 'dark' ? "fa-regular fa-star text-blue-300 hover:text-amber-400" : currentTheme === 'green' ? "fa-regular fa-star text-emerald-300 hover:text-emerald-400" : currentTheme === 'cavanweb' ? "fa-regular fa-star text-[#800040]" : "fa-regular fa-star text-amber-500";
+                favIcon.className = currentTheme === 'dark' || currentTheme === 'green' ? "fa-regular fa-star text-emerald-200 hover:text-amber-400" : currentTheme === 'cavanweb' ? "fa-regular fa-star text-[#800040]" : "fa-regular fa-star text-amber-500";
             }
         }
 
@@ -385,14 +389,14 @@
 
         function getWeatherIcon(iconCode) {
             const iconMap = {
-                '01d': 'fa-sun text-amber-400', '01n': 'fa-moon text-indigo-200',
-                '02d': 'fa-cloud-sun text-amber-300', '02n': 'fa-cloud-moon text-indigo-300',
+                '01d': 'fa-sun text-amber-400', '01n': 'fa-moon text-emerald-200',
+                '02d': 'fa-cloud-sun text-amber-300', '02n': 'fa-cloud-moon text-emerald-300',
                 '03d': 'fa-cloud text-slate-300', '03n': 'fa-cloud text-slate-400',
                 '04d': 'fa-cloud text-slate-300', '04n': 'fa-cloud text-slate-400',
-                '09d': 'fa-cloud-showers-heavy text-blue-400', '09n': 'fa-cloud-showers-heavy text-blue-500',
-                '10d': 'fa-cloud-rain text-blue-400', '10n': 'fa-cloud-rain text-blue-500',
+                '09d': 'fa-cloud-showers-heavy text-sky-400', '09n': 'fa-cloud-showers-heavy text-sky-500',
+                '10d': 'fa-cloud-rain text-sky-400', '10n': 'fa-cloud-rain text-sky-500',
                 '11d': 'fa-bolt text-amber-400', '11n': 'fa-bolt text-amber-500',
-                '13d': 'fa-snowflake text-blue-200', '13n': 'fa-snowflake text-blue-300',
+                '13d': 'fa-snowflake text-sky-200', '13n': 'fa-snowflake text-sky-300',
                 '50d': 'fa-smog text-slate-300', '50n': 'fa-smog text-slate-400'
             };
             return iconMap[iconCode] || 'fa-cloud-sun text-amber-400';
