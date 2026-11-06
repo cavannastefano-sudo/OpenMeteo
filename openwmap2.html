@@ -22,6 +22,16 @@
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
         }
+        /* Linee divisorie semitrasparenti e sottili per la modalità elenco in tutti i temi */
+        #weather-data-container tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        [data-theme="light"] #weather-data-container tr {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        [data-theme="cavanweb"] #weather-data-container tr {
+            border-bottom: 1px solid rgba(128, 0, 64, 0.12);
+        }
     </style>
 </head>
 <body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
@@ -37,7 +47,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="w-full max-w-4xl mx-auto text-center mt-6 text-xs space-y-2">
+    <footer class="w-full max-w-xl mx-auto text-center mt-6 space-y-2">
         <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
             <p class="text-xs" id="footer-app-text">Scarica la mia app ufficiale:</p>
             <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border transition shadow text-xs font-semibold group" title="Scarica da Google Play" id="playstore-btn">
@@ -45,16 +55,18 @@
                 <span>Google Play Store</span>
             </a>
         </div>
-        <p id="footer-copy">MeteoCWEB • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
+        <p id="footer-copy" class="text-xs">MeteoCWEB • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
     </footer>
 
-    <!-- JAVASCRIPT UNIFICATO (4 TEMI + VISTA GRIGLIA/ELENCO) -->
+    <!-- JAVASCRIPT UNIFICATO -->
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
         let lastFetchFunction = null;
         let currentLoadedCity = "";
+        let currentLatCoords = null;
+        let currentLonCoords = null;
         let latestWeatherData = null;
-        let currentViewMode = localStorage.getItem('cavanweb_view_mode') || 'grid'; // 'grid' o 'list'
+        let currentViewMode = localStorage.getItem('cavanweb_view_mode') || 'grid';
 
         function toggleTheme() {
             const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
@@ -82,6 +94,7 @@
 
         function setTheme(themeName) {
             localStorage.setItem('cavanweb_theme', themeName);
+            document.documentElement.setAttribute('data-theme', themeName);
             const body = document.getElementById('app-body');
             const metaTheme = document.getElementById('meta-theme-color');
             const footerAppText = document.getElementById('footer-app-text');
@@ -125,7 +138,8 @@
             } else if (currentLoadedCity) {
                 fetchWeatherDataByCity(currentLoadedCity);
             } else {
-                fetchWeatherDataByCity('Piacenza');
+                const savedName = localStorage.getItem('cavanweb_active_name');
+                fetchWeatherDataByCity(savedName || 'Piacenza');
             }
         }
 
@@ -142,17 +156,8 @@
             else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
 
             const themeButtonHTML = `
-                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
-                    <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
-                </button>
-            `;
-
-            const viewIcon = currentViewMode === 'grid' ? 'fa-list' : 'fa-border-all';
-            const viewLabel = currentViewMode === 'grid' ? 'Elenco' : 'Griglia';
-
-            const viewModeButtonHTML = `
-                <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0">
-                    <i class="fa-solid ${viewIcon}"></i> <span class="hidden sm:inline">${viewLabel}</span>
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} w-12 h-12 rounded-2xl border shadow transition flex items-center justify-center text-lg font-semibold">
+                    <i class="fa-solid ${themeIcon}"></i>
                 </button>
             `;
 
@@ -215,7 +220,7 @@
             }
 
             if (isCavanWeb) {
-                headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative bg-[#D8D9D0] border border-slate-400 rounded-3xl p-4 shadow-sm`;
+                headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative bg-transparent border-0 rounded-none p-0 shadow-none`;
             } else {
                 headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative`;
             }
@@ -231,7 +236,6 @@
                     <p class="${subText} text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    ${viewModeButtonHTML}
                     ${themeButtonHTML}
                     <div class="relative flex-shrink-0">
                         <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : 'bg-white/10 hover:bg-white/25 text-amber-400'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold">
@@ -282,7 +286,11 @@
                                         <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide">--</h2>
                                         <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xl ${subText} hover:${accentColor} transition p-1"><i id="fav-icon" class="fa-regular fa-star"></i></button>
                                     </div>
-                                    <p id="country-name" class="text-xs uppercase tracking-widest ${subText} font-semibold mt-1">--</p>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        <p id="country-name" class="text-xs uppercase tracking-widest ${subText} font-semibold">--</p>
+                                        <span class="${subText} opacity-50">•</span>
+                                        <p id="coords-display" class="text-xs ${subText} opacity-90 font-mono">--</p>
+                                    </div>
                                 </div>
                             </div>
                             <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : 'bg-white/10 hover:bg-white/20 text-amber-400'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0"><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
@@ -299,6 +307,14 @@
                                 <div id="weather-icon-container" class="text-5xl sm:text-6xl ${iconColor} mb-1"><i class="fa-solid fa-cloud"></i></div>
                                 <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize opacity-90">--</p>
                             </div>
+                        </div>
+
+                        <!-- TASTO VISTA GRIGLIA / ELENCO SOPRA ALLA GRIGLIA SULLA DESTRA -->
+                        <div class="flex justify-end -mb-2">
+                            <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300'} px-3 py-1.5 rounded-xl border shadow-sm transition flex items-center gap-1.5 text-xs font-semibold">
+                                <i class="fa-solid ${currentViewMode === 'grid' ? 'fa-list' : 'fa-border-all'}"></i>
+                                <span>${currentViewMode === 'grid' ? 'Elenco' : 'Griglia'}</span>
+                            </button>
                         </div>
 
                         <!-- CONTAINER DINAMICO GRIGLIA / ELENCO -->
@@ -389,15 +405,6 @@
             return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
-        function getWindDirection(degrees) {
-            if (degrees === undefined || degrees === null) return "";
-            const sectors = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-            degrees += 22.5;
-            if (degrees < 0) degrees = 360 - (Math.abs(degrees) % 360);
-            else degrees = degrees % 360;
-            return sectors[parseInt(degrees / 45)];
-        }
-
         function getWeatherIcon(iconCode) {
             const iconMap = {
                 '01d': 'fa-sun text-amber-400', '01n': 'fa-moon text-emerald-200',
@@ -446,23 +453,23 @@
                 const data = await response.json();
 
                 const cityName = data.name;
-                const lat = data.coord.lat;
-                const lon = data.coord.lon;
+                currentLatCoords = data.coord.lat;
+                currentLonCoords = data.coord.lon;
 
                 currentLoadedCity = cityName;
                 updateFavoriteIcon(cityName);
 
-                localStorage.setItem('cavanweb_active_lat', lat);
-                localStorage.setItem('cavanweb_active_lon', lon);
+                localStorage.setItem('cavanweb_active_lat', currentLatCoords);
+                localStorage.setItem('cavanweb_active_lon', currentLonCoords);
                 localStorage.setItem('cavanweb_active_name', cityName);
 
                 let omData = {};
                 try {
-                    const omRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`);
+                    const omRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLatCoords}&longitude=${currentLonCoords}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`);
                     if (omRes.ok) omData = await omRes.json();
                 } catch (e) {}
 
-                latestWeatherData = { data, omData, lat, lon };
+                latestWeatherData = { data, omData, lat: currentLatCoords, lon: currentLonCoords };
                 updateUIWithData(latestWeatherData);
 
                 if (loadingEl) loadingEl.classList.add('hidden');
@@ -485,6 +492,12 @@
 
             document.getElementById('city-name').textContent = cityName;
             document.getElementById('country-name').textContent = data.sys.country || 'IT';
+            
+            const coordsDisplay = document.getElementById('coords-display');
+            if (coordsDisplay && lat !== undefined && lon !== undefined) {
+                coordsDisplay.textContent = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
+            }
+
             document.getElementById('temp-value').textContent = Number(data.main.temp).toFixed(1);
             
             const description = data.weather[0].description;
@@ -534,7 +547,8 @@
             let innerBoxBg = isLight ? 'bg-[#fffde7]' : isCavanWeb ? 'bg-[#8FBBD0]/40' : 'bg-white/5';
             let innerBorder = isLight ? 'border-amber-300/80' : isCavanWeb ? 'border-[#800040]/30' : 'border-white/10';
             let boxIconBg = isLight || isGreen || currentTheme === 'dark' ? 'bg-amber-500/20 text-amber-400' : 'bg-[#800040]/10 text-[#800040]';
-            let tableRowBorder = isLight ? 'border-amber-200' : isCavanWeb ? 'border-[#800040]/20' : 'border-white/10';
+            
+            let listValColor = isCavanWeb ? 'text-emerald-700 font-bold' : '';
 
             const container = document.getElementById('weather-data-container');
 
@@ -558,20 +572,20 @@
             } else {
                 container.innerHTML = `
                     <div class="${innerBoxBg} rounded-2xl border ${innerBorder} overflow-hidden">
-                        <table class="w-full text-left text-sm sm:text-base">
-                            <tbody class="divide-y ${tableRowBorder}">
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-temperature-arrow-up mr-2 text-amber-500"></i>Min / Max Oggi</td><td class="font-bold">${minMax}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-mountain mr-2 text-emerald-500"></i>Altitudine</td><td class="font-bold">${altitude}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-temperature-half mr-2 text-rose-500"></i>Percepita</td><td class="font-bold">${feelsLike}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-gauge mr-2 text-indigo-500"></i>Pressione</td><td class="font-bold">${pressure}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-cloud mr-2 text-slate-400"></i>Copertura nuvolosa</td><td class="font-bold">${clouds}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-cloud-rain mr-2 text-sky-500"></i>Pioggia (1h)</td><td class="font-bold">${rain}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-droplet mr-2 text-blue-500"></i>Umidità</td><td class="font-bold">${humidity}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-wind mr-2 text-teal-500"></i>Vento</td><td class="font-bold">${wind}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-sun mr-2 text-amber-400"></i>Alba</td><td class="font-bold">${sunrise}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-sun mr-2 text-orange-500"></i>Mezzogiorno Solare</td><td class="font-bold">${solarNoon}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-moon mr-2 text-purple-500"></i>Tramonto</td><td class="font-bold">${sunset}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-80"><i class="fa-solid fa-moon mr-2 text-indigo-400"></i>Mezzanotte Solare</td><td class="font-bold">${solarMidnight}</td></tr>
+                        <table class="w-full text-left text-base sm:text-lg">
+                            <tbody>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-temperature-arrow-up mr-2 text-amber-500"></i>Min / Max Oggi</td><td class="font-bold text-base sm:text-lg ${listValColor}">${minMax}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-mountain mr-2 text-emerald-500"></i>Altitudine</td><td class="font-bold text-base sm:text-lg ${listValColor}">${altitude}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-temperature-half mr-2 text-rose-500"></i>Percepita</td><td class="font-bold text-base sm:text-lg ${listValColor}">${feelsLike}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-gauge mr-2 text-indigo-500"></i>Pressione</td><td class="font-bold text-base sm:text-lg ${listValColor}">${pressure}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-cloud mr-2 text-slate-400"></i>Copertura nuvolosa</td><td class="font-bold text-base sm:text-lg ${listValColor}">${clouds}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-cloud-rain mr-2 text-sky-500"></i>Pioggia (1h)</td><td class="font-bold text-base sm:text-lg ${listValColor}">${rain}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-droplet mr-2 text-blue-500"></i>Umidità</td><td class="font-bold text-base sm:text-lg ${listValColor}">${humidity}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-wind mr-2 text-teal-500"></i>Vento</td><td class="font-bold text-base sm:text-lg ${listValColor}">${wind}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-sun mr-2 text-amber-400"></i>Alba</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunrise}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-sun mr-2 text-orange-500"></i>Mezzogiorno Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarNoon}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-moon mr-2 text-purple-500"></i>Tramonto</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunset}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-moon mr-2 text-indigo-400"></i>Mezzanotte Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarMidnight}</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -636,12 +650,12 @@
                 if (input) input.value = selectedCity;
                 toggleClearButton();
                 fetchWeatherDataByCity(selectedCity);
+            } else if (savedName) {
+                const input = document.getElementById('search-input');
+                if (input) input.value = savedName;
+                toggleClearButton();
+                fetchWeatherDataByCity(savedName);
             } else if (savedLat && savedLon) {
-                if (savedName) {
-                    const input = document.getElementById('search-input');
-                    if (input) input.value = savedName;
-                    toggleClearButton();
-                }
                 fetchWeatherDataByCoords(parseFloat(savedLat), parseFloat(savedLon));
             } else {
                 fetchWeatherDataByCity('Piacenza');
