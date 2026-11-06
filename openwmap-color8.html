@@ -36,11 +36,8 @@
         <!-- Verrà iniettato via JS -->
     </main>
 
-    <!-- FOOTER CON PULSANTI TEMA E VISTA IN BASSO -->
-    <footer class="w-full max-w-xl mx-auto text-center mt-6 space-y-4">
-        <div id="footer-controls" class="flex items-center justify-center gap-2">
-            <!-- Verranno inseriti dinamicamente via JS -->
-        </div>
+    <!-- FOOTER -->
+    <footer class="w-full max-w-xl mx-auto text-center mt-6 space-y-2">
         <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
             <p class="text-xs" id="footer-app-text">Scarica la mia app ufficiale:</p>
             <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border transition shadow text-xs font-semibold group" title="Scarica da Google Play" id="playstore-btn">
@@ -138,7 +135,6 @@
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const headerContainer = document.getElementById('header-container');
             const mainContainer = document.getElementById('main-container');
-            const footerControls = document.getElementById('footer-controls');
 
             let themeIcon = "fa-palette";
             let themeLabel = "Tema";
@@ -148,23 +144,10 @@
             else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
 
             const themeButtonHTML = `
-                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-4 py-2.5 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold">
-                    <i class="fa-solid ${themeIcon}"></i> <span>${themeLabel}</span>
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} w-12 h-12 rounded-2xl border shadow transition flex items-center justify-center text-lg font-semibold">
+                    <i class="fa-solid ${themeIcon}"></i>
                 </button>
             `;
-
-            const viewIcon = currentViewMode === 'grid' ? 'fa-list' : 'fa-border-all';
-            const viewLabel = currentViewMode === 'grid' ? 'Vista Elenco' : 'Vista Griglia';
-
-            const viewModeButtonHTML = `
-                <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} px-4 py-2.5 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold">
-                    <i class="fa-solid ${viewIcon}"></i> <span>${viewLabel}</span>
-                </button>
-            `;
-
-            if (footerControls) {
-                footerControls.innerHTML = viewModeButtonHTML + themeButtonHTML;
-            }
 
             const isGreen = currentTheme === 'green';
             const isCavanWeb = currentTheme === 'cavanweb';
@@ -224,7 +207,7 @@
                 searchInputBg = 'bg-white text-slate-800 placeholder-slate-400 border-amber-300';
             }
 
-            // Se è CavanWeb rimuoviamo il riquadro dall'header principale e lo lasciamo fuori come gli altri temi
+            // CavanWeb senza riquadro nell'header
             if (isCavanWeb) {
                 headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative bg-transparent border-0 rounded-none p-0 shadow-none`;
             } else {
@@ -242,6 +225,7 @@
                     <p class="${subText} text-xs sm:text-sm">Dati da OpenWeatherMap & Open-Meteo</p>
                 </div>
                 <div class="flex items-center gap-2">
+                    ${themeButtonHTML}
                     <div class="relative flex-shrink-0">
                         <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : 'bg-white/10 hover:bg-white/25 text-amber-400'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold">
                             <i class="fa-solid fa-bars"></i>
@@ -312,6 +296,14 @@
                                 <div id="weather-icon-container" class="text-5xl sm:text-6xl ${iconColor} mb-1"><i class="fa-solid fa-cloud"></i></div>
                                 <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize opacity-90">--</p>
                             </div>
+                        </div>
+
+                        <!-- TASTO VISTA GRIGLIA / ELENCO POSIZIONATO SOPRA ALLA GRIGLIA SULLA DESTRA -->
+                        <div class="flex justify-end -mb-2">
+                            <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300'} px-3 py-1.5 rounded-xl border shadow-sm transition flex items-center gap-1.5 text-xs font-semibold">
+                                <i class="fa-solid ${currentViewMode === 'grid' ? 'fa-list' : 'fa-border-all'}"></i>
+                                <span>${currentViewMode === 'grid' ? 'Elenco' : 'Griglia'}</span>
+                            </button>
                         </div>
 
                         <!-- CONTAINER DINAMICO GRIGLIA / ELENCO -->
@@ -490,7 +482,6 @@
             document.getElementById('city-name').textContent = cityName;
             document.getElementById('country-name').textContent = data.sys.country || 'IT';
             
-            // Mostra latitudine e longitudine formattate in piccolo sotto la città
             const coordsDisplay = document.getElementById('coords-display');
             if (coordsDisplay && lat !== undefined && lon !== undefined) {
                 coordsDisplay.textContent = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
