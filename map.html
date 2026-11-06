@@ -240,7 +240,7 @@
                     .leaflet-control-layers-separator { border-top: 1px solid rgba(0,0,0,0.15) !important; }
                 `;
             } else {
-                // CavanWeb theme
+                // CavanWeb theme corretto con testo leggibile (#800040)
                 body.className = "bg-[#728890] min-h-screen text-slate-900 flex flex-col justify-between";
                 metaTheme.setAttribute("content", "#728890");
                 header.className = "w-full bg-[#D8D9D0] border-b border-slate-400 px-4 py-3 flex items-center justify-between z-[1000] text-slate-900 shadow-sm";
@@ -253,7 +253,7 @@
                 mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#D8D9D0] backdrop-blur-md px-4 py-2 rounded-full border border-slate-400 text-xs sm:text-sm text-slate-900 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap";
 
                 styleSheets.innerHTML = `
-                    .leaflet-popup-content-wrapper { background: #8FBBD0 !important; color: #800040 !important; border: 1px solid rgba(128,0,64,0.3) !important; }
+                    .leaflet-popup-content-wrapper { background: #8FBBD0 !important; color: #800040 !important; border: 1px solid rgba(128,0,64,0.3) !important; font-weight: bold; }
                     .leaflet-popup-tip { background: #8FBBD0 !important; }
                     .leaflet-control-layers { background: #8FBBD0 !important; color: #800040 !important; border: 1px solid rgba(128,0,64,0.3) !important; font-weight: bold; }
                     .leaflet-control-layers-separator { border-top: 1px solid rgba(128,0,64,0.3) !important; }
@@ -264,7 +264,7 @@
             }
         }
 
-        // Funzione per caricare il meteo al click sulla mappa
+        // Funzione per caricare il meteo al click sulla mappa e memorizzare correttamente la città
         async function getWeatherByCoords(lat, lon) {
             const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`;
             
@@ -283,7 +283,7 @@
 
                 const popupContent = `
                     <div class="p-2 space-y-1 text-left">
-                        <h3 class="font-bold text-base text-amber-500">${cityName} (${country})</h3>
+                        <h3 class="font-bold text-base">${cityName} (${country})</h3>
                         <p class="text-2xl font-extrabold">${temp}°C <span class="text-xs font-normal opacity-75">(Percepita ${feelsLike}°C)</span></p>
                         <p class="capitalize text-sm opacity-90">${desc}</p>
                         <hr class="border-current opacity-20 my-1">
@@ -292,7 +292,7 @@
                             <p><i class="fa-solid fa-wind text-teal-400"></i> Vento: ${wind} km/h</p>
                         </div>
                         <div class="pt-2 text-center">
-                            <a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${cityName}')" class="inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold px-3 py-1 rounded-lg text-xs transition shadow">
+                            <a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${cityName}'); localStorage.setItem('cavanweb_active_name', '${cityName}');" class="inline-block bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold px-3 py-1 rounded-lg text-xs transition shadow">
                                 Visualizza nella Dashboard
                             </a>
                         </div>
