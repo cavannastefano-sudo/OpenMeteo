@@ -22,6 +22,16 @@
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
         }
+        /* Linee divisorie semitrasparenti e sottili per la modalità elenco in tutti i temi */
+        #weather-data-container tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        [data-theme="light"] #weather-data-container tr {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        [data-theme="cavanweb"] #weather-data-container tr {
+            border-bottom: 1px solid rgba(128, 0, 64, 0.12);
+        }
     </style>
 </head>
 <body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
@@ -84,6 +94,7 @@
 
         function setTheme(themeName) {
             localStorage.setItem('cavanweb_theme', themeName);
+            document.documentElement.setAttribute('data-theme', themeName);
             const body = document.getElementById('app-body');
             const metaTheme = document.getElementById('meta-theme-color');
             const footerAppText = document.getElementById('footer-app-text');
@@ -537,9 +548,6 @@
             let innerBorder = isLight ? 'border-amber-300/80' : isCavanWeb ? 'border-[#800040]/30' : 'border-white/10';
             let boxIconBg = isLight || isGreen || currentTheme === 'dark' ? 'bg-amber-500/20 text-amber-400' : 'bg-[#800040]/10 text-[#800040]';
             
-            // RIGHE DIVISORIE ESTREMAMENTE DELICATE (NON PIÙ BIANCHE E VISTOSE)
-            let tableRowBorder = isLight ? 'border-amber-200/40' : isCavanWeb ? 'border-[#800040]/10' : 'border-white/5';
-            
             let listValColor = isCavanWeb ? 'text-emerald-700 font-bold' : '';
 
             const container = document.getElementById('weather-data-container');
@@ -565,7 +573,7 @@
                 container.innerHTML = `
                     <div class="${innerBoxBg} rounded-2xl border ${innerBorder} overflow-hidden">
                         <table class="w-full text-left text-base sm:text-lg">
-                            <tbody class="divide-y ${tableRowBorder}">
+                            <tbody>
                                 <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-temperature-arrow-up mr-2 text-amber-500"></i>Min / Max Oggi</td><td class="font-bold text-base sm:text-lg ${listValColor}">${minMax}</td></tr>
                                 <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-mountain mr-2 text-emerald-500"></i>Altitudine</td><td class="font-bold text-base sm:text-lg ${listValColor}">${altitude}</td></tr>
                                 <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-temperature-half mr-2 text-rose-500"></i>Percepita</td><td class="font-bold text-base sm:text-lg ${listValColor}">${feelsLike}</td></tr>
