@@ -237,9 +237,9 @@
                 boxIconBg = 'bg-[#5C3B5C]/15 text-[#5C3B5C]';
                 iconColor = 'text-[#5C3B5C]';
                 cardBg = '';
-                // Tutta la card principale usa il colore viola #DAD0F0
                 inlineStyleCard = 'style="background-color: #DAD0F0; color: #5C3B5C; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15);"';
-                searchInputBg = 'bg-white/80 text-[#5C3B5C] placeholder-[#5C3B5C]/60 border-[#5C3B5C]/30 font-semibold';
+                // Campo cerca con lo stesso colore del quadrato centrale (#DAD0F0)
+                searchInputBg = 'style="background-color: #DAD0F0; color: #5C3B5C;" class="w-full pl-10 pr-10 py-3 border rounded-2xl border-[#5C3B5C]/30 placeholder-[#5C3B5C]/60 font-semibold focus:outline-none focus:border-[#5C3B5C] text-sm sm:text-base transition"';
             }
 
             if (isCavanWeb) {
@@ -248,7 +248,6 @@
                 headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative`;
             }
 
-            // Scritte bianche nell'header colorate di giallo (#facc15 / text-amber-400) nel tema lavender
             let headerTitleColor = isLavender ? 'text-amber-300' : isLight || isCavanWeb ? 'text-slate-900' : 'text-white';
             let headerSubColor = isLavender ? 'text-amber-200' : subText;
             let headerBtnBg = isLavender ? 'bg-amber-400 hover:bg-amber-500 text-slate-900 border-amber-500' : isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : 'bg-amber-400 hover:bg-amber-500 text-slate-900 border-amber-500';
@@ -282,9 +281,18 @@
                 </div>
             `;
 
-            // Bottoni interni con sfondo giallo nel tema lavender
             let innerButtonBg = isLavender ? 'bg-amber-400 hover:bg-amber-500 text-slate-900 border-amber-500' : btnBg;
             let iconBtnBg = isLavender ? 'bg-amber-400 hover:bg-amber-500 text-slate-900 border-amber-500' : 'bg-white/10 hover:bg-white/20 text-amber-400';
+            
+            // Gestione input search per gli altri temi
+            let defaultInputClass = isLight ? 'w-full pl-10 pr-10 py-3 border rounded-2xl bg-white text-slate-800 placeholder-slate-400 border-amber-300 focus:outline-none focus:border-amber-500 text-sm sm:text-base transition' : 
+                                    isCavanWeb ? 'w-full pl-10 pr-10 py-3 border rounded-2xl bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold focus:outline-none focus:border-[#800040] text-sm sm:text-base transition' :
+                                    isGreen ? 'w-full pl-10 pr-10 py-3 border rounded-2xl bg-white/5 text-white placeholder-emerald-200/60 border-white/10 focus:outline-none focus:border-amber-400 text-sm sm:text-base transition' :
+                                    isDark ? 'w-full pl-10 pr-10 py-3 border rounded-2xl bg-white/5 text-white placeholder-blue-300/60 border-white/10 focus:outline-none focus:border-amber-400 text-sm sm:text-base transition' :
+                                    'w-full pl-10 pr-10 py-3 border rounded-2xl bg-white/5 text-white placeholder-blue-300/60 border-white/10 focus:outline-none focus:border-amber-400 text-sm sm:text-base transition';
+
+            let finalSearchInput = isLavender ? `<input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca località..." style="background-color: #DAD0F0; color: #5C3B5C;" class="w-full pl-10 pr-10 py-3 border rounded-2xl border-[#5C3B5C]/30 placeholder-[#5C3B5C]/60 font-semibold focus:outline-none focus:border-[#5C3B5C] text-sm sm:text-base transition">` :
+                                                 `<input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca località..." class="${defaultInputClass}">`;
 
             mainContainer.className = "w-full max-w-xl mx-auto flex-grow flex items-center justify-center";
             mainContainer.innerHTML = `
@@ -292,7 +300,7 @@
                     <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2">
                         <div class="relative flex-grow">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none ${subText}"><i class="fa-solid fa-magnifying-glass text-sm"></i></span>
-                            <input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca località..." class="w-full pl-10 pr-10 py-3 border rounded-2xl ${searchInputBg} focus:outline-none ${focusBorder} text-sm sm:text-base transition">
+                            ${finalSearchInput}
                             <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center ${subText} hover:opacity-100 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
                         <button type="submit" class="${innerButtonBg} px-4 py-3 rounded-2xl font-semibold transition shadow-lg flex items-center justify-center gap-1.5 text-sm sm:text-base">Cerca</button>
