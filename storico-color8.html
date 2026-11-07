@@ -300,20 +300,16 @@
             } else {
                 const isCavanWeb = (currentTheme === 'cavanweb');
                 
-                // Configurazione stili per Tema Lilla vs CavanWeb vs Chiaro
-                let headerBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400" : isLavender ? "" : "bg-[hsl(60,100%,94%)] border-amber-200";
+                // Configurazione stili puliti senza riquadro/bordo esterno sull'header
                 let cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : isLavender ? "" : "bg-[hsl(60,100%,94%)] border-amber-200 text-slate-800";
                 let dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : isLavender ? "bg-[#F8FED7] border-[#5C3B5C]/30" : "bg-[hsl(60,100%,94%)] border-amber-200";
-                let inlineHeaderStyle = isLavender ? 'style="background-color: #DAD0F0; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15); color: #5C3B5C;"' : '';
                 let inlineCardStyle = isLavender ? 'style="background-color: #DAD0F0; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15); color: #5C3B5C;"' : '';
                 let tableBgColor = isCavanWeb ? '#D8D9D0' : isLavender ? '#F8FED7' : '#fffde7';
 
-                headerContainer.className = `w-full max-w-6xl mx-auto mb-6 ${headerBgClass} border rounded-3xl p-4 shadow-sm space-y-4 relative`;
-                if (isLavender) headerContainer.setAttribute('style', inlineHeaderStyle.replace('color: #5C3B5C;', ''));
-                else headerContainer.removeAttribute('style');
-
+                // Header pulito senza bordi/sfondi di riquadro attorno al titolo
+                headerContainer.className = `w-full max-w-6xl mx-auto mb-6 bg-transparent border-0 rounded-none p-0 shadow-none space-y-4 relative`;
                 headerContainer.innerHTML = `
-                    <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center justify-between gap-3 px-2 sm:px-0">
                         <div class="flex items-center gap-3">
                             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
                                 <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${isLavender ? 'border-[#5C3B5C]/30' : 'border-slate-300'} shadow-sm group-hover:scale-105 transition">
@@ -338,7 +334,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="text-center border-t ${isLavender ? 'border-[#5C3B5C]/20' : 'border-slate-300/40'} pt-3">
+                    <div class="text-center pt-2">
                         <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-900"'}>
                             <i class="fa-solid fa-calendar-days ${isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-amber-600'}"></i> Archivio Storico Meteo Globale 1940-Oggi
                         </h1>
@@ -353,7 +349,7 @@
                             <i class="fa-solid fa-earth-americas ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'}"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-md">
-                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-2.5 border rounded-2xl focus:outline-none text-base font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);" placeholder="Cerca città..."' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : 'class="bg-white text-slate-800 border-amber-300"'}>
+                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-2.5 border rounded-2xl focus:outline-none text-base font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : 'class="bg-white text-slate-800 border-amber-300"'}>
                             <button id="clear-search-btn" onclick="clearLocationInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-slate-700 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
                         <button onclick="searchCustomLocation()" class="${isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border border-[#5C3B5C]/30 hover:bg-[#EBE7DF]' : 'bg-[#0284c7] hover:bg-[#0369a1] text-white'} px-5 py-2.5 rounded-2xl font-semibold transition shadow text-base flex items-center gap-2" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
