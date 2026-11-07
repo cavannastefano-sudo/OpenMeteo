@@ -48,7 +48,7 @@
             </button>
             <!-- Logo CavanWeb -->
             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
-                <img src="SfondoN-512.png" alt="Logo" class="w-9 h-9 rounded-xl object-cover border border-slate-300 shadow group-hover:scale-105 transition">
+                <img src="SfondoN-512.png" alt="Logo" class="w-9 h-9 rounded-xl object-cover border-0 shadow group-hover:scale-105 transition">
             </a>
         </div>
     </header>
@@ -158,13 +158,14 @@
 
         let currentMarker = null;
 
-        // Gestione dei Temi (CavanWeb, Chiaro, Scuro, Verde) in ciclo sequenziale
+        // Gestione dei Temi in ciclo sequenziale (CavanWeb -> Chiaro -> Scuro -> Verde -> Lilla)
         function toggleTheme() {
             const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             let next = 'light';
             if (current === 'cavanweb') next = 'light';
             else if (current === 'light') next = 'dark';
             else if (current === 'dark') next = 'green';
+            else if (current === 'green') next = 'lavender';
             else next = 'cavanweb';
             setTheme(next);
         }
@@ -185,17 +186,31 @@
             const styleSheets = document.getElementById('dynamic-theme-styles') || document.createElement('style');
             styleSheets.id = 'dynamic-theme-styles';
 
+            body.style.backgroundColor = '';
+            body.style.color = '';
+            header.style.backgroundColor = '';
+            header.style.borderBottom = '';
+            backBtn.style.backgroundColor = '';
+            backBtn.style.color = '';
+            backBtn.style.border = '';
+            themeToggleBtn.style.backgroundColor = '';
+            themeToggleBtn.style.color = '';
+            themeToggleBtn.style.border = '';
+            mapBanner.style.backgroundColor = '';
+            mapBanner.style.color = '';
+            mapBanner.style.border = '';
+
             if (themeName === 'dark') {
                 body.className = "bg-[#0f172a] min-h-screen text-white flex flex-col justify-between";
                 metaTheme.setAttribute("content", "#0f172a");
-                header.className = "w-full bg-slate-900/80 backdrop-blur-md border-b border-white/10 px-4 py-3 flex items-center justify-between z-[1000] text-white";
+                header.className = "w-full bg-slate-900/85 backdrop-blur-md border-b border-white/10 px-4 py-3 flex items-center justify-between z-[1000] text-white transition-colors";
                 mainTitle.className = "text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2 text-white";
                 titleIcon.className = "fa-solid fa-earth-americas text-amber-400";
                 backBtn.className = "bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-semibold";
                 themeToggleBtn.className = "bg-white/10 hover:bg-white/25 text-amber-400 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5 border border-white/20";
                 themeIcon.className = "fa-solid fa-moon";
                 themeLabel.textContent = "Scuro";
-                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-blue-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap";
+                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-blue-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
 
                 styleSheets.innerHTML = `
                     .leaflet-popup-content-wrapper { background: #1e293b !important; color: white !important; }
@@ -206,14 +221,14 @@
             } else if (themeName === 'green') {
                 body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-white flex flex-col justify-between";
                 metaTheme.setAttribute("content", "#064e3b");
-                header.className = "w-full bg-emerald-950/80 backdrop-blur-md border-b border-emerald-500/20 px-4 py-3 flex items-center justify-between z-[1000] text-white";
+                header.className = "w-full bg-emerald-950/85 backdrop-blur-md border-b border-emerald-500/20 px-4 py-3 flex items-center justify-between z-[1000] text-white transition-colors";
                 mainTitle.className = "text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2 text-white";
                 titleIcon.className = "fa-solid fa-earth-americas text-amber-400";
                 backBtn.className = "bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl border border-white/20 shadow transition text-emerald-200 hover:text-white flex items-center gap-2 text-xs sm:text-sm font-semibold";
                 themeToggleBtn.className = "bg-white/10 hover:bg-white/25 text-amber-400 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5 border border-white/20";
                 themeIcon.className = "fa-solid fa-leaf";
                 themeLabel.textContent = "Verde";
-                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-emerald-950/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-emerald-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap";
+                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-emerald-950/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-emerald-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
 
                 styleSheets.innerHTML = `
                     .leaflet-popup-content-wrapper { background: #064e3b !important; color: white !important; }
@@ -224,14 +239,14 @@
             } else if (themeName === 'light') {
                 body.className = "bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between";
                 metaTheme.setAttribute("content", "#f1f5f9");
-                header.className = "w-full bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-[1000] text-slate-800 shadow-sm";
+                header.className = "w-full bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-[1000] text-slate-800 shadow-sm transition-colors";
                 mainTitle.className = "text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2 text-slate-900";
                 titleIcon.className = "fa-solid fa-earth-americas text-amber-500";
                 backBtn.className = "bg-slate-200 hover:bg-slate-300 px-3.5 py-2 rounded-xl border border-slate-300 shadow transition text-slate-800 flex items-center gap-2 text-xs sm:text-sm font-semibold";
                 themeToggleBtn.className = "bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5 border border-amber-600";
                 themeIcon.className = "fa-solid fa-sun";
                 themeLabel.textContent = "Chiaro";
-                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-slate-300 text-xs sm:text-sm text-slate-800 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap";
+                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-slate-300 text-xs sm:text-sm text-slate-800 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
 
                 styleSheets.innerHTML = `
                     .leaflet-popup-content-wrapper { background: #ffffff !important; color: #1e293b !important; }
@@ -239,18 +254,54 @@
                     .leaflet-control-layers { background: #ffffff !important; color: #1e293b !important; border: 1px solid rgba(0,0,0,0.15) !important; }
                     .leaflet-control-layers-separator { border-top: 1px solid rgba(0,0,0,0.15) !important; }
                 `;
+            } else if (themeName === 'lavender') {
+                body.style.backgroundColor = "#9D93AB";
+                body.style.color = "#3C2A4D";
+                metaTheme.setAttribute("content", "#9D93AB");
+                
+                header.className = "w-full px-4 py-3 flex items-center justify-between z-[1000] shadow-sm transition-colors";
+                header.style.backgroundColor = "#DAD0F0";
+                header.style.borderBottom = "1px solid rgba(92, 59, 92, 0.25)";
+
+                mainTitle.className = "text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2";
+                mainTitle.style.color = "#5C3B5C";
+                titleIcon.className = "fa-solid fa-earth-americas text-[#5C3B5C]";
+                
+                backBtn.className = "px-3.5 py-2 rounded-xl shadow transition flex items-center gap-2 text-xs sm:text-sm font-semibold";
+                backBtn.style.backgroundColor = "#F5F2EB";
+                backBtn.style.color = "#5C3B5C";
+                backBtn.style.border = "1px solid rgba(92, 59, 92, 0.3)";
+
+                themeToggleBtn.className = "px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5";
+                themeToggleBtn.style.backgroundColor = "#F5F2EB";
+                themeToggleBtn.style.color = "#5C3B5C";
+                themeToggleBtn.style.border = "1px solid rgba(92, 59, 92, 0.3)";
+                themeIcon.className = "fa-solid fa-spa";
+                themeLabel.textContent = "Lilla";
+
+                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 backdrop-blur-md px-4 py-2 rounded-full text-xs sm:text-sm font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
+                mapBanner.style.backgroundColor = "#F8FED7";
+                mapBanner.style.color = "#5C3B5C";
+                mapBanner.style.border = "1px solid rgba(92, 59, 92, 0.3)";
+
+                styleSheets.innerHTML = `
+                    .leaflet-popup-content-wrapper { background: #F8FED7 !important; color: #5C3B5C !important; border: 1px solid rgba(92, 59, 92, 0.3) !important; font-weight: bold; }
+                    .leaflet-popup-tip { background: #F8FED7 !important; }
+                    .leaflet-control-layers { background: #F8FED7 !important; color: #5C3B5C !important; border: 1px solid rgba(92, 59, 92, 0.3) !important; font-weight: bold; }
+                    .leaflet-control-layers-separator { border-top: 1px solid rgba(92, 59, 92, 0.3) !important; }
+                `;
             } else {
-                // CavanWeb theme corretto con testo leggibile (#800040)
+                // CavanWeb
                 body.className = "bg-[#728890] min-h-screen text-slate-900 flex flex-col justify-between";
                 metaTheme.setAttribute("content", "#728890");
-                header.className = "w-full bg-[#D8D9D0] border-b border-slate-400 px-4 py-3 flex items-center justify-between z-[1000] text-slate-900 shadow-sm";
+                header.className = "w-full bg-[#D8D9D0] border-b border-slate-400 px-4 py-3 flex items-center justify-between z-[1000] text-slate-900 shadow-sm transition-colors";
                 mainTitle.className = "text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2 text-slate-900";
                 titleIcon.className = "fa-solid fa-earth-americas text-[#800040]";
                 backBtn.className = "bg-[#728890] hover:bg-[#5d727a] px-3.5 py-2 rounded-xl border border-slate-600/40 shadow transition text-white flex items-center gap-2 text-xs sm:text-sm font-semibold";
                 themeToggleBtn.className = "bg-[#728890] hover:bg-[#5d727a] text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5 border border-slate-600/40";
                 themeIcon.className = "fa-solid fa-desktop";
                 themeLabel.textContent = "CavanWeb";
-                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#D8D9D0] backdrop-blur-md px-4 py-2 rounded-full border border-slate-400 text-xs sm:text-sm text-slate-900 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap";
+                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#D8D9D0] backdrop-blur-md px-4 py-2 rounded-full border border-slate-400 text-xs sm:text-sm text-slate-900 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
 
                 styleSheets.innerHTML = `
                     .leaflet-popup-content-wrapper { background: #8FBBD0 !important; color: #800040 !important; border: 1px solid rgba(128,0,64,0.3) !important; font-weight: bold; }
