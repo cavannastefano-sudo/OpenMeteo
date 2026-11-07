@@ -22,7 +22,7 @@
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
         }
-        /* Linee divisorie sottili e semitrasparenti per la modalità elenco in tutti i temi */
+        /* Linee divisorie sottili e semitrasparenti pulite per tutti i temi */
         #weather-data-container tr {
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
         }
@@ -105,6 +105,10 @@
             const playStoreBtn = document.getElementById('playstore-btn');
             const footerCopy = document.getElementById('footer-copy');
 
+            // Reset inline styles
+            body.style.backgroundColor = '';
+            body.style.color = '';
+
             if (themeName === 'dark') {
                 body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8";
                 metaTheme.setAttribute("content", "#0f172a");
@@ -124,13 +128,13 @@
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-amber-100 hover:bg-amber-200 px-3.5 py-1.5 rounded-xl border border-amber-300 transition shadow text-xs font-semibold text-slate-800 group";
                 footerCopy.className = "text-slate-600";
             } else if (themeName === 'lavender') {
-                // Nuovo tema basato sui colori dell'immagine fornita
+                // Tema esatto basato sui colori dell'immagine fornita
                 body.className = "min-h-screen flex flex-col justify-between p-4 sm:p-8";
-                body.style.backgroundColor = "#A49BB3"; // Sfondo lilla polveroso dell'immagine
+                body.style.backgroundColor = "#9D93AB"; // Sfondo lavanda/lilla polveroso esatto dell'immagine
                 body.style.color = "#3C2A4D";
-                metaTheme.setAttribute("content", "#A49BB3");
+                metaTheme.setAttribute("content", "#9D93AB");
                 footerAppText.className = "text-xs text-[#3C2A4D] font-medium";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#EFECE6] hover:bg-[#E2DDD5] px-3.5 py-1.5 rounded-xl border border-[#5C3B5C]/30 transition shadow text-xs font-semibold text-[#3C2A4D] group";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#F5F2EB] hover:bg-[#EBE7DF] px-3.5 py-1.5 rounded-xl border border-[#5C3B5C]/30 transition shadow text-xs font-semibold text-[#3C2A4D] group";
                 footerCopy.className = "text-[#3C2A4D]/80";
             } else {
                 body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
@@ -162,25 +166,23 @@
             const mainContainer = document.getElementById('main-container');
 
             let themeIcon = "fa-palette";
-            let themeLabel = "Tema";
-            if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
-            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
-            else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
-            else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
-            else if (currentTheme === 'lavender') { themeIcon = "fa-spa"; themeLabel = "Lavender"; }
+            if (currentTheme === 'cavanweb') themeIcon = "fa-desktop";
+            else if (currentTheme === 'light') themeIcon = "fa-sun";
+            else if (currentTheme === 'dark') themeIcon = "fa-moon";
+            else if (currentTheme === 'green') themeIcon = "fa-leaf";
+            else if (currentTheme === 'lavender') themeIcon = "fa-spa";
 
             const isGreen = currentTheme === 'green';
             const isCavanWeb = currentTheme === 'cavanweb';
             const isLight = currentTheme === 'light';
             const isLavender = currentTheme === 'lavender';
+            const isDark = currentTheme === 'dark';
 
             const themeButtonHTML = `
-                <button onclick="toggleTheme()" title="Cambia Tema" class="${isDarkOrGreen(currentTheme) ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : isCavanWeb ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#EFECE6] hover:bg-[#E2DDD5] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} w-12 h-12 rounded-2xl border shadow transition flex items-center justify-center text-lg font-semibold" ${isLavender ? 'style="background-color: #EFECE6; color: #5C3B5C;"' : ''}>
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${isDark || isGreen ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : isCavanWeb ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#F5F2EB] hover:bg-[#EBE7DF] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} w-12 h-12 rounded-2xl border shadow transition flex items-center justify-center text-lg font-semibold" ${isLavender ? 'style="background-color: #F5F2EB; color: #5C3B5C;"' : ''}>
                     <i class="fa-solid ${themeIcon}"></i>
                 </button>
             `;
-
-            function isDarkOrGreen(t) { return t === 'dark' || t === 'green'; }
 
             let accentColor = 'text-amber-400';
             let subText = 'text-blue-200';
@@ -236,7 +238,7 @@
                 innerBorder = 'border-amber-300/80';
                 searchInputBg = 'bg-white text-slate-800 placeholder-slate-400 border-amber-300';
             } else if (isLavender) {
-                // Applicazione dei colori esatti ispirati all'immagine (sfondo card lavanda chiarissimo/crema e dettagli bordeaux)
+                // Tema esatto basato sull'immagine: card bianco-crema chiaro [#F5F2EB], testi e bordi color vinaccia/bordeaux scuro [#5C3B5C]
                 accentColor = 'text-[#5C3B5C]';
                 subText = 'text-[#5C3B5C] font-semibold';
                 borderCol = 'border-[#5C3B5C]/30';
@@ -246,10 +248,10 @@
                 boxIconBg = 'bg-[#5C3B5C]/15 text-[#5C3B5C]';
                 iconColor = 'text-[#5C3B5C]';
                 cardBg = '';
-                inlineStyleCard = 'style="background-color: #EFECE6; color: #5C3B5C; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15);"';
-                innerBoxBg = 'bg-[#FAF8F5]';
+                inlineStyleCard = 'style="background-color: #F5F2EB; color: #5C3B5C; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15);"';
+                innerBoxBg = 'bg-white/60';
                 innerBorder = 'border-[#5C3B5C]/20';
-                searchInputBg = 'bg-[#FAF8F5] text-[#5C3B5C] placeholder-[#5C3B5C]/60 border-[#5C3B5C]/30 font-semibold';
+                searchInputBg = 'bg-white/80 text-[#5C3B5C] placeholder-[#5C3B5C]/60 border-[#5C3B5C]/30 font-semibold';
             }
 
             if (isCavanWeb) {
@@ -258,25 +260,25 @@
                 headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative`;
             }
 
-            let inlineHeaderStyle = isLavender ? 'style="color: #5C3B5C;"' : '';
+            let inlineHeaderStyle = isLavender ? 'style="color: #F5F2EB;"' : '';
 
             headerContainer.innerHTML = `
                 <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
                     <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${isLight ? 'border-amber-300' : borderCol} shadow-lg group-hover:scale-105 transition">
                 </a>
                 <div class="text-center flex-grow mx-2">
-                    <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : isLavender ? 'text-[#5C3B5C]' : 'text-white'}" ${inlineHeaderStyle}>
+                    <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : isLavender ? 'text-[#F5F2EB]' : 'text-white'}" ${inlineHeaderStyle}>
                         <i class="fa-solid fa-cloud-sun ${accentColor}"></i> MeteoCWEB
                     </h1>
-                    <p class="${subText} text-xs sm:text-sm" ${inlineHeaderStyle}>Dati da OpenWeatherMap & Open-Meteo</p>
+                    <p class="${subText} text-xs sm:text-sm" ${isLavender ? 'style="color: rgba(245, 242, 235, 0.9);"' : ''}>Dati da OpenWeatherMap & Open-Meteo</p>
                 </div>
                 <div class="flex items-center gap-2">
                     ${themeButtonHTML}
                     <div class="relative flex-shrink-0">
-                        <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : isLavender ? 'bg-[#EFECE6] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold" ${isLavender ? 'style="background-color: #EFECE6; color: #5C3B5C;"' : ''}>
+                        <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : isLavender ? 'bg-[#F5F2EB] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold" ${isLavender ? 'style="background-color: #F5F2EB; color: #5C3B5C;"' : ''}>
                             <i class="fa-solid fa-bars"></i>
                         </button>
-                        <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : isCavanWeb ? 'bg-[#8FBBD0] border-[#800040]/50 text-[#800040]' : isLavender ? 'bg-[#EFECE6] border-[#5C3B5C]/30 text-[#5C3B5C]' : isLight ? 'bg-[#fffacd] border-amber-300 text-slate-800' : 'bg-slate-900/95 border-white/20 text-blue-200'} backdrop-blur-xl border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2" ${isLavender ? 'style="background-color: #EFECE6; color: #5C3B5C;"' : ''}>
+                        <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : isCavanWeb ? 'bg-[#8FBBD0] border-[#800040]/50 text-[#800040]' : isLavender ? 'bg-[#F5F2EB] border-[#5C3B5C]/30 text-[#5C3B5C]' : isLight ? 'bg-[#fffacd] border-amber-300 text-slate-800' : 'bg-slate-900/95 border-white/20 text-blue-200'} backdrop-blur-xl border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2" ${isLavender ? 'style="background-color: #F5F2EB; color: #5C3B5C;"' : ''}>
                             <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${accentColor} border-b ${borderCol} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
                             <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span></div>
                             <div class="border-t ${borderCol} my-1"></div>
@@ -299,7 +301,7 @@
                             <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center ${subText} hover:opacity-100 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
                         <button type="submit" class="${btnBg} px-4 py-3 rounded-2xl font-semibold transition shadow-lg flex items-center justify-center gap-1.5 text-sm sm:text-base">Cerca</button>
-                        <button type="button" onclick="getGPSWeather()" title="GPS" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#FAF8F5] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} px-4 py-3 rounded-2xl border ${borderCol} transition flex items-center justify-center" ${isLavender ? 'style="background-color: #FAF8F5; color: #5C3B5C;"' : ''}><i class="fa-solid fa-location-crosshairs text-lg"></i></button>
+                        <button type="button" onclick="getGPSWeather()" title="GPS" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-white/80 text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} px-4 py-3 rounded-2xl border ${borderCol} transition flex items-center justify-center" ${isLavender ? 'style="background-color: rgba(255,255,255,0.8); color: #5C3B5C;"' : ''}><i class="fa-solid fa-location-crosshairs text-lg"></i></button>
                     </form>
 
                     <div id="loading" class="flex flex-col items-center justify-center py-12 space-y-4">
@@ -328,7 +330,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#FAF8F5] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0" ${isLavender ? 'style="background-color: #FAF8F5; color: #5C3B5C;"' : ''}><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
+                            <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-white/80 text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0" ${isLavender ? 'style="background-color: rgba(255,255,255,0.8); color: #5C3B5C;"' : ''}><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
                         </div>
 
                         <div class="flex items-center justify-between">
@@ -346,7 +348,7 @@
 
                         <!-- TASTO VISTA GRIGLIA / ELENCO SOPRA ALLA GRIGLIA SULLA DESTRA -->
                         <div class="flex justify-end -mb-2">
-                            <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#FAF8F5] hover:bg-[#EFECE6] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20'} px-3 py-1.5 rounded-xl border shadow-sm transition flex items-center gap-1.5 text-xs font-semibold" ${isLavender ? 'style="background-color: #FAF8F5; color: #5C3B5C;"' : ''}>
+                            <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-white/80 hover:bg-white text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20'} px-3 py-1.5 rounded-xl border shadow-sm transition flex items-center gap-1.5 text-xs font-semibold" ${isLavender ? 'style="background-color: rgba(255,255,255,0.8); color: #5C3B5C;"' : ''}>
                                 <i class="fa-solid ${currentViewMode === 'grid' ? 'fa-list' : 'fa-border-all'}"></i>
                                 <span>${currentViewMode === 'grid' ? 'Elenco' : 'Griglia'}</span>
                             </button>
@@ -580,7 +582,7 @@
             const isLavender = currentTheme === 'lavender';
 
             let subText = isGreen ? 'text-emerald-200' : isLight ? 'text-slate-700' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-blue-200';
-            let innerBoxBg = isLight ? 'bg-[#fffde7]' : isCavanWeb ? 'bg-[#8FBBD0]/40' : isLavender ? 'bg-[#FAF8F5]' : 'bg-white/5';
+            let innerBoxBg = isLight ? 'bg-[#fffde7]' : isCavanWeb ? 'bg-[#8FBBD0]/40' : isLavender ? 'bg-white/60' : 'bg-white/5';
             let innerBorder = isLight ? 'border-amber-300/80' : isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/20' : 'border-white/10';
             let boxIconBg = isLight || isGreen || currentTheme === 'dark' ? 'bg-amber-500/20 text-amber-400' : isLavender ? 'bg-[#5C3B5C]/15 text-[#5C3B5C]' : 'bg-[#800040]/10 text-[#800040]';
             
