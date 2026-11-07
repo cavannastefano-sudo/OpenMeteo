@@ -217,14 +217,14 @@
                 cardBg = 'bg-[#D8D9D0] backdrop-blur-none';
                 searchInputBg = 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold';
             } else if (isLight) {
-                accentColor = 'text-amber-600';
+                accentColor = 'text-[#808000]';
                 subText = 'text-slate-700';
                 borderCol = 'border-amber-300';
                 focusBorder = 'focus:border-amber-500';
                 spinnerColor = 'border-amber-500';
                 btnBg = 'bg-amber-500 hover:bg-amber-600 text-white';
-                boxIconBg = 'bg-amber-500/20 text-amber-600';
-                iconColor = 'text-amber-500';
+                boxIconBg = 'bg-amber-500/20 text-[#808000]';
+                iconColor = 'text-[#808000]';
                 cardBg = 'bg-[#fffacd] backdrop-blur-none';
                 searchInputBg = 'bg-white text-slate-800 placeholder-slate-400 border-amber-300';
             } else if (isLavender) {
@@ -237,9 +237,7 @@
                 boxIconBg = 'bg-[#5C3B5C]/15 text-[#5C3B5C]';
                 iconColor = 'text-[#5C3B5C]';
                 cardBg = '';
-                // Tutta la card principale usa il colore viola #DAD0F0
                 inlineStyleCard = 'style="background-color: #DAD0F0; color: #5C3B5C; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15);"';
-                // Campo cerca con lo stesso giallo del campo dati (#F8FED7)
                 searchInputBg = 'bg-[#F8FED7] text-[#5C3B5C] placeholder-[#5C3B5C]/60 border-[#5C3B5C]/30 font-semibold';
             }
 
@@ -251,7 +249,6 @@
 
             let inlineHeaderStyle = isLavender ? 'style="color: #F5F2EB;"' : '';
 
-            // Sfondo della tenda del menu impostato con il giallo dei dati (#F8FED7) per il tema lavender
             let menuBgStyle = isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : '';
             let menuBgClass = isLavender ? 'backdrop-blur-none' : 'backdrop-blur-xl';
             let menuBtnStyle = isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : '';
@@ -317,7 +314,7 @@
                                 <div class="flex items-center gap-3">
                                     <div>
                                         <div class="flex items-center gap-2">
-                                            <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide">--</h2>
+                                            <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide" ${isLight ? 'style="color: #808000;"' : ''}>--</h2>
                                             <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xl ${subText} hover:${accentColor} transition p-1"><i id="fav-icon" class="fa-regular fa-star"></i></button>
                                         </div>
                                         <div class="flex items-center gap-2 mt-1">
@@ -333,8 +330,8 @@
                             <div class="flex items-center justify-between pt-4">
                                 <div>
                                     <div class="flex items-start">
-                                        <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter">--</span>
-                                        <span class="text-3xl sm:text-4xl font-light ml-1 ${accentColor}">°C</span>
+                                        <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter" ${isLight ? 'style="color: #808000;"' : ''}>--</span>
+                                        <span class="text-3xl sm:text-4xl font-light ml-1 ${accentColor}" ${isLight ? 'style="color: #808000;"' : ''}>°C</span>
                                     </div>
                                 </div>
                                 <div class="text-right">
@@ -352,7 +349,7 @@
                             </button>
                         </div>
 
-                        <!-- CONTAINER DINAMICO GRIGLIA / ELENCO (FRAME DATI CON #F8FED7) -->
+                        <!-- CONTAINER DINAMICO GRIGLIA / ELENCO -->
                         <div id="weather-data-container"></div>
 
                         <div class="text-center pt-2 border-t ${borderCol}"><p class="text-xs ${subText}">Ultimo aggiornamento: <span id="update-time">--</span></p></div>
@@ -585,7 +582,7 @@
             let innerBorder = isLight ? 'border-amber-300/80' : isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/20' : 'border-white/10';
             let boxIconBg = isLight || isGreen || currentTheme === 'dark' ? 'bg-amber-500/20 text-amber-400' : isLavender ? 'bg-[#5C3B5C]/15 text-[#5C3B5C]' : 'bg-[#800040]/10 text-[#800040]';
             
-            let listValColor = isCavanWeb ? 'text-emerald-700 font-bold' : isLavender ? 'text-[#5C3B5C] font-bold' : '';
+            let listValColor = isCavanWeb ? 'text-emerald-700 font-bold' : isLavender ? 'text-[#5C3B5C] font-bold' : isLight ? 'text-slate-900 font-bold' : '';
 
             const container = document.getElementById('weather-data-container');
 
