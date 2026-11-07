@@ -22,7 +22,7 @@
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
         }
-        /* Linee divisorie sottili e semitrasparenti pulite per tutti i temi */
+        /* Linee divisorie sottili e semitrasparenti per la modalità elenco */
         #weather-data-container tr {
             border-bottom: 1px solid rgba(255, 255, 255, 0.12);
         }
@@ -105,7 +105,6 @@
             const playStoreBtn = document.getElementById('playstore-btn');
             const footerCopy = document.getElementById('footer-copy');
 
-            // Reset inline styles
             body.style.backgroundColor = '';
             body.style.color = '';
 
@@ -128,9 +127,8 @@
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-amber-100 hover:bg-amber-200 px-3.5 py-1.5 rounded-xl border border-amber-300 transition shadow text-xs font-semibold text-slate-800 group";
                 footerCopy.className = "text-slate-600";
             } else if (themeName === 'lavender') {
-                // Tema esatto basato sui colori dell'immagine fornita
                 body.className = "min-h-screen flex flex-col justify-between p-4 sm:p-8";
-                body.style.backgroundColor = "#9D93AB"; // Sfondo lavanda/lilla polveroso esatto dell'immagine
+                body.style.backgroundColor = "#9D93AB";
                 body.style.color = "#3C2A4D";
                 metaTheme.setAttribute("content", "#9D93AB");
                 footerAppText.className = "text-xs text-[#3C2A4D] font-medium";
@@ -193,8 +191,6 @@
             let boxIconBg = 'bg-amber-500/20 text-amber-400';
             let iconColor = 'text-amber-300';
             let cardBg = 'bg-white/10 backdrop-blur-md';
-            let innerBoxBg = 'bg-white/5';
-            let innerBorder = 'border-white/10';
             let searchInputBg = 'bg-white/5 text-white placeholder-blue-300/60 border-white/10';
             let inlineStyleCard = '';
 
@@ -208,8 +204,6 @@
                 boxIconBg = 'bg-amber-500/20 text-amber-400';
                 iconColor = 'text-amber-300';
                 cardBg = 'bg-white/10 backdrop-blur-md';
-                innerBoxBg = 'bg-white/5';
-                innerBorder = 'border-white/10';
                 searchInputBg = 'bg-white/5 text-white placeholder-emerald-200/60 border-white/10';
             } else if (isCavanWeb) {
                 accentColor = 'text-[#800040]';
@@ -221,8 +215,6 @@
                 boxIconBg = 'bg-[#800040]/10 text-[#800040]';
                 iconColor = 'text-[#800040]';
                 cardBg = 'bg-[#D8D9D0] backdrop-blur-none';
-                innerBoxBg = 'bg-[#8FBBD0]/40';
-                innerBorder = 'border-[#800040]/30';
                 searchInputBg = 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold';
             } else if (isLight) {
                 accentColor = 'text-amber-600';
@@ -234,11 +226,8 @@
                 boxIconBg = 'bg-amber-500/20 text-amber-600';
                 iconColor = 'text-amber-500';
                 cardBg = 'bg-[#fffacd] backdrop-blur-none';
-                innerBoxBg = 'bg-[#fffde7]';
-                innerBorder = 'border-amber-300/80';
                 searchInputBg = 'bg-white text-slate-800 placeholder-slate-400 border-amber-300';
             } else if (isLavender) {
-                // Tema esatto basato sull'immagine: card bianco-crema chiaro [#F5F2EB], testi e bordi color vinaccia/bordeaux scuro [#5C3B5C]
                 accentColor = 'text-[#5C3B5C]';
                 subText = 'text-[#5C3B5C] font-semibold';
                 borderCol = 'border-[#5C3B5C]/30';
@@ -249,8 +238,6 @@
                 iconColor = 'text-[#5C3B5C]';
                 cardBg = '';
                 inlineStyleCard = 'style="background-color: #F5F2EB; color: #5C3B5C; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15);"';
-                innerBoxBg = 'bg-white/60';
-                innerBorder = 'border-[#5C3B5C]/20';
                 searchInputBg = 'bg-white/80 text-[#5C3B5C] placeholder-[#5C3B5C]/60 border-[#5C3B5C]/30 font-semibold';
             }
 
@@ -291,6 +278,10 @@
                 </div>
             `;
 
+            // Frame superiore (temperatura/luogo) con il colore #DAD0F0 per il tema lavender
+            let topFrameStyle = isLavender ? 'style="background-color: #DAD0F0; border: 1px solid rgba(92,59,92,0.25);"' : '';
+            let topFrameClass = isLavender ? 'rounded-2xl p-4 mb-3' : '';
+
             mainContainer.className = "w-full max-w-xl mx-auto flex-grow flex items-center justify-center";
             mainContainer.innerHTML = `
                 <div id="weather-card" class="${cardBg} border ${borderCol} rounded-3xl p-6 sm:p-8 shadow-2xl w-full relative overflow-hidden transition-all duration-300 space-y-6 ${isLight ? 'text-slate-800' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-white'}" ${inlineStyleCard}>
@@ -315,46 +306,49 @@
                         <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 ${btnBg} font-semibold rounded-xl transition shadow-lg text-sm">Carica Piacenza</button>
                     </div>
 
-                    <div id="weather-content" class="hidden space-y-6">
-                        <div class="flex justify-between items-start border-b ${borderCol} pb-4">
-                            <div class="flex items-center gap-3">
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide">--</h2>
-                                        <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xl ${subText} hover:${accentColor} transition p-1"><i id="fav-icon" class="fa-regular fa-star"></i></button>
-                                    </div>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        <p id="country-name" class="text-xs uppercase tracking-widest ${subText} font-semibold">--</p>
-                                        <span class="${subText} opacity-50">•</span>
-                                        <p id="coords-display" class="text-xs ${subText} opacity-90 font-mono">--</p>
+                    <div id="weather-content" class="hidden space-y-4">
+                        <!-- FRAME SUPERIORE TEMPERATURA / LUOGO CON #DAD0F0 -->
+                        <div class="${topFrameClass}" ${topFrameStyle}>
+                            <div class="flex justify-between items-start border-b ${isLavender ? 'border-[#5C3B5C]/20' : borderCol} pb-4">
+                                <div class="flex items-center gap-3">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide">--</h2>
+                                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xl ${subText} hover:${accentColor} transition p-1"><i id="fav-icon" class="fa-regular fa-star"></i></button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <p id="country-name" class="text-xs uppercase tracking-widest ${subText} font-semibold">--</p>
+                                            <span class="${subText} opacity-50">•</span>
+                                            <p id="coords-display" class="text-xs ${subText} opacity-90 font-mono">--</p>
+                                        </div>
                                     </div>
                                 </div>
+                                <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-white/80 text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0" ${isLavender ? 'style="background-color: rgba(255,255,255,0.8); color: #5C3B5C;"' : ''}><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
                             </div>
-                            <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-white/80 text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0" ${isLavender ? 'style="background-color: rgba(255,255,255,0.8); color: #5C3B5C;"' : ''}><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
-                        </div>
 
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="flex items-start">
-                                    <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter">--</span>
-                                    <span class="text-3xl sm:text-4xl font-light ml-1 ${accentColor}">°C</span>
+                            <div class="flex items-center justify-between pt-4">
+                                <div>
+                                    <div class="flex items-start">
+                                        <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter">--</span>
+                                        <span class="text-3xl sm:text-4xl font-light ml-1 ${accentColor}">°C</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="text-right">
-                                <div id="weather-icon-container" class="text-5xl sm:text-6xl ${iconColor} mb-1"><i class="fa-solid fa-cloud"></i></div>
-                                <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize opacity-90">--</p>
+                                <div class="text-right">
+                                    <div id="weather-icon-container" class="text-5xl sm:text-6xl ${iconColor} mb-1"><i class="fa-solid fa-cloud"></i></div>
+                                    <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize opacity-90">--</p>
+                                </div>
                             </div>
                         </div>
 
                         <!-- TASTO VISTA GRIGLIA / ELENCO SOPRA ALLA GRIGLIA SULLA DESTRA -->
-                        <div class="flex justify-end -mb-2">
+                        <div class="flex justify-end -mb-1">
                             <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-white/80 hover:bg-white text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20'} px-3 py-1.5 rounded-xl border shadow-sm transition flex items-center gap-1.5 text-xs font-semibold" ${isLavender ? 'style="background-color: rgba(255,255,255,0.8); color: #5C3B5C;"' : ''}>
                                 <i class="fa-solid ${currentViewMode === 'grid' ? 'fa-list' : 'fa-border-all'}"></i>
                                 <span>${currentViewMode === 'grid' ? 'Elenco' : 'Griglia'}</span>
                             </button>
                         </div>
 
-                        <!-- CONTAINER DINAMICO GRIGLIA / ELENCO -->
+                        <!-- CONTAINER DINAMICO GRIGLIA / ELENCO (FRAME DATI CON #F8FED7) -->
                         <div id="weather-data-container"></div>
 
                         <div class="text-center pt-2 border-t ${borderCol}"><p class="text-xs ${subText}">Ultimo aggiornamento: <span id="update-time">--</span></p></div>
@@ -582,7 +576,9 @@
             const isLavender = currentTheme === 'lavender';
 
             let subText = isGreen ? 'text-emerald-200' : isLight ? 'text-slate-700' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-blue-200';
-            let innerBoxBg = isLight ? 'bg-[#fffde7]' : isCavanWeb ? 'bg-[#8FBBD0]/40' : isLavender ? 'bg-white/60' : 'bg-white/5';
+            
+            // Frame dati (griglia o elenco) con il colore #F8FED7 per il tema lavender
+            let innerBoxBg = isLight ? 'bg-[#fffde7]' : isCavanWeb ? 'bg-[#8FBBD0]/40' : isLavender ? 'bg-[#F8FED7]' : 'bg-white/5';
             let innerBorder = isLight ? 'border-amber-300/80' : isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/20' : 'border-white/10';
             let boxIconBg = isLight || isGreen || currentTheme === 'dark' ? 'bg-amber-500/20 text-amber-400' : isLavender ? 'bg-[#5C3B5C]/15 text-[#5C3B5C]' : 'bg-[#800040]/10 text-[#800040]';
             
