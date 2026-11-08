@@ -46,6 +46,23 @@
             <button onclick="toggleTheme()" id="theme-toggle-btn" title="Cambia Tema" class="bg-[#728890] hover:bg-[#5d727a] text-white px-2.5 py-1.5 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1 border border-slate-600/40">
                 <i class="fa-solid fa-desktop" id="theme-icon"></i> <span id="theme-label" class="hidden sm:inline">CavanWeb</span>
             </button>
+            
+            <!-- Pulsante Menu a tendina -->
+            <div class="relative flex-shrink-0">
+                <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="bg-[#728890] hover:bg-[#5d727a] text-white w-9 h-9 rounded-xl border border-slate-600/40 shadow transition flex items-center justify-center text-sm font-semibold">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 bg-slate-900/95 border border-white/20 text-blue-200 backdrop-blur-xl border rounded-2xl shadow-2xl py-2 z-[1100] flex flex-col gap-1 px-2">
+                    <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/20 flex items-center gap-1.5" id="menu-fav-title"><i class="fa-solid fa-star"></i> Preferiti</div>
+                    <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span></div>
+                    <div class="border-t border-white/20 my-1" id="menu-divider"></div>
+                    <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
+                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-calendar-days text-amber-400 w-5 text-center"></i> <span>Archivio Storico</span></a>
+                </div>
+            </div>
+
             <!-- Logo CavanWeb -->
             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group" title="Visita CavanWeb">
                 <img src="SfondoN-512.png" alt="Logo" class="w-8 h-8 rounded-xl object-cover border-0 shadow group-hover:scale-105 transition">
@@ -158,7 +175,45 @@
 
         let currentMarker = null;
 
-        // Gestione dei Temi in ciclo sequenziale (CavanWeb -> Chiaro -> Scuro -> Verde -> Lilla)
+        // Gestione Menu a tendina
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const menu = document.getElementById('dropdown-menu');
+            const menuBtn = document.getElementById('menu-btn');
+            if (menu && menuBtn && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function getFavorites() {
+            try { return JSON.parse(localStorage.getItem('cavanweb_favorites')) || []; } catch (e) { return []; }
+        }
+
+        function renderFavoritesMenu() {
+            const favListContainer = document.getElementById('favorites-list');
+            if (!favListContainer) return;
+            const favorites = getFavorites();
+
+            if (favorites.length === 0) {
+                favListContainer.innerHTML = `<span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span>`;
+                return;
+            }
+
+            let html = '';
+            favorites.forEach(city => {
+                html += `<a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${city}'); localStorage.setItem('cavanweb_active_name', '${city}');" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/5 text-sm font-semibold transition">
+                    <span class="truncate"><i class="fa-solid fa-location-dot mr-2 text-xs"></i>${city}</span>
+                    <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
+                </a>`;
+            });
+            favListContainer.innerHTML = html;
+        }
+
+        // Gestione dei Temi in ciclo sequenziale
         function toggleTheme() {
             const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             let next = 'light';
@@ -181,6 +236,10 @@
             const themeToggleBtn = document.getElementById('theme-toggle-btn');
             const themeIcon = document.getElementById('theme-icon');
             const themeLabel = document.getElementById('theme-label');
+            const menuBtn = document.getElementById('menu-btn');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const menuFavTitle = document.getElementById('menu-fav-title');
+            const menuDivider = document.getElementById('menu-divider');
             const mapBanner = document.getElementById('map-banner');
 
             const styleSheets = document.getElementById('dynamic-theme-styles') || document.createElement('style');
@@ -196,12 +255,15 @@
             themeToggleBtn.style.backgroundColor = '';
             themeToggleBtn.style.color = '';
             themeToggleBtn.style.border = '';
+            menuBtn.style.backgroundColor = '';
+            menuBtn.style.color = '';
+            menuBtn.style.border = '';
+            dropdownMenu.className = "hidden absolute right-0 mt-2 w-60 border rounded-2xl shadow-2xl py-2 z-[1100] flex flex-col gap-1 px-2";
             mapBanner.style.backgroundColor = '';
             mapBanner.style.color = '';
             mapBanner.style.border = '';
 
             if (themeName === 'dark') {
-                // Tema Scuro: Blu con scritte verdine (emerald-300)
                 body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-emerald-300 flex flex-col justify-between";
                 metaTheme.setAttribute("content", "#0f172a");
                 header.className = "w-full bg-slate-900/85 backdrop-blur-md border-b border-white/10 px-3 py-2.5 flex items-center justify-between z-[1000] text-emerald-300 transition-colors gap-2";
@@ -209,8 +271,12 @@
                 titleIcon.className = "fa-solid fa-earth-americas text-amber-400 flex-shrink-0";
                 backBtn.className = "bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-xl border border-white/20 shadow transition text-emerald-300 hover:text-white flex items-center gap-1.5 text-xs font-semibold flex-shrink-0";
                 themeToggleBtn.className = "bg-white/10 hover:bg-white/25 text-amber-400 px-2.5 py-1.5 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1 border border-white/20 flex-shrink-0";
+                menuBtn.className = "bg-white/10 hover:bg-white/25 text-amber-400 w-9 h-9 rounded-xl border border-white/20 shadow transition flex items-center justify-center text-sm font-semibold flex-shrink-0";
                 themeIcon.className = "fa-solid fa-moon";
                 themeLabel.textContent = "Scuro";
+                dropdownMenu.className += " bg-slate-900/95 border-white/20 text-emerald-200 backdrop-blur-xl";
+                menuFavTitle.className = "px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/20 flex items-center gap-1.5";
+                menuDivider.className = "border-t border-white/20 my-1";
                 mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-emerald-300 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
 
                 styleSheets.innerHTML = `
@@ -220,7 +286,6 @@
                     .leaflet-control-layers-separator { border-top: 1px solid rgba(255,255,255,0.2) !important; }
                 `;
             } else if (themeName === 'green') {
-                // Tema Verde: Verde con scritte azzurrine (sky-200)
                 body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-sky-200 flex flex-col justify-between";
                 metaTheme.setAttribute("content", "#064e3b");
                 header.className = "w-full bg-emerald-950/85 backdrop-blur-md border-b border-emerald-500/20 px-3 py-2.5 flex items-center justify-between z-[1000] text-sky-200 transition-colors gap-2";
@@ -228,8 +293,12 @@
                 titleIcon.className = "fa-solid fa-earth-americas text-amber-400 flex-shrink-0";
                 backBtn.className = "bg-white/10 hover:bg-white/20 px-2.5 py-1.5 rounded-xl border border-white/20 shadow transition text-sky-200 hover:text-white flex items-center gap-1.5 text-xs font-semibold flex-shrink-0";
                 themeToggleBtn.className = "bg-white/10 hover:bg-white/25 text-amber-400 px-2.5 py-1.5 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1 border border-white/20 flex-shrink-0";
+                menuBtn.className = "bg-white/10 hover:bg-white/25 text-amber-400 w-9 h-9 rounded-xl border border-white/20 shadow transition flex items-center justify-center text-sm font-semibold flex-shrink-0";
                 themeIcon.className = "fa-solid fa-leaf";
                 themeLabel.textContent = "Verde";
+                dropdownMenu.className += " bg-teal-950/95 border-emerald-500/20 text-sky-200 backdrop-blur-xl";
+                menuFavTitle.className = "px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-emerald-500/20 flex items-center gap-1.5";
+                menuDivider.className = "border-t border-emerald-500/20 my-1";
                 mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-emerald-950/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-xs sm:text-sm text-sky-200 pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
 
                 styleSheets.innerHTML = `
@@ -257,6 +326,15 @@
                 themeToggleBtn.style.backgroundColor = "#fef08a";
                 themeToggleBtn.style.color = "#854d0e";
                 themeToggleBtn.style.borderColor = "#facc15";
+
+                menuBtn.className = "w-9 h-9 rounded-xl border shadow transition flex items-center justify-center text-sm font-semibold flex-shrink-0";
+                menuBtn.style.backgroundColor = "#fef08a";
+                menuBtn.style.color = "#854d0e";
+                menuBtn.style.borderColor = "#facc15";
+
+                dropdownMenu.className += " bg-[#fffacd] border-amber-300 text-slate-800 backdrop-blur-none";
+                menuFavTitle.className = "px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#808000] border-b border-amber-300 flex items-center gap-1.5";
+                menuDivider.className = "border-t border-amber-300 my-1";
 
                 themeIcon.className = "fa-solid fa-sun";
                 themeLabel.textContent = "Chiaro";
@@ -293,6 +371,17 @@
                 themeToggleBtn.style.backgroundColor = "#F5F2EB";
                 themeToggleBtn.style.color = "#5C3B5C";
                 themeToggleBtn.style.border = "1px solid rgba(92, 59, 92, 0.3)";
+
+                menuBtn.className = "w-9 h-9 rounded-xl shadow transition flex items-center justify-center text-sm font-semibold flex-shrink-0";
+                menuBtn.style.backgroundColor = "#F5F2EB";
+                menuBtn.style.color = "#5C3B5C";
+                menuBtn.style.border = "1px solid rgba(92, 59, 92, 0.3)";
+
+                dropdownMenu.className += " border-[#5C3B5C]/30 text-[#5C3B5C] backdrop-blur-none";
+                dropdownMenu.style.backgroundColor = "#F8FED7";
+                menuFavTitle.className = "px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#5C3B5C] border-b border-[#5C3B5C]/30 flex items-center gap-1.5";
+                menuDivider.className = "border-t border-[#5C3B5C]/30 my-1";
+
                 themeIcon.className = "fa-solid fa-spa";
                 themeLabel.textContent = "Lilla";
 
@@ -316,8 +405,12 @@
                 titleIcon.className = "fa-solid fa-earth-americas text-[#800040] flex-shrink-0";
                 backBtn.className = "bg-[#728890] hover:bg-[#5d727a] px-2.5 py-1.5 rounded-xl border border-slate-600/40 shadow transition text-white flex items-center gap-1.5 text-xs font-semibold flex-shrink-0";
                 themeToggleBtn.className = "bg-[#728890] hover:bg-[#5d727a] text-white px-2.5 py-1.5 rounded-xl text-xs font-semibold shadow transition flex items-center gap-1 border border-slate-600/40 flex-shrink-0";
+                menuBtn.className = "bg-[#800040] text-white hover:bg-[#600030] w-9 h-9 rounded-xl border border-[#800040]/50 shadow transition flex items-center justify-center text-sm font-semibold flex-shrink-0";
                 themeIcon.className = "fa-solid fa-desktop";
                 themeLabel.textContent = "CavanWeb";
+                dropdownMenu.className += " bg-[#8FBBD0] border-[#800040]/50 text-[#800040] backdrop-blur-none";
+                menuFavTitle.className = "px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#800040] border-b border-[#800040]/30 flex items-center gap-1.5";
+                menuDivider.className = "border-t border-[#800040]/30 my-1";
                 mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-[#D8D9D0] backdrop-blur-md px-4 py-2 rounded-full border border-slate-400 text-xs sm:text-sm text-slate-900 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
 
                 styleSheets.innerHTML = `
@@ -330,6 +423,7 @@
             if (!document.getElementById('dynamic-theme-styles')) {
                 document.head.appendChild(styleSheets);
             }
+            renderFavoritesMenu();
         }
 
         // Funzione per caricare il meteo al click sulla mappa e memorizzare correttamente la città
