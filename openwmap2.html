@@ -18,14 +18,11 @@
         body {
             font-family: 'Inter', sans-serif;
             transition: background 0.3s ease, color 0.3s ease;
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
         }
         input[type="search"]::-webkit-search-cancel-button {
             display: none;
-        }
-        /* Correzione per forzare la barra di navigazione mobile a seguire il tema */
-        html, body {
-            overscroll-behavior-y: none;
-            -webkit-tap-highlight-color: transparent;
         }
         /* Linee divisorie sottili e semitrasparenti per la modalità elenco */
         #weather-data-container tr {
