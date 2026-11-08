@@ -109,17 +109,17 @@
             body.style.color = '';
 
             if (themeName === 'dark') {
-                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-emerald-200 flex flex-col justify-between p-4 sm:p-8";
+                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-sky-200 flex flex-col justify-between p-4 sm:p-8";
                 metaTheme.setAttribute("content", "#0f172a");
-                footerAppText.className = "text-xs text-emerald-200";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-emerald-200 group";
-                footerCopy.className = "text-emerald-200/70";
+                footerAppText.className = "text-xs text-sky-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-sky-200 group";
+                footerCopy.className = "text-sky-200/70";
             } else if (themeName === 'green') {
-                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-emerald-200 flex flex-col justify-between p-4 sm:p-8";
+                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-sky-200 flex flex-col justify-between p-4 sm:p-8";
                 metaTheme.setAttribute("content", "#064e3b");
-                footerAppText.className = "text-xs text-emerald-200";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-emerald-200 group";
-                footerCopy.className = "text-emerald-200/70";
+                footerAppText.className = "text-xs text-sky-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-sky-200 group";
+                footerCopy.className = "text-sky-200/70";
             } else if (themeName === 'light') {
                 body.className = "bg-white min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
                 metaTheme.setAttribute("content", "#ffffff");
@@ -129,11 +129,11 @@
             } else if (themeName === 'lavender') {
                 body.className = "min-h-screen flex flex-col justify-between p-4 sm:p-8";
                 body.style.backgroundColor = "#9D93AB";
-                body.style.color = "#3C2A4D";
+                body.style.color = "#5C3B5C";
                 metaTheme.setAttribute("content", "#9D93AB");
-                footerAppText.className = "text-xs text-[#3C2A4D] font-medium";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#F5F2EB] hover:bg-[#EBE7DF] px-3.5 py-1.5 rounded-xl border border-[#5C3B5C]/30 transition shadow text-xs font-semibold text-[#3C2A4D] group";
-                footerCopy.className = "text-[#3C2A4D]/80";
+                footerAppText.className = "text-xs text-[#5C3B5C] font-semibold";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#F5F2EB] hover:bg-[#EBE7DF] px-3.5 py-1.5 rounded-xl border border-[#5C3B5C]/30 transition shadow text-xs font-semibold text-[#5C3B5C] group";
+                footerCopy.className = "text-[#5C3B5C]";
             } else {
                 body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
                 metaTheme.setAttribute("content", "#728890");
@@ -196,7 +196,7 @@
 
             if (isDark || isGreen) {
                 accentColor = 'text-amber-400';
-                subText = 'text-emerald-200';
+                subText = 'text-sky-200';
                 borderCol = 'border-white/20';
                 focusBorder = 'focus:border-amber-400';
                 spinnerColor = 'border-amber-400';
@@ -204,7 +204,7 @@
                 boxIconBg = 'bg-amber-500/20 text-amber-400';
                 iconColor = 'text-amber-300';
                 cardBg = 'bg-white/10 backdrop-blur-md';
-                searchInputBg = 'bg-white/5 text-emerald-200 placeholder-emerald-200/60 border-white/10';
+                searchInputBg = 'bg-white/5 text-sky-200 placeholder-sky-200/60 border-white/10';
             } else if (isCavanWeb) {
                 accentColor = 'text-[#800040]';
                 subText = 'text-[#800040] font-medium';
@@ -247,8 +247,8 @@
                 headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative`;
             }
 
-            let inlineHeaderStyle = isLavender ? 'style="color: #F5F2EB;"' : '';
-            let inlineSubHeaderStyle = isLavender ? 'style="color: rgba(245, 242, 235, 0.9);"' : '';
+            let inlineHeaderStyle = isLavender ? 'style="color: #5C3B5C;"' : '';
+            let inlineSubHeaderStyle = isLavender ? 'style="color: #5C3B5C;"' : '';
 
             let menuBgStyle = isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : '';
             let menuBgClass = isLavender ? 'backdrop-blur-none' : 'backdrop-blur-xl';
@@ -259,7 +259,7 @@
                     <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${isLight ? 'border-amber-300' : borderCol} shadow-lg group-hover:scale-105 transition">
                 </a>
                 <div class="text-center flex-grow mx-2">
-                    <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : isLavender ? 'text-[#F5F2EB]' : 'text-emerald-200'}" ${inlineHeaderStyle}>
+                    <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : isLavender ? 'text-[#5C3B5C]' : 'text-sky-200'}" ${inlineHeaderStyle}>
                         <i class="fa-solid fa-cloud-sun ${accentColor}"></i> MeteoCWEB
                     </h1>
                     <p class="${subText} text-xs sm:text-sm" ${inlineSubHeaderStyle}>Dati da OpenWeatherMap & Open-Meteo</p>
@@ -270,7 +270,7 @@
                         <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold" ${menuBtnStyle}>
                             <i class="fa-solid fa-bars"></i>
                         </button>
-                        <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : isDark ? 'bg-slate-900/95 border-white/20 text-emerald-200' : isCavanWeb ? 'bg-[#8FBBD0] border-[#800040]/50 text-[#800040]' : isLavender ? 'bg-[#F8FED7] border-[#5C3B5C]/30 text-[#5C3B5C]' : isLight ? 'bg-[#fffacd] border-amber-300 text-slate-800' : 'bg-slate-900/95 border-white/20 text-blue-200'} ${menuBgClass} border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2" ${menuBgStyle}>
+                        <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-sky-200' : isDark ? 'bg-slate-900/95 border-white/20 text-sky-200' : isCavanWeb ? 'bg-[#8FBBD0] border-[#800040]/50 text-[#800040]' : isLavender ? 'bg-[#F8FED7] border-[#5C3B5C]/30 text-[#5C3B5C]' : isLight ? 'bg-[#fffacd] border-amber-300 text-slate-800' : 'bg-slate-900/95 border-white/20 text-blue-200'} ${menuBgClass} border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2" ${menuBgStyle}>
                             <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${accentColor} border-b ${borderCol} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
                             <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span></div>
                             <div class="border-t ${borderCol} my-1"></div>
@@ -287,7 +287,7 @@
 
             mainContainer.className = "w-full max-w-xl mx-auto flex-grow flex items-center justify-center";
             mainContainer.innerHTML = `
-                <div id="weather-card" class="${cardBg} border ${borderCol} rounded-3xl p-6 sm:p-8 shadow-2xl w-full relative overflow-hidden transition-all duration-300 space-y-6 ${isLight ? 'text-slate-800' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : isDark || isGreen ? 'text-emerald-200' : 'text-white'}" ${inlineStyleCard}>
+                <div id="weather-card" class="${cardBg} border ${borderCol} rounded-3xl p-6 sm:p-8 shadow-2xl w-full relative overflow-hidden transition-all duration-300 space-y-6 ${isLight ? 'text-slate-800' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : isDark || isGreen ? 'text-sky-200' : 'text-white'}" ${inlineStyleCard}>
                     <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2">
                         <div class="relative flex-grow">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none ${subText}"><i class="fa-solid fa-magnifying-glass text-sm"></i></span>
@@ -315,7 +315,7 @@
                                 <div class="flex items-center gap-3">
                                     <div>
                                         <div class="flex items-center gap-2">
-                                            <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide ${isDark || isGreen ? 'text-emerald-200' : ''}" ${isLight ? 'style="color: #808000;"' : ''}>--</h2>
+                                            <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide ${isDark || isGreen ? 'text-sky-200' : ''}" ${isLight ? 'style="color: #808000;"' : ''}>--</h2>
                                             <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xl ${subText} hover:${accentColor} transition p-1"><i id="fav-icon" class="fa-regular fa-star"></i></button>
                                         </div>
                                         <div class="flex items-center gap-2 mt-1">
@@ -331,13 +331,13 @@
                             <div class="flex items-center justify-between pt-4">
                                 <div>
                                     <div class="flex items-start">
-                                        <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter ${isDark || isGreen ? 'text-emerald-200' : ''}" ${isLight ? 'style="color: #808000;"' : ''}>--</span>
+                                        <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter ${isDark || isGreen ? 'text-sky-200' : ''}" ${isLight ? 'style="color: #808000;"' : ''}>--</span>
                                         <span class="text-3xl sm:text-4xl font-light ml-1 ${accentColor}" ${isLight ? 'style="color: #808000;"' : ''}>°C</span>
                                     </div>
                                 </div>
                                 <div class="text-right">
                                     <div id="weather-icon-container" class="text-5xl sm:text-6xl ${iconColor} mb-1"><i class="fa-solid fa-cloud"></i></div>
-                                    <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize opacity-90 ${isDark || isGreen ? 'text-emerald-200' : ''}">--</p>
+                                    <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize opacity-90 ${isDark || isGreen ? 'text-sky-200' : ''}">--</p>
                                 </div>
                             </div>
                         </div>
@@ -401,7 +401,7 @@
             if (favorites.includes(cityName)) {
                 favIcon.className = currentTheme === 'dark' || currentTheme === 'green' ? "fa-solid fa-star text-amber-400" : currentTheme === 'cavanweb' ? "fa-solid fa-star text-[#800040]" : currentTheme === 'lavender' ? "fa-solid fa-star text-[#5C3B5C]" : "fa-solid fa-star text-amber-500";
             } else {
-                favIcon.className = currentTheme === 'dark' || currentTheme === 'green' ? "fa-regular fa-star text-emerald-200 hover:text-amber-400" : currentTheme === 'cavanweb' ? "fa-regular fa-star text-[#800040]" : currentTheme === 'lavender' ? "fa-regular fa-star text-[#5C3B5C]" : "fa-regular fa-star text-amber-500";
+                favIcon.className = currentTheme === 'dark' || currentTheme === 'green' ? "fa-regular fa-star text-sky-200 hover:text-amber-400" : currentTheme === 'cavanweb' ? "fa-regular fa-star text-[#800040]" : currentTheme === 'lavender' ? "fa-regular fa-star text-[#5C3B5C]" : "fa-regular fa-star text-amber-500";
             }
         }
 
@@ -440,8 +440,8 @@
 
         function getWeatherIcon(iconCode) {
             const iconMap = {
-                '01d': 'fa-sun text-amber-400', '01n': 'fa-moon text-emerald-200',
-                '02d': 'fa-cloud-sun text-amber-300', '02n': 'fa-cloud-moon text-emerald-300',
+                '01d': 'fa-sun text-amber-400', '01n': 'fa-moon text-sky-200',
+                '02d': 'fa-cloud-sun text-amber-300', '02n': 'fa-cloud-moon text-sky-300',
                 '03d': 'fa-cloud text-slate-300', '03n': 'fa-cloud text-slate-400',
                 '04d': 'fa-cloud text-slate-300', '04n': 'fa-cloud text-slate-400',
                 '09d': 'fa-cloud-showers-heavy text-sky-400', '09n': 'fa-cloud-showers-heavy text-sky-500',
@@ -578,31 +578,31 @@
             const isLavender = currentTheme === 'lavender';
             const isDark = currentTheme === 'dark';
 
-            let subText = isDark || isGreen ? 'text-emerald-200' : isLight ? 'text-slate-700' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-blue-200';
+            let subText = isDark || isGreen ? 'text-sky-200' : isLight ? 'text-slate-700' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-blue-200';
             
             let innerBoxBg = isLight ? 'bg-[#fffde7]' : isCavanWeb ? 'bg-[#8FBBD0]/40' : isLavender ? 'bg-[#F8FED7]' : 'bg-white/5';
             let innerBorder = isLight ? 'border-amber-300/80' : isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/20' : 'border-white/10';
             let boxIconBg = isLight || isGreen || isDark ? 'bg-amber-500/20 text-amber-400' : isLavender ? 'bg-[#5C3B5C]/15 text-[#5C3B5C]' : 'bg-[#800040]/10 text-[#800040]';
             
-            let listValColor = isCavanWeb ? 'text-emerald-700 font-bold' : isLavender ? 'text-[#5C3B5C] font-bold' : isLight ? 'text-slate-900 font-bold' : isDark || isGreen ? 'text-emerald-200 font-bold' : '';
+            let listValColor = isCavanWeb ? 'text-emerald-700 font-bold' : isLavender ? 'text-[#5C3B5C] font-bold' : isLight ? 'text-slate-900 font-bold' : isDark || isGreen ? 'text-sky-200 font-bold' : '';
 
             const container = document.getElementById('weather-data-container');
 
             if (currentViewMode === 'grid') {
                 container.innerHTML = `
                     <div class="grid grid-cols-2 gap-3 pt-2">
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="${boxIconBg} p-3 rounded-xl"><i class="fa-solid fa-temperature-arrow-up text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Min / Max Oggi</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${minMax}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-emerald-500/20 p-3 rounded-xl text-emerald-500"><i class="fa-solid fa-mountain text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Altitudine</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${altitude}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-rose-500/20 p-3 rounded-xl text-rose-500"><i class="fa-solid fa-temperature-half text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Percepita</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${feelsLike}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-indigo-500/20 p-3 rounded-xl text-indigo-500"><i class="fa-solid fa-gauge text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Pressione</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${pressure}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-slate-500/20 p-3 rounded-xl text-slate-500"><i class="fa-solid fa-cloud text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Copertura nuvolosa</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${clouds}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-sky-500/20 p-3 rounded-xl text-sky-500"><i class="fa-solid fa-cloud-rain text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Pioggia (1h)</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${rain}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-blue-500/20 p-3 rounded-xl text-blue-500"><i class="fa-solid fa-droplet text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Umidità</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${humidity}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-teal-500/20 p-3 rounded-xl text-teal-500"><i class="fa-solid fa-wind text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Vento</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${wind}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="${boxIconBg} p-3 rounded-xl"><i class="fa-solid fa-sun text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Alba</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${sunrise}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-orange-500/20 p-3 rounded-xl text-orange-500"><i class="fa-solid fa-sun text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Mezzogiorno Solare</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${solarNoon}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-purple-500/20 p-3 rounded-xl text-purple-500"><i class="fa-solid fa-moon text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Tramonto</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${sunset}</p></div></div>
-                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-indigo-400/20 p-3 rounded-xl text-indigo-400"><i class="fa-solid fa-moon text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Mezzanotte Solare</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-emerald-200' : ''}">${solarMidnight}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="${boxIconBg} p-3 rounded-xl"><i class="fa-solid fa-temperature-arrow-up text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Min / Max Oggi</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${minMax}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-emerald-500/20 p-3 rounded-xl text-emerald-500"><i class="fa-solid fa-mountain text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Altitudine</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${altitude}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-rose-500/20 p-3 rounded-xl text-rose-500"><i class="fa-solid fa-temperature-half text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Percepita</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${feelsLike}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-indigo-500/20 p-3 rounded-xl text-indigo-500"><i class="fa-solid fa-gauge text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Pressione</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${pressure}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-slate-500/20 p-3 rounded-xl text-slate-500"><i class="fa-solid fa-cloud text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Copertura nuvolosa</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${clouds}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-sky-500/20 p-3 rounded-xl text-sky-500"><i class="fa-solid fa-cloud-rain text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Pioggia (1h)</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${rain}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-blue-500/20 p-3 rounded-xl text-blue-500"><i class="fa-solid fa-droplet text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Umidità</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${humidity}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-teal-500/20 p-3 rounded-xl text-teal-500"><i class="fa-solid fa-wind text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Vento</p><p class="text-lg font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${wind}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="${boxIconBg} p-3 rounded-xl"><i class="fa-solid fa-sun text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Alba</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${sunrise}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-orange-500/20 p-3 rounded-xl text-orange-500"><i class="fa-solid fa-sun text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Mezzogiorno Solare</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${solarNoon}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-purple-500/20 p-3 rounded-xl text-purple-500"><i class="fa-solid fa-moon text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Tramonto</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${sunset}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-indigo-400/20 p-3 rounded-xl text-indigo-400"><i class="fa-solid fa-moon text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Mezzanotte Solare</p><p class="text-sm sm:text-base font-bold ${isDark || isGreen ? 'text-sky-200' : ''}">${solarMidnight}</p></div></div>
                     </div>
                 `;
             } else {
@@ -610,18 +610,18 @@
                     <div class="${innerBoxBg} rounded-2xl border ${innerBorder} overflow-hidden">
                         <table class="w-full text-left text-base sm:text-lg">
                             <tbody>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-temperature-arrow-up mr-2 text-amber-500"></i>Min / Max Oggi</td><td class="font-bold text-base sm:text-lg ${listValColor}">${minMax}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-mountain mr-2 text-emerald-500"></i>Altitudine</td><td class="font-bold text-base sm:text-lg ${listValColor}">${altitude}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-temperature-half mr-2 text-rose-500"></i>Percepita</td><td class="font-bold text-base sm:text-lg ${listValColor}">${feelsLike}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-gauge mr-2 text-indigo-500"></i>Pressione</td><td class="font-bold text-base sm:text-lg ${listValColor}">${pressure}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-cloud mr-2 text-slate-400"></i>Copertura nuvolosa</td><td class="font-bold text-base sm:text-lg ${listValColor}">${clouds}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-cloud-rain mr-2 text-sky-500"></i>Pioggia (1h)</td><td class="font-bold text-base sm:text-lg ${listValColor}">${rain}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-droplet mr-2 text-blue-500"></i>Umidità</td><td class="font-bold text-base sm:text-lg ${listValColor}">${humidity}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-wind mr-2 text-teal-500"></i>Vento</td><td class="font-bold text-base sm:text-lg ${listValColor}">${wind}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-sun mr-2 text-amber-400"></i>Alba</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunrise}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-sun mr-2 text-orange-500"></i>Mezzogiorno Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarNoon}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-moon mr-2 text-purple-500"></i>Tramonto</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunset}</td></tr>
-                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-emerald-200' : ''}"><i class="fa-solid fa-moon mr-2 text-indigo-400"></i>Mezzanotte Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarMidnight}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-temperature-arrow-up mr-2 text-amber-500"></i>Min / Max Oggi</td><td class="font-bold text-base sm:text-lg ${listValColor}">${minMax}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-mountain mr-2 text-emerald-500"></i>Altitudine</td><td class="font-bold text-base sm:text-lg ${listValColor}">${altitude}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-temperature-half mr-2 text-rose-500"></i>Percepita</td><td class="font-bold text-base sm:text-lg ${listValColor}">${feelsLike}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-gauge mr-2 text-indigo-500"></i>Pressione</td><td class="font-bold text-base sm:text-lg ${listValColor}">${pressure}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-cloud mr-2 text-slate-400"></i>Copertura nuvolosa</td><td class="font-bold text-base sm:text-lg ${listValColor}">${clouds}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-cloud-rain mr-2 text-sky-500"></i>Pioggia (1h)</td><td class="font-bold text-base sm:text-lg ${listValColor}">${rain}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-droplet mr-2 text-blue-500"></i>Umidità</td><td class="font-bold text-base sm:text-lg ${listValColor}">${humidity}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-wind mr-2 text-teal-500"></i>Vento</td><td class="font-bold text-base sm:text-lg ${listValColor}">${wind}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-sun mr-2 text-amber-400"></i>Alba</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunrise}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-sun mr-2 text-orange-500"></i>Mezzogiorno Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarNoon}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-moon mr-2 text-purple-500"></i>Tramonto</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunset}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base ${isDark || isGreen ? 'text-sky-200' : ''}"><i class="fa-solid fa-moon mr-2 text-indigo-400"></i>Mezzanotte Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarMidnight}</td></tr>
                             </tbody>
                         </table>
                     </div>
