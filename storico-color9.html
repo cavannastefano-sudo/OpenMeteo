@@ -153,8 +153,14 @@
             else if (currentTheme === 'lavender') { themeIcon = "fa-spa"; themeLabel = "Lilla"; }
 
             const isLavender = (currentTheme === 'lavender');
+            
+            // Stile condiviso dei pulsanti basato sullo sfondo/scheda corrente (stesso colore e bordo dei quadri dati)
+            let buttonBgClass = currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : isLavender ? 'bg-[#DAD0F0] hover:bg-[#c9bfe0] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-[#fffde7] hover:bg-[#fff9c4] text-slate-800 border-amber-300';
+            let dropdownBgClass = currentTheme === 'dark' || currentTheme === 'green' ? (currentTheme === 'green' ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : 'bg-slate-900 border border-white/20 text-emerald-400') : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] border-slate-400 text-slate-800' : isLavender ? 'bg-[#DAD0F0] border-[#5C3B5C]/30 text-[#5C3B5C]' : 'bg-[#fffde7] border-amber-300 text-slate-800';
+            let inlineButtonStyle = isLavender ? 'style="background-color: #DAD0F0; border: 1px solid rgba(92, 59, 92, 0.25); color: #5C3B5C;"' : currentTheme === 'light' ? 'style="background-color: #fffde7; border: 1px solid #fcd34d; color: #1e293b;"' : '';
+
             const themeButtonHTML = `
-                <button onclick="toggleTheme()" title="Cambia Tema" class="${currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : isLavender ? 'bg-[#F5F2EB] hover:bg-[#EBE7DF] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-[#800040] hover:bg-[#600030] text-white border-[#800040]'} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0" ${isLavender ? 'style="background-color: #F5F2EB; color: #5C3B5C;"' : ''}>
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${buttonBgClass} px-3.5 h-12 rounded-2xl border shadow transition flex items-center justify-center gap-2 text-sm font-semibold flex-shrink-0" ${inlineButtonStyle}>
                     <i class="fa-solid ${themeIcon}"></i> <span class="hidden sm:inline">${themeLabel}</span>
                 </button>
             `;
@@ -174,7 +180,7 @@
                             ${themeButtonHTML}
                         </div>
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 px-4 py-2.5 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center gap-2 text-base font-semibold">
+                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 px-4.5 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center gap-2 text-base font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
                             <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : 'bg-slate-900 border border-white/20'} rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2 text-emerald-400 text-base">
@@ -301,10 +307,9 @@
                 const isCavanWeb = (currentTheme === 'cavanweb');
                 const isLight = (currentTheme === 'light');
                 
-                // Due tonalità di giallo per il tema chiaro e colori dedicati per gli altri temi
                 let cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : isLight ? "bg-[#fffde7] border-amber-300 text-slate-800" : isLavender ? "" : "bg-[hsl(60,100%,94%)] border-amber-200 text-slate-800";
                 let secondaryCardBgClass = isLight ? "bg-[#fff9c4] border-amber-300 text-slate-800" : cardBgClass;
-                let dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : isLight ? "bg-amber-100 border-amber-300" : isLavender ? "bg-[#F8FED7] border-[#5C3B5C]/30" : "bg-[hsl(60,100%,94%)] border-amber-200";
+                let dropdownBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : isLight ? "bg-[#fffde7] border-amber-300 text-slate-800" : isLavender ? "bg-[#DAD0F0] border-[#5C3B5C]/30 text-[#5C3B5C]" : "bg-[hsl(60,100%,94%)] border-amber-200 text-slate-800";
                 let inlineCardStyle = isLavender ? 'style="background-color: #DAD0F0; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15); color: #5C3B5C;"' : '';
 
                 headerContainer.className = `w-full max-w-6xl mx-auto mb-6 bg-transparent border-0 rounded-none p-0 shadow-none space-y-4 relative`;
@@ -314,23 +319,23 @@
                             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
                                 <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border-0 shadow-sm group-hover:scale-105 transition">
                             </a>
-                            <button onclick="location.reload();" class="${isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border border-[#5C3B5C]/30 hover:bg-[#f0f8c5]' : isLight ? 'bg-amber-200 hover:bg-amber-300 text-slate-900 border border-amber-300' : 'bg-slate-700 hover:bg-slate-800 text-white'} w-12 h-12 rounded-2xl transition shadow flex items-center justify-center text-lg flex-shrink-0 font-semibold" title="Aggiorna" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
+                            <button onclick="location.reload();" class="${buttonBgClass} w-12 h-12 rounded-2xl border shadow transition flex items-center justify-center text-lg flex-shrink-0 font-semibold" title="Aggiorna" ${inlineButtonStyle}>
                                 <i class="fa-solid fa-rotate"></i>
                             </button>
                             ${themeButtonHTML}
                         </div>
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="${isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border border-[#5C3B5C]/30 hover:bg-[#f0f8c5]' : isLight ? 'bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold' : 'bg-[#800040] hover:bg-[#600030] text-white'} px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 text-base font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
+                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="${buttonBgClass} px-4.5 h-12 rounded-2xl border shadow transition flex items-center gap-2 text-base font-semibold" ${inlineButtonStyle}>
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
-                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-2xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-900 text-base" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
-                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} border-b ${isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/30' : 'border-amber-300'} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
+                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2 text-base font-medium" ${inlineCardStyle}>
+                                <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-700' : 'text-amber-700'} border-b ${isCavanWeb ? 'border-slate-300' : isLavender ? 'border-[#5C3B5C]/30' : 'border-amber-300'} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
                                 <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-sm ${isLavender ? 'text-[#5C3B5C]' : 'text-slate-600'} px-3 py-1 font-semibold italic">Nessun preferito salvato</span></div>
-                                <div class="border-t ${isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/30' : 'border-amber-300'} my-1"></div>
-                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-cloud-sun ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>MeteoCWEB</span></a>
-                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-earth-americas ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-clock ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>SunClock24</span></a>
-                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-globe ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <div class="border-t ${isCavanWeb ? 'border-slate-300' : isLavender ? 'border-[#5C3B5C]/30' : 'border-amber-300'} my-1"></div>
+                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-slate-300/60' : isLavender ? 'hover:bg-[#c9bfe0]' : 'hover:bg-amber-200/60'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-cloud-sun ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'} w-5 text-center"></i> <span>MeteoCWEB</span></a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-slate-300/60' : isLavender ? 'hover:bg-[#c9bfe0]' : 'hover:bg-amber-200/60'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-earth-americas ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'} w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-slate-300/60' : isLavender ? 'hover:bg-[#c9bfe0]' : 'hover:bg-amber-200/60'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-clock ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'} w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-slate-300/60' : isLavender ? 'hover:bg-[#c9bfe0]' : 'hover:bg-amber-200/60'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-globe ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'} w-5 text-center"></i> <span>Meteo Europa</span></a>
                             </div>
                         </div>
                     </div>
@@ -517,9 +522,9 @@
                 if (currentTheme === 'dark' || currentTheme === 'green') {
                     html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-emerald-400 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-emerald-400/50"></i></button>`;
                 } else if (isLavender) {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#EBE7DF] text-[#5C3B5C] text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#5C3B5C] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-[#5C3B5C]/60"></i></button>`;
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#c9bfe0] text-[#5C3B5C] text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#5C3B5C] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-[#5C3B5C]/60"></i></button>`;
                 } else {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLight ? 'hover:bg-amber-100' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot ${isLight ? 'text-amber-600' : 'text-[#800040]'} mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs ${isCavanWeb ? 'text-slate-600' : 'text-slate-400'}"></i></button>`;
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl ${isCavanWeb ? 'hover:bg-slate-300/60' : isLight ? 'hover:bg-amber-200/60' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot ${isLight ? 'text-amber-600' : 'text-[#800040]'} mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs ${isCavanWeb ? 'text-slate-600' : 'text-slate-400'}"></i></button>`;
                 }
             });
             favListContainer.innerHTML = html;
