@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="cavanweb">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeteoCWEB - Dashboard</title>
+    <!-- PWA Manifest & Theme -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#728890" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        input[type="search"]::-webkit-search-cancel-button {
+            display: none;
+        }
+        /* Linee divisorie sottili e semitrasparenti per la modalità elenco */
+        #weather-data-container tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        [data-theme="light"] #weather-data-container tr {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        [data-theme="cavanweb"] #weather-data-container tr {
+            border-bottom: 1px solid rgba(128, 0, 64, 0.12);
+        }
+        [data-theme="lavender"] #weather-data-container tr {
+            border-bottom: 1px solid rgba(92, 59, 92, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8" id="app-body">
+
+    <!-- HEADER DINAMICO -->
+    <div id="header-container" class="w-full max-w-5xl mx-auto mb-6">
+        <!-- Verrà iniettato via JS -->
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <main id="main-container" class="w-full max-w-xl mx-auto flex-grow flex items-center justify-center">
+        <!-- Verrà iniettato via JS -->
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-xl mx-auto text-center mt-6 space-y-2">
+        <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-2">
+            <p class="text-xs" id="footer-app-text">Scarica la mia app ufficiale:</p>
+            <a href="https://play.google.com/store/apps/details?id=com.cavanweb.com1v10" target="_blank" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border transition shadow text-xs font-semibold group" title="Scarica da Google Play" id="playstore-btn">
+                <i class="fa-brands fa-google-play text-amber-400 text-sm group-hover:scale-110 transition"></i>
+                <span>Google Play Store</span>
+            </a>
+        </div>
+        <p id="footer-copy" class="text-xs">MeteoCWEB • Sviluppato con Tailwind CSS & OpenWeatherMap</p>
+    </footer>
+
+    <!-- JAVASCRIPT UNIFICATO -->
+    <script>
+        const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
+        let lastFetchFunction = null;
+        let currentLoadedCity = "";
+        let currentLatCoords = null;
+        let currentLonCoords = null;
+        let latestWeatherData = null;
+        let currentViewMode = localStorage.getItem('cavanweb_view_mode') || 'grid';
+
+        function toggleTheme() {
+            const current = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            let next = 'light';
+            if (current === 'cavanweb') next = 'light';
+            else if (current === 'light') next = 'dark';
+            else if (current === 'dark') next = 'green';
+            else if (current === 'green') next = 'lavender';
+            else next = 'cavanweb';
+            setTheme(next);
+        }
+
+        function toggleViewMode() {
+            currentViewMode = currentViewMode === 'grid' ? 'list' : 'grid';
+            localStorage.setItem('cavanweb_view_mode', currentViewMode);
+            renderLayout();
+            if (latestWeatherData) {
+                const loadingEl = document.getElementById('loading');
+                const contentEl = document.getElementById('weather-content');
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (contentEl) contentEl.classList.remove('hidden');
+                updateUIWithData(latestWeatherData);
+                updateFavoriteIcon(currentLoadedCity);
+            }
+        }
+
+        function setTheme(themeName) {
+            localStorage.setItem('cavanweb_theme', themeName);
+            document.documentElement.setAttribute('data-theme', themeName);
+            const body = document.getElementById('app-body');
+            const metaTheme = document.getElementById('meta-theme-color');
+            const footerAppText = document.getElementById('footer-app-text');
+            const playStoreBtn = document.getElementById('playstore-btn');
+            const footerCopy = document.getElementById('footer-copy');
+
+            body.style.backgroundColor = '';
+            body.style.color = '';
+
+            if (themeName === 'dark') {
+                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8";
+                metaTheme.setAttribute("content", "#0f172a");
+                footerAppText.className = "text-xs text-blue-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-blue-300/60";
+            } else if (themeName === 'green') {
+                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8";
+                metaTheme.setAttribute("content", "#064e3b");
+                footerAppText.className = "text-xs text-emerald-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
+                footerCopy.className = "text-emerald-300/60";
+            } else if (themeName === 'light') {
+                body.className = "bg-white min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#ffffff");
+                footerAppText.className = "text-xs text-slate-700";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-amber-100 hover:bg-amber-200 px-3.5 py-1.5 rounded-xl border border-amber-300 transition shadow text-xs font-semibold text-slate-800 group";
+                footerCopy.className = "text-slate-600";
+            } else if (themeName === 'lavender') {
+                body.className = "min-h-screen flex flex-col justify-between p-4 sm:p-8";
+                body.style.backgroundColor = "#9D93AB";
+                body.style.color = "#3C2A4D";
+                metaTheme.setAttribute("content", "#9D93AB");
+                footerAppText.className = "text-xs text-[#3C2A4D] font-medium";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#F5F2EB] hover:bg-[#EBE7DF] px-3.5 py-1.5 rounded-xl border border-[#5C3B5C]/30 transition shadow text-xs font-semibold text-[#3C2A4D] group";
+                footerCopy.className = "text-[#3C2A4D]/80";
+            } else {
+                body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
+                metaTheme.setAttribute("content", "#728890");
+                footerAppText.className = "text-xs text-slate-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-[#D8D9D0]/40 hover:bg-[#D8D9D0]/70 px-3.5 py-1.5 rounded-xl border border-slate-600/30 transition shadow text-xs font-semibold text-slate-900 group";
+                footerCopy.className = "text-slate-200/80";
+            }
+
+            renderLayout();
+            if (latestWeatherData) {
+                const loadingEl = document.getElementById('loading');
+                const contentEl = document.getElementById('weather-content');
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (contentEl) contentEl.classList.remove('hidden');
+                updateUIWithData(latestWeatherData);
+                updateFavoriteIcon(currentLoadedCity);
+            } else if (currentLoadedCity) {
+                fetchWeatherDataByCity(currentLoadedCity);
+            } else {
+                const savedName = localStorage.getItem('cavanweb_active_name');
+                fetchWeatherDataByCity(savedName || 'Piacenza');
+            }
+        }
+
+        function renderLayout() {
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const headerContainer = document.getElementById('header-container');
+            const mainContainer = document.getElementById('main-container');
+
+            let themeIcon = "fa-palette";
+            if (currentTheme === 'cavanweb') themeIcon = "fa-desktop";
+            else if (currentTheme === 'light') themeIcon = "fa-sun";
+            else if (currentTheme === 'dark') themeIcon = "fa-moon";
+            else if (currentTheme === 'green') themeIcon = "fa-leaf";
+            else if (currentTheme === 'lavender') themeIcon = "fa-spa";
+
+            const isGreen = currentTheme === 'green';
+            const isCavanWeb = currentTheme === 'cavanweb';
+            const isLight = currentTheme === 'light';
+            const isLavender = currentTheme === 'lavender';
+            const isDark = currentTheme === 'dark';
+
+            const themeButtonHTML = `
+                <button onclick="toggleTheme()" title="Cambia Tema" class="${isDark || isGreen ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : isCavanWeb ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#F5F2EB] hover:bg-[#EBE7DF] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600'} w-12 h-12 rounded-2xl border shadow transition flex items-center justify-center text-lg font-semibold" ${isLavender ? 'style="background-color: #F5F2EB; color: #5C3B5C;"' : ''}>
+                    <i class="fa-solid ${themeIcon}"></i>
+                </button>
+            `;
+
+            let accentColor = 'text-amber-400';
+            let subText = 'text-blue-200';
+            let borderCol = 'border-white/20';
+            let focusBorder = 'focus:border-amber-400';
+            let spinnerColor = 'border-amber-400';
+            let btnBg = 'bg-amber-500 hover:bg-amber-600 text-slate-900';
+            let boxIconBg = 'bg-amber-500/20 text-amber-400';
+            let iconColor = 'text-amber-300';
+            let cardBg = 'bg-white/10 backdrop-blur-md';
+            let searchInputBg = 'bg-white/5 text-white placeholder-blue-300/60 border-white/10';
+            let inlineStyleCard = '';
+
+            if (isGreen) {
+                accentColor = 'text-amber-400';
+                subText = 'text-emerald-200';
+                borderCol = 'border-white/20';
+                focusBorder = 'focus:border-amber-400';
+                spinnerColor = 'border-amber-400';
+                btnBg = 'bg-amber-500 hover:bg-amber-600 text-slate-900';
+                boxIconBg = 'bg-amber-500/20 text-amber-400';
+                iconColor = 'text-amber-300';
+                cardBg = 'bg-white/10 backdrop-blur-md';
+                searchInputBg = 'bg-white/5 text-white placeholder-emerald-200/60 border-white/10';
+            } else if (isCavanWeb) {
+                accentColor = 'text-[#800040]';
+                subText = 'text-[#800040] font-medium';
+                borderCol = 'border-[#800040]/40';
+                focusBorder = 'focus:border-[#800040]';
+                spinnerColor = 'border-[#800040]';
+                btnBg = 'bg-[#800040] hover:bg-[#600030] text-white';
+                boxIconBg = 'bg-[#800040]/10 text-[#800040]';
+                iconColor = 'text-[#800040]';
+                cardBg = 'bg-[#D8D9D0] backdrop-blur-none';
+                searchInputBg = 'bg-[#8FBBD0] text-[#800040] placeholder-[#800040]/70 border-[#800040]/50 font-bold';
+            } else if (isLight) {
+                accentColor = 'text-[#808000]';
+                subText = 'text-slate-700';
+                borderCol = 'border-amber-300';
+                focusBorder = 'focus:border-amber-500';
+                spinnerColor = 'border-amber-500';
+                btnBg = 'bg-amber-500 hover:bg-amber-600 text-white';
+                boxIconBg = 'bg-amber-500/20 text-[#808000]';
+                iconColor = 'text-[#808000]';
+                cardBg = 'bg-[#fffacd] backdrop-blur-none';
+                searchInputBg = 'bg-white text-slate-800 placeholder-slate-400 border-amber-300';
+            } else if (isLavender) {
+                accentColor = 'text-[#5C3B5C]';
+                subText = 'text-[#5C3B5C] font-semibold';
+                borderCol = 'border-[#5C3B5C]/30';
+                focusBorder = 'focus:border-[#5C3B5C]';
+                spinnerColor = 'border-[#5C3B5C]';
+                btnBg = 'bg-[#F8FED7] hover:bg-[#f0f8c5] text-[#5C3B5C]';
+                boxIconBg = 'bg-[#5C3B5C]/15 text-[#5C3B5C]';
+                iconColor = 'text-[#5C3B5C]';
+                cardBg = '';
+                inlineStyleCard = 'style="background-color: #DAD0F0; color: #5C3B5C; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15);"';
+                searchInputBg = 'bg-[#F8FED7] text-[#5C3B5C] placeholder-[#5C3B5C]/60 border-[#5C3B5C]/30 font-semibold';
+            }
+
+            if (isCavanWeb) {
+                headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative bg-transparent border-0 rounded-none p-0 shadow-none`;
+            } else {
+                headerContainer.className = `w-full max-w-5xl mx-auto mb-6 flex items-center justify-between px-2 sm:px-4 relative`;
+            }
+
+            // MODIFICA COLORE TITOLO E SOTTOTITOLO PER IL TEMA LILLA (#5C3B5C)
+            let inlineHeaderStyle = isLavender ? 'style="color: #5C3B5C;"' : '';
+            let inlineSubHeaderStyle = isLavender ? 'style="color: #5C3B5C;"' : '';
+
+            let menuBgStyle = isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : '';
+            let menuBgClass = isLavender ? 'backdrop-blur-none' : 'backdrop-blur-xl';
+            let menuBtnStyle = isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : '';
+
+            headerContainer.innerHTML = `
+                <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
+                    <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border ${isLight ? 'border-amber-300' : borderCol} shadow-lg group-hover:scale-105 transition">
+                </a>
+                <div class="text-center flex-grow mx-2">
+                    <h1 class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5 ${isLight || isCavanWeb ? 'text-slate-900' : isLavender ? 'text-[#5C3B5C]' : 'text-white'}" ${inlineHeaderStyle}>
+                        <i class="fa-solid fa-cloud-sun ${accentColor}"></i> MeteoCWEB
+                    </h1>
+                    <p class="${subText} text-xs sm:text-sm" ${inlineSubHeaderStyle}>Dati da OpenWeatherMap & Open-Meteo</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    ${themeButtonHTML}
+                    <div class="relative flex-shrink-0">
+                        <button onclick="toggleMenu()" id="menu-btn" title="Menu" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#800040] text-white hover:bg-[#600030]' : isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400'} w-12 h-12 rounded-2xl border ${isLight ? 'border-amber-300' : borderCol} shadow transition flex items-center justify-center text-lg font-semibold" ${menuBtnStyle}>
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+                        <div id="dropdown-menu" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : isCavanWeb ? 'bg-[#8FBBD0] border-[#800040]/50 text-[#800040]' : isLavender ? 'bg-[#F8FED7] border-[#5C3B5C]/30 text-[#5C3B5C]' : isLight ? 'bg-[#fffacd] border-amber-300 text-slate-800' : 'bg-slate-900/95 border-white/20 text-blue-200'} ${menuBgClass} border rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2" ${menuBgStyle}>
+                            <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${accentColor} border-b ${borderCol} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
+                            <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span></div>
+                            <div class="border-t ${borderCol} my-1"></div>
+                            <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-earth-americas ${accentColor} w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                            <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-clock ${accentColor} w-5 text-center"></i> <span>SunClock24</span></a>
+                            <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-globe ${accentColor} w-5 text-center"></i> <span>Meteo Europa</span></a>
+                            <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-calendar-days ${accentColor} w-5 text-center"></i> <span>Archivio Storico</span></a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let lavenderButtonStyle = isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : '';
+
+            mainContainer.className = "w-full max-w-xl mx-auto flex-grow flex items-center justify-center";
+            mainContainer.innerHTML = `
+                <div id="weather-card" class="${cardBg} border ${borderCol} rounded-3xl p-6 sm:p-8 shadow-2xl w-full relative overflow-hidden transition-all duration-300 space-y-6 ${isLight ? 'text-slate-800' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-white'}" ${inlineStyleCard}>
+                    <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2">
+                        <div class="relative flex-grow">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none ${subText}"><i class="fa-solid fa-magnifying-glass text-sm"></i></span>
+                            <input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca località..." class="w-full pl-10 pr-10 py-3 border rounded-2xl ${searchInputBg} focus:outline-none ${focusBorder} text-sm sm:text-base transition" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
+                            <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center ${subText} hover:opacity-100 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
+                        </div>
+                        <button type="submit" class="${btnBg} px-4 py-3 rounded-2xl font-semibold transition shadow-lg flex items-center justify-center gap-1.5 text-sm sm:text-base" ${lavenderButtonStyle}>Cerca</button>
+                        <button type="button" onclick="getGPSWeather()" title="GPS" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} px-4 py-3 rounded-2xl border ${borderCol} transition flex items-center justify-center" ${lavenderButtonStyle}><i class="fa-solid fa-location-crosshairs text-lg"></i></button>
+                    </form>
+
+                    <div id="loading" class="flex flex-col items-center justify-center py-12 space-y-4">
+                        <div class="animate-spin rounded-full h-12 w-12 border-4 ${spinnerColor} border-t-transparent"></div>
+                        <p id="loading-text" class="${subText} font-medium">Caricamento dati meteo in corso...</p>
+                    </div>
+
+                    <div id="error-state" class="hidden flex flex-col items-center justify-center py-8 text-center space-y-4">
+                        <i class="fa-solid fa-triangle-exclamation text-red-400 text-4xl"></i>
+                        <p id="error-message" class="text-red-400 text-sm">Località non trovata o errore di connessione.</p>
+                        <button onclick="fetchWeatherDataByCity('Piacenza')" class="px-4 py-2 ${btnBg} font-semibold rounded-xl transition shadow-lg text-sm" ${lavenderButtonStyle}>Carica Piacenza</button>
+                    </div>
+
+                    <div id="weather-content" class="hidden space-y-4">
+                        <div>
+                            <div class="flex justify-between items-start border-b ${isLavender ? 'border-[#5C3B5C]/20' : borderCol} pb-4">
+                                <div class="flex items-center gap-3">
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <h2 id="city-name" class="text-2xl sm:text-3xl font-bold tracking-wide" ${isLight ? 'style="color: #808000;"' : ''}>--</h2>
+                                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-xl ${subText} hover:${accentColor} transition p-1"><i id="fav-icon" class="fa-regular fa-star"></i></button>
+                                        </div>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <p id="country-name" class="text-xs uppercase tracking-widest ${subText} font-semibold">--</p>
+                                            <span class="${subText} opacity-50">•</span>
+                                            <p id="coords-display" class="text-xs ${subText} opacity-90 font-mono">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="refreshCurrent()" title="Aggiorna" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/20 text-amber-400'} p-2.5 rounded-full border ${borderCol} transition flex-shrink-0" ${lavenderButtonStyle}><i id="refresh-icon" class="fa-solid fa-rotate"></i></button>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-4">
+                                <div>
+                                    <div class="flex items-start">
+                                        <span id="temp-value" class="text-6xl sm:text-7xl font-extrabold tracking-tighter" ${isLight ? 'style="color: #808000;"' : ''}>--</span>
+                                        <span class="text-3xl sm:text-4xl font-light ml-1 ${accentColor}" ${isLight ? 'style="color: #808000;"' : ''}>°C</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div id="weather-icon-container" class="text-5xl sm:text-6xl ${iconColor} mb-1"><i class="fa-solid fa-cloud"></i></div>
+                                    <p id="weather-desc" class="text-base sm:text-lg font-medium capitalize opacity-90">--</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TASTO VISTA GRIGLIA / ELENCO -->
+                        <div class="flex justify-end -mb-1">
+                            <button onclick="toggleViewMode()" title="Cambia Vista (Griglia / Elenco)" class="${isLight ? 'bg-amber-100 hover:bg-amber-200 text-slate-800 border-amber-300' : isCavanWeb ? 'bg-[#8FBBD0] hover:bg-[#78a9c0] text-[#800040] border-[#800040]/40' : isLavender ? 'bg-[#F8FED7] hover:bg-[#f0f8c5] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20'} px-3 py-1.5 rounded-xl border shadow-sm transition flex items-center gap-1.5 text-xs font-semibold" ${lavenderButtonStyle}>
+                                <i class="fa-solid ${currentViewMode === 'grid' ? 'fa-list' : 'fa-border-all'}"></i>
+                                <span>${currentViewMode === 'grid' ? 'Elenco' : 'Griglia'}</span>
+                            </button>
+                        </div>
+
+                        <!-- CONTAINER DINAMICO GRIGLIA / ELENCO -->
+                        <div id="weather-data-container"></div>
+
+                        <div class="text-center pt-2 border-t ${borderCol}"><p class="text-xs ${subText}">Ultimo aggiornamento: <span id="update-time">--</span></p></div>
+                    </div>
+                </div>
+            `;
+
+            renderFavoritesMenu();
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const menu = document.getElementById('dropdown-menu');
+            const menuBtn = document.getElementById('menu-btn');
+            if (menu && menuBtn && !menu.contains(e.target) && !menuBtn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        function getFavorites() {
+            try { return JSON.parse(localStorage.getItem('cavanweb_favorites')) || []; } catch (e) { return []; }
+        }
+
+        function saveFavorites(favorites) {
+            localStorage.setItem('cavanweb_favorites', JSON.stringify(favorites));
+            renderFavoritesMenu();
+        }
+
+        function toggleFavorite() {
+            if (!currentLoadedCity) return;
+            let favorites = getFavorites();
+            const index = favorites.indexOf(currentLoadedCity);
+            if (index > -1) { favorites.splice(index, 1); } else { favorites.push(currentLoadedCity); }
+            saveFavorites(favorites);
+            updateFavoriteIcon(currentLoadedCity);
+        }
+
+        function updateFavoriteIcon(cityName) {
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const favIcon = document.getElementById('fav-icon');
+            if (!favIcon) return;
+            const favorites = getFavorites();
+
+            if (favorites.includes(cityName)) {
+                favIcon.className = currentTheme === 'dark' || currentTheme === 'green' ? "fa-solid fa-star text-amber-400" : currentTheme === 'cavanweb' ? "fa-solid fa-star text-[#800040]" : currentTheme === 'lavender' ? "fa-solid fa-star text-[#5C3B5C]" : "fa-solid fa-star text-amber-500";
+            } else {
+                favIcon.className = currentTheme === 'dark' || currentTheme === 'green' ? "fa-regular fa-star text-emerald-200 hover:text-amber-400" : currentTheme === 'cavanweb' ? "fa-regular fa-star text-[#800040]" : currentTheme === 'lavender' ? "fa-regular fa-star text-[#5C3B5C]" : "fa-regular fa-star text-amber-500";
+            }
+        }
+
+        function renderFavoritesMenu() {
+            const favListContainer = document.getElementById('favorites-list');
+            if (!favListContainer) return;
+            const favorites = getFavorites();
+
+            if (favorites.length === 0) {
+                favListContainer.innerHTML = `<span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span>`;
+                return;
+            }
+
+            let html = '';
+            favorites.forEach(city => {
+                html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-black/5 text-base font-semibold transition">
+                    <span class="truncate"><i class="fa-solid fa-location-dot mr-2 text-xs"></i>${city}</span>
+                    <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
+                </button>`;
+            });
+            favListContainer.innerHTML = html;
+        }
+
+        function loadFavoriteCity(cityName) {
+            const input = document.getElementById('search-input');
+            if (input) input.value = cityName;
+            toggleClearButton();
+            toggleMenu();
+            fetchWeatherDataByCity(cityName);
+        }
+
+        function formatTime(unixTimestamp) {
+            const date = new Date(unixTimestamp * 1000);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function getWeatherIcon(iconCode) {
+            const iconMap = {
+                '01d': 'fa-sun text-amber-400', '01n': 'fa-moon text-emerald-200',
+                '02d': 'fa-cloud-sun text-amber-300', '02n': 'fa-cloud-moon text-emerald-300',
+                '03d': 'fa-cloud text-slate-300', '03n': 'fa-cloud text-slate-400',
+                '04d': 'fa-cloud text-slate-300', '04n': 'fa-cloud text-slate-400',
+                '09d': 'fa-cloud-showers-heavy text-sky-400', '09n': 'fa-cloud-showers-heavy text-sky-500',
+                '10d': 'fa-cloud-rain text-sky-400', '10n': 'fa-cloud-rain text-sky-500',
+                '11d': 'fa-bolt text-amber-400', '11n': 'fa-bolt text-amber-500',
+                '13d': 'fa-snowflake text-sky-200', '13n': 'fa-snowflake text-sky-300',
+                '50d': 'fa-smog text-slate-300', '50n': 'fa-smog text-slate-400'
+            };
+            return iconMap[iconCode] || 'fa-cloud-sun text-amber-400';
+        }
+
+        function toggleClearButton() {
+            const input = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-btn');
+            if (!input || !clearBtn) return;
+            if (input.value.trim().length > 0) clearBtn.classList.remove('hidden');
+            else clearBtn.classList.add('hidden');
+        }
+
+        function clearSearchInput() {
+            const input = document.getElementById('search-input');
+            if (!input) return;
+            input.value = '';
+            toggleClearButton();
+            input.focus();
+        }
+
+        async function fetchWeather(url) {
+            const loadingEl = document.getElementById('loading');
+            const errorEl = document.getElementById('error-state');
+            const contentEl = document.getElementById('weather-content');
+            const refreshIcon = document.getElementById('refresh-icon');
+
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (contentEl) contentEl.classList.add('hidden');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Località non trovata');
+                const data = await response.json();
+
+                const cityName = data.name;
+                currentLatCoords = data.coord.lat;
+                currentLonCoords = data.coord.lon;
+
+                currentLoadedCity = cityName;
+                updateFavoriteIcon(cityName);
+
+                localStorage.setItem('cavanweb_active_lat', currentLatCoords);
+                localStorage.setItem('cavanweb_active_lon', currentLonCoords);
+                localStorage.setItem('cavanweb_active_name', cityName);
+
+                let omData = {};
+                try {
+                    const omRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLatCoords}&longitude=${currentLonCoords}&daily=temperature_2m_max,temperature_2m_min,apparent_temperature_max,pressure_msl_mean,wind_speed_10m_max,wind_direction_10m_dominant,relative_humidity_2m_mean,precipitation_sum&timezone=auto`);
+                    if (omRes.ok) omData = await omRes.json();
+                } catch (e) {}
+
+                latestWeatherData = { data, omData, lat: currentLatCoords, lon: currentLonCoords };
+                updateUIWithData(latestWeatherData);
+
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (errorEl) errorEl.classList.add('hidden');
+                if (contentEl) contentEl.classList.remove('hidden');
+
+            } catch (err) {
+                console.error(err);
+                if (loadingEl) loadingEl.classList.add('hidden');
+                if (errorEl) errorEl.classList.remove('hidden');
+                const errMsg = document.getElementById('error-message');
+                if (errMsg) errMsg.textContent = "Impossibile caricare i dati: " + err.message;
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        function updateUIWithData({ data, omData, lat, lon }) {
+            const cityName = data.name;
+
+            document.getElementById('city-name').textContent = cityName;
+            document.getElementById('country-name').textContent = data.sys.country || 'IT';
+            
+            const coordsDisplay = document.getElementById('coords-display');
+            if (coordsDisplay && lat !== undefined && lon !== undefined) {
+                coordsDisplay.textContent = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
+            }
+
+            document.getElementById('temp-value').textContent = Number(data.main.temp).toFixed(1);
+            
+            const description = data.weather[0].description;
+            document.getElementById('weather-desc').textContent = description.charAt(0).toUpperCase() + description.slice(1);
+            document.getElementById('weather-icon-container').innerHTML = `<i class="fa-solid ${getWeatherIcon(data.weather[0].icon)}"></i>`;
+
+            const feelsLike = Number(data.main.feels_like).toFixed(1) + '°C';
+            const pressure = data.main.pressure + ' hPa';
+            const clouds = (data.clouds ? data.clouds.all : 0) + '%';
+            
+            let rainAmount = 0;
+            if (data.rain) rainAmount = data.rain['1h'] || data.rain['3h'] || 0;
+            const rain = Number(rainAmount).toFixed(1) + ' mm';
+            
+            const humidity = data.main.humidity + '%';
+            const wind = Number(data.wind.speed * 3.6).toFixed(1) + ' km/h';
+
+            const sunrise = data.sys.sunrise ? formatTime(data.sys.sunrise) : '--:--';
+            const sunset = data.sys.sunset ? formatTime(data.sys.sunset) : '--:--';
+
+            let solarNoon = '--:--';
+            let solarMidnight = '--:--';
+            if (data.sys.sunrise && data.sys.sunset) {
+                const solarNoonTimestamp = (data.sys.sunrise + data.sys.sunset) / 2;
+                solarNoon = formatTime(solarNoonTimestamp);
+                solarMidnight = formatTime(solarNoonTimestamp + 43200);
+            }
+
+            let altitude = '-- m s.l.m.';
+            if (omData && omData.elevation !== undefined && omData.elevation !== null) {
+                altitude = Math.round(omData.elevation) + ' m s.l.m.';
+            }
+
+            let minMax = '--° / --°';
+            if (omData && omData.daily) {
+                const tMin = Number(omData.daily.temperature_2m_min[0]).toFixed(1);
+                const tMax = Number(omData.daily.temperature_2m_max[0]).toFixed(1);
+                minMax = `${tMin}° / ${tMax}°`;
+            }
+
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const isGreen = currentTheme === 'green';
+            const isCavanWeb = currentTheme === 'cavanweb';
+            const isLight = currentTheme === 'light';
+            const isLavender = currentTheme === 'lavender';
+
+            let subText = isGreen ? 'text-emerald-200' : isLight ? 'text-slate-700' : isCavanWeb ? 'text-[#800040]' : isLavender ? 'text-[#5C3B5C]' : 'text-blue-200';
+            
+            let innerBoxBg = isLight ? 'bg-[#fffde7]' : isCavanWeb ? 'bg-[#8FBBD0]/40' : isLavender ? 'bg-[#F8FED7]' : 'bg-white/5';
+            let innerBorder = isLight ? 'border-amber-300/80' : isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/20' : 'border-white/10';
+            let boxIconBg = isLight || isGreen || currentTheme === 'dark' ? 'bg-amber-500/20 text-amber-400' : isLavender ? 'bg-[#5C3B5C]/15 text-[#5C3B5C]' : 'bg-[#800040]/10 text-[#800040]';
+            
+            let listValColor = isCavanWeb ? 'text-emerald-700 font-bold' : isLavender ? 'text-[#5C3B5C] font-bold' : isLight ? 'text-slate-900 font-bold' : '';
+
+            const container = document.getElementById('weather-data-container');
+
+            if (currentViewMode === 'grid') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="${boxIconBg} p-3 rounded-xl"><i class="fa-solid fa-temperature-arrow-up text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Min / Max Oggi</p><p class="text-sm sm:text-base font-bold">${minMax}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-emerald-500/20 p-3 rounded-xl text-emerald-500"><i class="fa-solid fa-mountain text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Altitudine</p><p class="text-lg font-bold">${altitude}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-rose-500/20 p-3 rounded-xl text-rose-500"><i class="fa-solid fa-temperature-half text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Percepita</p><p class="text-lg font-bold">${feelsLike}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-indigo-500/20 p-3 rounded-xl text-indigo-500"><i class="fa-solid fa-gauge text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Pressione</p><p class="text-lg font-bold">${pressure}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-slate-500/20 p-3 rounded-xl text-slate-500"><i class="fa-solid fa-cloud text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Copertura nuvolosa</p><p class="text-lg font-bold">${clouds}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-sky-500/20 p-3 rounded-xl text-sky-500"><i class="fa-solid fa-cloud-rain text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Pioggia (1h)</p><p class="text-lg font-bold">${rain}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-blue-500/20 p-3 rounded-xl text-blue-500"><i class="fa-solid fa-droplet text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Umidità</p><p class="text-lg font-bold">${humidity}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-teal-500/20 p-3 rounded-xl text-teal-500"><i class="fa-solid fa-wind text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Vento</p><p class="text-lg font-bold">${wind}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="${boxIconBg} p-3 rounded-xl"><i class="fa-solid fa-sun text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Alba</p><p class="text-sm sm:text-base font-bold">${sunrise}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-orange-500/20 p-3 rounded-xl text-orange-500"><i class="fa-solid fa-sun text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Mezzogiorno Solare</p><p class="text-sm sm:text-base font-bold">${solarNoon}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-purple-500/20 p-3 rounded-xl text-purple-500"><i class="fa-solid fa-moon text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Tramonto</p><p class="text-sm sm:text-base font-bold">${sunset}</p></div></div>
+                        <div class="${innerBoxBg} rounded-2xl p-4 border ${innerBorder} flex items-center space-x-3"><div class="bg-indigo-400/20 p-3 rounded-xl text-indigo-400"><i class="fa-solid fa-moon text-xl"></i></div><div><p class="text-xs ${subText} font-medium">Mezzanotte Solare</p><p class="text-sm sm:text-base font-bold">${solarMidnight}</p></div></div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="${innerBoxBg} rounded-2xl border ${innerBorder} overflow-hidden">
+                        <table class="w-full text-left text-base sm:text-lg">
+                            <tbody>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-temperature-arrow-up mr-2 text-amber-500"></i>Min / Max Oggi</td><td class="font-bold text-base sm:text-lg ${listValColor}">${minMax}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-mountain mr-2 text-emerald-500"></i>Altitudine</td><td class="font-bold text-base sm:text-lg ${listValColor}">${altitude}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-temperature-half mr-2 text-rose-500"></i>Percepita</td><td class="font-bold text-base sm:text-lg ${listValColor}">${feelsLike}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-gauge mr-2 text-indigo-500"></i>Pressione</td><td class="font-bold text-base sm:text-lg ${listValColor}">${pressure}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-cloud mr-2 text-slate-400"></i>Copertura nuvolosa</td><td class="font-bold text-base sm:text-lg ${listValColor}">${clouds}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-cloud-rain mr-2 text-sky-500"></i>Pioggia (1h)</td><td class="font-bold text-base sm:text-lg ${listValColor}">${rain}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-droplet mr-2 text-blue-500"></i>Umidità</td><td class="font-bold text-base sm:text-lg ${listValColor}">${humidity}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-wind mr-2 text-teal-500"></i>Vento</td><td class="font-bold text-base sm:text-lg ${listValColor}">${wind}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-sun mr-2 text-amber-400"></i>Alba</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunrise}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-sun mr-2 text-orange-500"></i>Mezzogiorno Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarNoon}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-moon mr-2 text-purple-500"></i>Tramonto</td><td class="font-bold text-base sm:text-lg ${listValColor}">${sunset}</td></tr>
+                                <tr class="flex justify-between p-3.5"><td class="font-medium opacity-90 text-sm sm:text-base"><i class="fa-solid fa-moon mr-2 text-indigo-400"></i>Mezzanotte Solare</td><td class="font-bold text-base sm:text-lg ${listValColor}">${solarMidnight}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            document.getElementById('update-time').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+
+        function fetchWeatherDataByCity(cityName) {
+            lastFetchFunction = () => fetchWeatherDataByCity(cityName);
+            fetchWeather(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric&lang=it`);
+        }
+
+        function fetchWeatherDataByCoords(lat, lon) {
+            lastFetchFunction = () => fetchWeatherDataByCoords(lat, lon);
+            fetchWeather(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=it`);
+        }
+
+        function refreshCurrent() {
+            if (lastFetchFunction) lastFetchFunction();
+            else fetchWeatherDataByCity('Piacenza');
+        }
+
+        function handleSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('search-input').value.trim();
+            if (query) fetchWeatherDataByCity(query);
+        }
+
+        function getGPSWeather() {
+            if (!navigator.geolocation) {
+                alert("La geolocalizzazione non è supportata dal tuo browser.");
+                fetchWeatherDataByCity('Piacenza');
+                return;
+            }
+            const loadingText = document.getElementById('loading-text');
+            if (loadingText) loadingText.textContent = "Rilevamento posizione GPS...";
+            
+            navigator.geolocation.getCurrentPosition(
+                (pos) => fetchWeatherDataByCoords(pos.coords.latitude, pos.coords.longitude),
+                () => {
+                    alert("Impossibile rilevare la posizione GPS. Caricamento Piacenza di default.");
+                    fetchWeatherDataByCity('Piacenza');
+                },
+                { timeout: 10000 }
+            );
+        }
+
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            setTheme(savedTheme);
+
+            const selectedCity = localStorage.getItem('selected_city');
+            const savedLat = localStorage.getItem('cavanweb_active_lat');
+            const savedLon = localStorage.getItem('cavanweb_active_lon');
+            const savedName = localStorage.getItem('cavanweb_active_name');
+
+            if (selectedCity) {
+                localStorage.removeItem('selected_city');
+                const input = document.getElementById('search-input');
+                if (input) input.value = selectedCity;
+                toggleClearButton();
+                fetchWeatherDataByCity(selectedCity);
+            } else if (savedName) {
+                const input = document.getElementById('search-input');
+                if (input) input.value = savedName;
+                toggleClearButton();
+                fetchWeatherDataByCity(savedName);
+            } else if (savedLat && savedLon) {
+                fetchWeatherDataByCoords(parseFloat(savedLat), parseFloat(savedLon));
+            } else {
+                fetchWeatherDataByCity('Piacenza');
+            }
+        };
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registrato con successo:', reg.scope))
+                    .catch(err => console.log('Registrazione Service Worker fallita:', err));
+            });
+        }
+    </script>
+</body>
+</html>
