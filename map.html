@@ -237,22 +237,38 @@
                     .leaflet-control-layers-separator { border-top: 1px solid rgba(255,255,255,0.2) !important; }
                 `;
             } else if (themeName === 'light') {
-                body.className = "bg-[#f1f5f9] min-h-screen text-slate-800 flex flex-col justify-between";
-                metaTheme.setAttribute("content", "#f1f5f9");
-                header.className = "w-full bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-[1000] text-slate-800 shadow-sm transition-colors";
+                // Tema chiaro puro con due tonalità di giallo/crema per i quadri
+                body.className = "bg-white min-h-screen text-slate-800 flex flex-col justify-between";
+                metaTheme.setAttribute("content", "#ffffff");
+                
+                header.className = "w-full px-4 py-3 flex items-center justify-between z-[1000] text-slate-800 shadow-sm transition-colors";
+                header.style.backgroundColor = "#fffde7"; // Prima tonalità di giallo chiaro
+                header.style.borderBottom = "1px solid #fde047";
+
                 mainTitle.className = "text-lg sm:text-xl font-bold tracking-tight flex items-center justify-center gap-2 text-slate-900";
-                titleIcon.className = "fa-solid fa-earth-americas text-amber-500";
-                backBtn.className = "bg-slate-200 hover:bg-slate-300 px-3.5 py-2 rounded-xl border border-slate-300 shadow transition text-slate-800 flex items-center gap-2 text-xs sm:text-sm font-semibold";
-                themeToggleBtn.className = "bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5 border border-amber-600";
+                titleIcon.className = "fa-solid fa-earth-americas text-amber-600";
+                
+                backBtn.className = "px-3.5 py-2 rounded-xl border shadow transition text-slate-800 flex items-center gap-2 text-xs sm:text-sm font-semibold";
+                backBtn.style.backgroundColor = "#fef08a"; // Seconda tonalità di giallo
+                backBtn.style.borderColor = "#facc15";
+
+                themeToggleBtn.className = "px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow transition flex items-center gap-1.5 border";
+                themeToggleBtn.style.backgroundColor = "#fef08a";
+                themeToggleBtn.style.color = "#854d0e";
+                themeToggleBtn.style.borderColor = "#facc15";
+
                 themeIcon.className = "fa-solid fa-sun";
                 themeLabel.textContent = "Chiaro";
-                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full border border-slate-300 text-xs sm:text-sm text-slate-800 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
+
+                mapBanner.className = "absolute bottom-4 left-1/2 transform -translate-x-1/2 backdrop-blur-md px-4 py-2 rounded-full text-xs sm:text-sm text-slate-800 font-semibold pointer-events-none shadow-xl z-[999] text-center whitespace-nowrap transition-colors";
+                mapBanner.style.backgroundColor = "#fffde7";
+                mapBanner.style.border = "1px solid #fde047";
 
                 styleSheets.innerHTML = `
-                    .leaflet-popup-content-wrapper { background: #ffffff !important; color: #1e293b !important; }
-                    .leaflet-popup-tip { background: #ffffff !important; }
-                    .leaflet-control-layers { background: #ffffff !important; color: #1e293b !important; border: 1px solid rgba(0,0,0,0.15) !important; }
-                    .leaflet-control-layers-separator { border-top: 1px solid rgba(0,0,0,0.15) !important; }
+                    .leaflet-popup-content-wrapper { background: #fffde7 !important; color: #1e293b !important; border: 1px solid #fde047 !important; font-weight: bold; }
+                    .leaflet-popup-tip { background: #fffde7 !important; }
+                    .leaflet-control-layers { background: #fffde7 !important; color: #1e293b !important; border: 1px solid #fde047 !important; font-weight: bold; }
+                    .leaflet-control-layers-separator { border-top: 1px solid #fde047 !important; }
                 `;
             } else if (themeName === 'lavender') {
                 body.style.backgroundColor = "#9D93AB";
