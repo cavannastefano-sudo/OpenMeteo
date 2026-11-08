@@ -23,10 +23,10 @@
             display: none;
         }
         /* Schema colori per select nei temi scuri e verdi */
-        body.dark-theme select, body.green-theme select {
+        body.dark-theme select, body.green-theme select, body.green-blue-theme select {
             color-scheme: dark;
         }
-        body.dark-theme select option, body.green-theme select option {
+        body.dark-theme select option, body.green-theme select option, body.green-blue-theme select option {
             color: #34d399 !important;
             background-color: #0f172a !important;
         }
@@ -83,7 +83,9 @@
             if (current === 'cavanweb') next = 'light';
             else if (current === 'light') next = 'dark';
             else if (current === 'dark') next = 'green';
-            else if (current === 'green') next = 'lavender';
+            else if (current === 'green') next = 'green-blue';
+            else if (current === 'green-blue') next = 'lavender';
+            else if (current === 'lavender') next = 'cavanweb';
             else next = 'cavanweb';
             setTheme(next);
         }
@@ -96,22 +98,28 @@
             const playStoreBtn = document.getElementById('playstore-btn');
             const footerCopy = document.getElementById('footer-copy');
 
-            body.classList.remove('dark-theme', 'green-theme');
+            body.classList.remove('dark-theme', 'green-theme', 'green-blue-theme');
             body.style.backgroundColor = '';
             body.style.color = '';
 
             if (themeName === 'dark') {
-                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8 dark-theme";
+                body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-emerald-300 flex flex-col justify-between p-4 sm:p-8 dark-theme";
                 metaTheme.setAttribute("content", "#0f172a");
-                footerAppText.className = "text-xs text-blue-200";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
-                footerCopy.className = "text-blue-300/60";
+                footerAppText.className = "text-xs text-emerald-300";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-emerald-300 group";
+                footerCopy.className = "text-emerald-300/80";
             } else if (themeName === 'green') {
-                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-white flex flex-col justify-between p-4 sm:p-8 green-theme";
+                body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-sky-200 flex flex-col justify-between p-4 sm:p-8 green-blue-theme";
                 metaTheme.setAttribute("content", "#064e3b");
-                footerAppText.className = "text-xs text-emerald-200";
-                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-white group";
-                footerCopy.className = "text-emerald-300/60";
+                footerAppText.className = "text-xs text-sky-200";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-sky-200 group";
+                footerCopy.className = "text-sky-200/80";
+            } else if (themeName === 'green-blue') {
+                body.className = "bg-gradient-to-br from-green-950 via-emerald-950 to-slate-950 min-h-screen text-sky-300 flex flex-col justify-between p-4 sm:p-8 green-blue-theme";
+                metaTheme.setAttribute("content", "#022c22");
+                footerAppText.className = "text-xs text-sky-300";
+                playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-sky-300 group";
+                footerCopy.className = "text-sky-300/80";
             } else if (themeName === 'light') {
                 body.className = "bg-white min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
                 metaTheme.setAttribute("content", "#ffffff");
@@ -148,15 +156,16 @@
             let themeLabel = "Tema";
             if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
             else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro"; }
-            else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro"; }
-            else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde"; }
+            else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro (Blu/Verde)"; }
+            else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde/Azzurro"; }
+            else if (currentTheme === 'green-blue') { themeIcon = "fa-tree"; themeLabel = "Verde Scuro/Azzurro"; }
             else if (currentTheme === 'lavender') { themeIcon = "fa-spa"; themeLabel = "Lilla"; }
 
             const isLavender = (currentTheme === 'lavender');
             const isLight = (currentTheme === 'light');
+            const isDarkOrGreen = (currentTheme === 'dark' || currentTheme === 'green' || currentTheme === 'green-blue');
 
-            // Pulsante tema coordinato solo per il tema chiaro, originale per gli altri
-            let themeButtonClass = currentTheme === 'dark' || currentTheme === 'green' ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : isLavender ? 'bg-[#F5F2EB] hover:bg-[#EBE7DF] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-[#fffde7] hover:bg-[#fff9c4] text-slate-800 border-amber-300';
+            let themeButtonClass = isDarkOrGreen ? 'bg-white/10 hover:bg-white/25 text-amber-400 border-white/20' : currentTheme === 'cavanweb' ? 'bg-[#D8D9D0] hover:bg-white text-slate-800 border-slate-400' : isLavender ? 'bg-[#F5F2EB] hover:bg-[#EBE7DF] text-[#5C3B5C] border-[#5C3B5C]/30' : 'bg-[#fffde7] hover:bg-[#fff9c4] text-slate-800 border-amber-300';
             let inlineThemeButtonStyle = isLavender ? 'style="background-color: #F5F2EB; color: #5C3B5C;"' : isLight ? 'style="background-color: #fffde7; border: 1px solid #fcd34d; color: #1e293b;"' : '';
 
             const themeButtonHTML = `
@@ -165,8 +174,8 @@
                 </button>
             `;
 
-            if (currentTheme === 'dark' || currentTheme === 'green') {
-                const isGreen = (currentTheme === 'green');
+            if (isDarkOrGreen) {
+                const isGreenBlue = (currentTheme === 'green' || currentTheme === 'green-blue');
                 headerContainer.className = "w-full max-w-6xl mx-auto mb-6 space-y-4 relative";
                 headerContainer.innerHTML = `
                     <div class="flex items-center justify-between gap-3">
@@ -174,23 +183,23 @@
                             <a href="https://www.cavanweb.com/" target="_blank" class="flex items-center group flex-shrink-0" title="Visita CavanWeb">
                                 <img src="SfondoN-512.png" alt="Logo" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover aspect-square border-0 shadow-lg group-hover:scale-105 transition">
                             </a>
-                            <button onclick="location.reload();" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center justify-center text-lg font-semibold" title="Aggiorna">
+                            <button onclick="location.reload();" class="bg-white/10 hover:bg-white/25 w-12 h-12 rounded-2xl border border-white/20 shadow transition ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} hover:text-white flex items-center justify-center text-lg font-semibold" title="Aggiorna">
                                 <i class="fa-solid fa-rotate"></i>
                             </button>
                             ${themeButtonHTML}
                         </div>
                         <div class="relative flex-shrink-0">
-                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 px-4 py-2.5 rounded-xl border border-white/20 shadow transition text-blue-200 hover:text-white flex items-center gap-2 text-base font-semibold">
+                            <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="bg-white/10 hover:bg-white/25 px-4 py-2.5 rounded-xl border border-white/20 shadow transition ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} hover:text-white flex items-center gap-2 text-base font-semibold">
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
-                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${isGreen ? 'bg-teal-950/95 border-emerald-500/20 text-emerald-200' : 'bg-slate-900 border border-white/20'} rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2 text-emerald-400 text-base">
+                            <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${isGreenBlue ? 'bg-teal-950/95 border-emerald-500/20 text-sky-300' : 'bg-slate-900 border border-white/20 text-emerald-300'} rounded-2xl shadow-2xl py-2 z-50 flex flex-col gap-1 px-2 text-base">
                                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/10 flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
-                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs text-emerald-400 px-3 py-1 italic">Nessun preferito salvato</span></div>
+                                <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs px-3 py-1 italic">Nessun preferito salvato</span></div>
                                 <div class="border-t border-white/10 my-1"></div>
-                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-emerald-400 text-sm font-semibold transition"><i class="fa-solid fa-cloud-sun text-amber-400 w-5 text-center"></i> <span>MeteoCWEB</span></a>
-                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-emerald-400 text-sm font-semibold transition"><i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-emerald-400 text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
-                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-emerald-400 text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="openwmap2.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-cloud-sun text-amber-400 w-5 text-center"></i> <span>MeteoCWEB</span></a>
+                                <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
+                                <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
                             </div>
                         </div>
                     </div>
@@ -198,25 +207,25 @@
                         <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight text-white mb-0.5 flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-calendar-days text-amber-400"></i> Archivio Storico Meteo Globale 1940-Oggi
                         </h1>
-                        <p class="${isGreen ? 'text-emerald-200' : 'text-blue-200'} text-sm sm:text-base">Dati storici e climatologici Open-Meteo</p>
+                        <p class="${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} text-sm sm:text-base">Dati storici e climatologici Open-Meteo</p>
                     </div>
                 `;
 
                 mainContainer.className = "w-full max-w-6xl mx-auto space-y-6 flex-grow";
                 mainContainer.innerHTML = `
                     <div class="bg-white/15 backdrop-blur-md border border-white/20 rounded-3xl p-5 shadow-2xl flex flex-wrap items-center gap-3">
-                        <div class="flex items-center gap-2 ${isGreen ? 'text-emerald-200' : 'text-blue-200'} font-semibold text-sm">
+                        <div class="flex items-center gap-2 ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} font-semibold text-sm">
                             <i class="fa-solid fa-earth-americas text-amber-400"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-md">
-                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-blue-300/60 focus:outline-none focus:border-amber-400 text-sm transition">
-                            <button id="clear-search-btn" onclick="clearLocationInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-blue-300 hover:text-white transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
+                            <input type="text" id="locationInput" placeholder="Cerca città..." value="Piacenza" oninput="handleSearchInput(this)" class="w-full pl-4 pr-10 py-3 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-emerald-300/60 focus:outline-none focus:border-amber-400 text-sm transition">
+                            <button id="clear-search-btn" onclick="clearLocationInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-emerald-300 hover:text-white transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
                         <button onclick="searchCustomLocation()" class="bg-amber-500 hover:bg-amber-600 px-5 py-3 rounded-2xl font-semibold text-slate-900 transition shadow-lg flex items-center gap-2 text-sm"><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
-                        <button onclick="useCurrentGPS()" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition text-blue-200 hover:text-white flex items-center gap-2 text-sm" title="Usa GPS"><i class="fa-solid fa-location-crosshairs text-amber-400"><span>GPS</span></i></button>
-                        <div class="w-full text-xs ${isGreen ? 'text-emerald-200' : 'text-blue-300'} pt-1 flex items-center justify-between">
+                        <button onclick="useCurrentGPS()" class="bg-white/10 hover:bg-white/20 px-4 py-3 rounded-2xl border border-white/10 transition ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} hover:text-white flex items-center gap-2 text-sm" title="Usa GPS"><i class="fa-solid fa-location-crosshairs text-amber-400"><span>GPS</span></i></button>
+                        <div class="w-full text-xs ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} pt-1 flex items-center justify-between">
                             <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold text-white">Piacenza (45.05°N, 9.70°E)</span></span>
-                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-base text-blue-300 hover:text-amber-400 transition flex items-center gap-1.5 px-2 py-0.5 bg-white/5 rounded-xl border border-white/10"><i id="fav-icon" class="fa-regular fa-star text-amber-400"></i> <span class="text-xs">Preferito</span></button>
+                            <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-base ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} hover:text-amber-400 transition flex items-center gap-1.5 px-2 py-0.5 bg-white/5 rounded-xl border border-white/10"><i id="fav-icon" class="fa-regular fa-star text-amber-400"></i> <span class="text-xs">Preferito</span></button>
                         </div>
                     </div>
 
@@ -224,12 +233,12 @@
                         <h2 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-400"></i> Meteo Attuale / Oggi (<span id="currentLocationTitle">Piacenza</span>)</h2>
                         <div class="w-full overflow-hidden rounded-2xl border border-white/10">
                             <table id="currentWeatherTable" class="w-full text-left border-collapse text-sm">
-                                <tbody class="divide-y divide-white/10 text-blue-100">
+                                <tbody class="divide-y divide-white/10 ${isGreenBlue ? 'text-sky-200' : 'text-emerald-200'}">
                                     <tr><td colspan="2" class="p-4 text-center">Caricamento dati attuali in corso...</td></tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="text-xs ${isGreen ? 'text-emerald-200/80' : 'text-blue-200/80'} space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10">
+                        <div class="text-xs ${isGreenBlue ? 'text-sky-200/80' : 'text-emerald-200/80'} space-y-1 bg-white/5 p-4 rounded-2xl border border-white/10">
                             <p>ℹ️ <strong>Legenda:</strong></p>
                             <p>• La temperatura attuale è indicata in <span class="text-rose-400 font-bold">rosso grassetto</span> con l'orario di rilevazione.</p>
                             <p>• I valori in <span class="text-teal-300 font-bold">turchese</span> rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità) affiancati ai valori giornalieri.</p>
@@ -241,8 +250,8 @@
                             <div>
                                 <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-regular fa-calendar text-amber-400"></i> Selezione Anno Singolo</h3>
                                 <div class="flex flex-wrap items-center gap-3">
-                                    <select id="yearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-4 py-3 text-emerald-400 focus:outline-none focus:border-amber-400 text-sm">
-                                        <option value="" class="bg-slate-900 text-emerald-400">-- Seleziona un anno --</option>
+                                    <select id="yearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-4 py-3 ${isGreenBlue ? 'text-sky-300' : 'text-emerald-300'} focus:outline-none focus:border-amber-400 text-sm">
+                                        <option value="" class="bg-slate-900 ${isGreenBlue ? 'text-sky-300' : 'text-emerald-300'}">-- Seleziona un anno --</option>
                                     </select>
                                 </div>
                             </div>
@@ -258,15 +267,15 @@
                                 <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Intervallo Anni Multiplo</h3>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs ${isGreen ? 'text-emerald-200' : 'text-blue-300'} mb-1">Da Anno:</label>
-                                        <select id="startYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 text-emerald-400 focus:outline-none focus:border-amber-400 text-sm">
-                                            <option value="" class="bg-slate-900 text-emerald-400">-- Inizio --</option>
+                                        <label class="block text-xs ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} mb-1">Da Anno:</label>
+                                        <select id="startYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 ${isGreenBlue ? 'text-sky-300' : 'text-emerald-300'} focus:outline-none focus:border-amber-400 text-sm">
+                                            <option value="" class="bg-slate-900 ${isGreenBlue ? 'text-sky-300' : 'text-emerald-300'}">-- Inizio --</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs ${isGreen ? 'text-emerald-200' : 'text-blue-300'} mb-1">A Anno:</label>
-                                        <select id="endYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 text-emerald-400 focus:outline-none focus:border-amber-400 text-sm">
-                                            <option value="" class="bg-slate-900 text-emerald-400">-- Fine --</option>
+                                        <label class="block text-xs ${isGreenBlue ? 'text-sky-200' : 'text-emerald-300'} mb-1">A Anno:</label>
+                                        <select id="endYearSelect" class="w-full bg-white/5 border border-white/20 rounded-2xl px-3 py-2.5 ${isGreenBlue ? 'text-sky-300' : 'text-emerald-300'} focus:outline-none focus:border-amber-400 text-sm">
+                                            <option value="" class="bg-slate-900 ${isGreenBlue ? 'text-sky-300' : 'text-emerald-300'}">-- Fine --</option>
                                         </select>
                                     </div>
                                 </div>
@@ -284,7 +293,7 @@
                         <div class="w-full overflow-x-auto rounded-2xl border border-white/10 max-h-[600px]">
                             <table id="weatherTable" class="w-full text-left border-collapse text-sm whitespace-nowrap">
                                 <thead>
-                                    <tr class="bg-white/10 text-blue-200 border-b border-white/10 sticky top-0 backdrop-blur-md">
+                                    <tr class="bg-white/10 ${isGreenBlue ? 'text-sky-200' : 'text-emerald-200'} border-b border-white/10 sticky top-0 backdrop-blur-md">
                                         <th class="p-3 text-center">Data</th>
                                         <th class="p-3 text-center">Max</th>
                                         <th class="p-3 text-center">Percepita</th>
@@ -296,8 +305,8 @@
                                         <th class="p-3 text-center">Alba / Tramonto</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-white/10 text-blue-100">
-                                    <tr><td colspan="9" class="p-6 text-center text-blue-300">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
+                                <tbody class="divide-y divide-white/10 ${isGreenBlue ? 'text-sky-100' : 'text-emerald-100'}">
+                                    <tr><td colspan="9" class="p-6 text-center ${isGreenBlue ? 'text-sky-200' : 'text-emerald-200'}">Seleziona un anno o un intervallo per visualizzare i dati nella tabella.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -308,7 +317,6 @@
                 
                 let cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : isLight ? "bg-[#fffde7] border-amber-300 text-slate-800" : isLavender ? "" : "bg-[hsl(60,100%,94%)] border-amber-200 text-slate-800";
                 let secondaryCardBgClass = isLight ? "bg-[#fff9c4] border-amber-300 text-slate-800" : cardBgClass;
-                // Per il tema chiaro, il menu a tendina riprende il colore della pagina realtime (#fffde7)
                 let dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : isLight ? "bg-[#fffde7] border-amber-300" : isLavender ? "bg-[#F8FED7] border-[#5C3B5C]/30" : "bg-[hsl(60,100%,94%)] border-amber-200";
                 let inlineCardStyle = isLavender ? 'style="background-color: #DAD0F0; border: 1px solid rgba(92, 59, 92, 0.25); box-shadow: 0 20px 25px -5px rgba(60, 42, 77, 0.15); color: #5C3B5C;"' : '';
 
@@ -325,11 +333,9 @@
                             ${themeButtonHTML}
                         </div>
                         <div class="relative flex-shrink-0">
-                            <!-- Pulsante Menu originale ripristinato esattamente com'era -->
                             <button onclick="toggleArchiveMenu()" id="menu-btn" title="Menu" class="${isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border border-[#5C3B5C]/30 hover:bg-[#f0f8c5]' : isLight ? 'bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold' : 'bg-[#800040] hover:bg-[#600030] text-white'} px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2 text-base font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
                                 <i class="fa-solid fa-bars"></i> <span>Menu</span>
                             </button>
-                            <!-- Tenda del menu con colore coordinato al tema chiaro (#fffde7) -->
                             <div id="archiveDropdown" class="hidden absolute right-0 mt-2 w-60 ${dropdownBgClass} border rounded-2xl shadow-xl py-2 z-50 flex flex-col gap-1 px-2 text-slate-900 text-base" ${isLight ? 'style="background-color: #fffde7; border-color: #fcd34d;"' : isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
                                 <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} border-b ${isCavanWeb ? 'border-[#800040]/30' : isLavender ? 'border-[#5C3B5C]/30' : 'border-amber-300'} flex items-center gap-1.5"><i class="fa-solid fa-star"></i> Preferiti</div>
                                 <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-sm ${isLavender ? 'text-[#5C3B5C]' : 'text-slate-600'} px-3 py-1 font-semibold italic">Nessun preferito salvato</span></div>
@@ -342,7 +348,7 @@
                         </div>
                     </div>
                     <div class="text-center pt-2">
-                        <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-900"'}>
+                        <h1 id="mainTitle" class="text-xl sm:text-3xl font-bold tracking-tight mb-0.5 flex items-center justify-center gap-1.5" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>
                             <i class="fa-solid fa-calendar-days ${isCavanWeb ? 'text-[#800040]' : isLight ? 'text-amber-600' : isLavender ? 'text-[#5C3B5C]' : 'text-amber-600'}"></i> Archivio Storico Meteo Globale 1940-Oggi
                         </h1>
                         <p class="${isLavender ? '' : 'text-slate-600'} text-sm sm:text-base" ${isLavender ? 'style="color: #5C3B5C; opacity: 0.9;"' : ''}>Dati storici e climatologici Open-Meteo</p>
@@ -352,7 +358,7 @@
                 mainContainer.className = "w-full max-w-6xl mx-auto space-y-4 flex-grow";
                 mainContainer.innerHTML = `
                     <div class="${cardBgClass} border rounded-3xl p-5 shadow-sm flex flex-wrap items-center gap-3" ${inlineCardStyle}>
-                        <div class="flex items-center gap-2 font-semibold text-base" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-900"'}>
+                        <div class="flex items-center gap-2 font-semibold text-base" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>
                             <i class="fa-solid fa-earth-americas ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'}"></i> Località:
                         </div>
                         <div class="relative flex-grow max-w-md">
@@ -361,8 +367,8 @@
                         </div>
                         <button onclick="searchCustomLocation()" class="${isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border border-[#5C3B5C]/30 hover:bg-[#EBE7DF]' : isLight ? 'bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold' : 'bg-[#0284c7] hover:bg-[#0369a1] text-white'} px-5 py-2.5 rounded-2xl font-semibold transition shadow text-base flex items-center gap-2" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}><i class="fa-solid fa-magnifying-glass"></i> Cerca</button>
                         <button onclick="useCurrentGPS()" class="${isLavender ? 'bg-[#F8FED7] text-[#5C3B5C] border border-[#5C3B5C]/30 hover:bg-[#EBE7DF]' : isLight ? 'bg-amber-200 hover:bg-amber-300 text-slate-900 font-bold border border-amber-300' : 'bg-[#10b981] hover:bg-[#059669] text-white'} px-4 py-2.5 rounded-2xl border transition flex items-center gap-2 text-base font-semibold" title="Usa GPS" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}><i class="fa-solid fa-location-crosshairs"><span>GPS</span></i></button>
-                        <div class="w-full text-sm pt-1 flex items-center justify-between font-semibold" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-700"'}>
-                            <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-900"'}>Piacenza (45.05°N, 9.70°E)</span></span>
+                        <div class="w-full text-sm pt-1 flex items-center justify-between font-semibold" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>
+                            <span>Posizione attiva: <span id="currentLocationLabel" class="font-bold" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>Piacenza (45.05°N, 9.70°E)</span></span>
                             <button onclick="toggleFavorite()" id="fav-btn" title="Preferito" class="text-sm transition flex items-center gap-1.5 px-3 py-1 rounded-xl border font-semibold shadow-sm" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;"' : isLight ? 'style="background-color: #fff9c4; color: #1e293b; border-color: #fcd34d;"' : 'class="bg-white text-slate-800 border-amber-300"'}>
                                 <i id="fav-icon" class="fa-regular fa-star ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-blue-600'}"></i> <span class="text-xs">Preferito</span>
                             </button>
@@ -370,7 +376,7 @@
                     </div>
 
                     <div class="${secondaryCardBgClass} border rounded-3xl p-6 shadow-sm space-y-4" ${inlineCardStyle}>
-                        <h2 class="text-lg font-bold flex items-center gap-2" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-900"'}>
+                        <h2 class="text-lg font-bold flex items-center gap-2" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>
                             <i class="fa-solid fa-bolt ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'}"></i> Meteo Attuale / Oggi (<span id="currentLocationTitle">Piacenza</span>)
                         </h2>
                         <div class="w-full overflow-hidden rounded-2xl border ${isLavender ? 'border-[#5C3B5C]/30' : isCavanWeb ? 'border-slate-300' : isLight ? 'border-amber-300' : 'border-amber-300'}">
@@ -380,7 +386,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="text-sm space-y-4 p-4 rounded-2xl border shadow-sm font-medium" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.25);"' : isLight ? 'style="background-color: #fffde7; color: #334155; border-color: #fcd34d;"' : 'class="text-slate-700 ' + cardBgClass + ' border ' + (isCavanWeb ? 'border-slate-400' : 'border-amber-300') + '"'}>
+                        <div class="text-sm space-y-4 p-4 rounded-2xl border shadow-sm font-medium" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.25);"' : isLight ? 'style="background-color: #fffde7; color: #334155; border-color: #fcd34d;"' : ''}>
                             <p>ℹ️ <strong>Legenda:</strong></p>
                             <p>• La temperatura attuale è indicata in <span class="font-bold text-rose-600">rosso grassetto</span> con l'orario di rilevazione.</p>
                             <p>• I valori in <span class="font-bold text-teal-700">turchese</span> rappresentano i dati attuali con relativi orari (percepita, pressione, vento e umidità) affiancati ai valori giornalieri.</p>
@@ -390,11 +396,11 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div class="${cardBgClass} border rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between" ${inlineCardStyle}>
                             <div>
-                                <h3 class="text-base font-bold mb-3 flex items-center gap-2" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-900"'}>
+                                <h3 class="text-base font-bold mb-3 flex items-center gap-2" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>
                                     <i class="fa-regular fa-calendar ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'}"></i> Selezione Anno Singolo
                                 </h3>
                                 <div class="flex flex-wrap items-center gap-3">
-                                    <select id="yearSelect" class="w-full border rounded-2xl px-4 py-3 focus:outline-none text-base font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : isLight ? 'style="background-color: #fff9c4; color: #1e293b; border-color: #fcd34d;"' : 'class="bg-white text-slate-800 border-amber-300"'}>
+                                    <select id="yearSelect" class="w-full border rounded-2xl px-4 py-3 focus:outline-none text-base font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : isLight ? 'style="background-color: #fff9c4; color: #1e293b; border-color: #fcd34d;"' : ''}>
                                         <option value="" class="bg-white text-slate-800">-- Seleziona un anno --</option>
                                     </select>
                                 </div>
@@ -408,19 +414,19 @@
 
                         <div class="${secondaryCardBgClass} border rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between" ${inlineCardStyle}>
                             <div>
-                                <h3 class="text-base font-bold mb-3 flex items-center gap-2" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-900"'}>
+                                <h3 class="text-base font-bold mb-3 flex items-center gap-2" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>
                                     <i class="fa-solid fa-clock-rotate-left ${isLavender ? 'text-[#5C3B5C]' : isLight ? 'text-amber-600' : 'text-[#800040]'}"></i> Intervallo Anni Multiplo
                                 </h3>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs mb-1 font-bold" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-700"'}>Da Anno:</label>
-                                        <select id="startYearSelect" class="w-full border rounded-2xl px-3 py-2.5 focus:outline-none text-sm font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : isLight ? 'style="background-color: #fff9c4; color: #1e293b; border-color: #fcd34d;"' : 'class="bg-white text-slate-800 border-amber-300"'}>
+                                        <label class="block text-xs mb-1 font-bold" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>Da Anno:</label>
+                                        <select id="startYearSelect" class="w-full border rounded-2xl px-3 py-2.5 focus:outline-none text-sm font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : isLight ? 'style="background-color: #fff9c4; color: #1e293b; border-color: #fcd34d;"' : ''}>
                                             <option value="" class="bg-white text-slate-800">-- Inizio --</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-xs mb-1 font-bold" ${isLavender ? 'style="color: #5C3B5C;"' : 'class="text-slate-700"'}>A Anno:</label>
-                                        <select id="endYearSelect" class="w-full border rounded-2xl px-3 py-2.5 focus:outline-none text-sm font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : isLight ? 'style="background-color: #fff9c4; color: #1e293b; border-color: #fcd34d;"' : 'class="bg-white text-slate-800 border-amber-300"'}>
+                                        <label class="block text-xs mb-1 font-bold" ${isLavender ? 'style="color: #5C3B5C;"' : ''}>A Anno:</label>
+                                        <select id="endYearSelect" class="w-full border rounded-2xl px-3 py-2.5 focus:outline-none text-sm font-semibold" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C; border-color: rgba(92, 59, 92, 0.3);"' : isCavanWeb ? 'style="background-color: #8FBBD0; color: #800040;" class="border-slate-300"' : isLight ? 'style="background-color: #fff9c4; color: #1e293b; border-color: #fcd34d;"' : ''}>
                                             <option value="" class="bg-white text-slate-800">-- Fine --</option>
                                         </select>
                                     </div>
@@ -501,7 +507,7 @@
             if (favorites.includes(cityName)) {
                 favIcon.className = "fa-solid fa-star text-blue-500";
             } else {
-                favIcon.className = (currentTheme === 'dark' || currentTheme === 'green') ? "fa-regular fa-star text-amber-400" : currentTheme === 'light' ? "fa-regular fa-star text-amber-600" : currentTheme === 'lavender' ? "fa-regular fa-star text-[#5C3B5C]" : "fa-regular fa-star text-blue-600";
+                favIcon.className = (currentTheme === 'dark' || currentTheme === 'green' || currentTheme === 'green-blue') ? "fa-regular fa-star text-amber-400" : currentTheme === 'light' ? "fa-regular fa-star text-amber-600" : currentTheme === 'lavender' ? "fa-regular fa-star text-[#5C3B5C]" : "fa-regular fa-star text-blue-600";
             }
         }
 
@@ -513,16 +519,17 @@
             const isCavanWeb = (currentTheme === 'cavanweb');
             const isLight = (currentTheme === 'light');
             const isLavender = (currentTheme === 'lavender');
+            const isDarkOrGreen = (currentTheme === 'dark' || currentTheme === 'green' || currentTheme === 'green-blue');
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = `<span class="text-sm ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-emerald-400' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-slate-400')} px-3 py-1 font-semibold italic">Nessun preferito salvato</span>`;
+                favListContainer.innerHTML = `<span class="text-sm ${isDarkOrGreen ? 'text-sky-200' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-slate-400')} px-3 py-1 font-semibold italic">Nessun preferito salvato</span>`;
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
-                if (currentTheme === 'dark' || currentTheme === 'green') {
-                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-emerald-400 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-emerald-400/50"></i></button>`;
+                if (isDarkOrGreen) {
+                    html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white/10 text-sky-200 text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-amber-400 mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-sky-200/50"></i></button>`;
                 } else if (isLavender) {
                     html += `<button onclick="loadFavoriteCity('${city}')" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-[#EBE7DF] text-[#5C3B5C] text-base font-semibold transition"><span class="truncate"><i class="fa-solid fa-location-dot text-[#5C3B5C] mr-2 text-xs"></i>${city}</span><i class="fa-solid fa-chevron-right text-xs text-[#5C3B5C]/60"></i></button>`;
                 } else {
@@ -649,7 +656,8 @@
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const isCavanWeb = (currentTheme === 'cavanweb');
             const isLavender = (currentTheme === 'lavender');
-            document.querySelector("#weatherTable tbody").innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-blue-300')} font-bold">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>`;
+            const isDarkOrGreen = (currentTheme === 'dark' || currentTheme === 'green' || currentTheme === 'green-blue');
+            document.querySelector("#weatherTable tbody").innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isDarkOrGreen ? 'text-sky-200' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-blue-300')} font-bold">Località aggiornata. Seleziona un anno o un intervallo per visualizzare i dati storici.</td></tr>`;
             const csvBtn = document.getElementById("exportCsvBtn");
             const txtBtn = document.getElementById("exportTxtBtn");
             if (csvBtn) csvBtn.classList.add("hidden");
@@ -833,8 +841,9 @@
                             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
                             const isCavanWeb = (currentTheme === 'cavanweb');
                             const isLavender = (currentTheme === 'lavender');
+                            const isDarkOrGreen = (currentTheme === 'dark' || currentTheme === 'green' || currentTheme === 'green-blue');
                             if (!cachedYearData || !cachedYearData.time) {
-                                if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato disponibile per questo periodo.</td></tr>`;
+                                if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isDarkOrGreen ? 'text-sky-200' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato disponibile per questo periodo.</td></tr>`;
                                 return;
                             }
                             if (exportCsvBtn) { exportCsvBtn.classList.remove("hidden"); exportCsvBtn.classList.add("inline-flex"); }
@@ -846,7 +855,8 @@
                             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
                             const isCavanWeb = (currentTheme === 'cavanweb');
                             const isLavender = (currentTheme === 'lavender');
-                            if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-red-400' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento dei dati.</td></tr>`;
+                            const isDarkOrGreen = (currentTheme === 'dark' || currentTheme === 'green' || currentTheme === 'green-blue');
+                            if (tbody) tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isDarkOrGreen ? 'text-red-400' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento dei dati.</td></tr>`;
                         });
                 };
             }
@@ -919,7 +929,8 @@
             const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
             const isCavanWeb = (currentTheme === 'cavanweb');
             const isLavender = (currentTheme === 'lavender');
-            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Caricamento dati intervallo in corso...</td></tr>`;
+            const isDarkOrGreen = (currentTheme === 'dark' || currentTheme === 'green' || currentTheme === 'green-blue');
+            tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isDarkOrGreen ? 'text-sky-200' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Caricamento dati intervallo in corso...</td></tr>`;
             const yearSelect = document.getElementById("yearSelect");
             if (yearSelect) yearSelect.value = "";
             document.getElementById("exportCsvBtn").classList.add("hidden");
@@ -963,10 +974,10 @@
                 }
                 cachedMultiData.sort((a, b) => b.rawDate.localeCompare(a.rawDate));
                 if (cachedMultiData.length > 0) renderMultiTableData();
-                else tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-blue-300' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato trovato.</td></tr>`;
+                else tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isDarkOrGreen ? 'text-sky-200' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-amber-600')} font-bold">Nessun dato trovato.</td></tr>`;
             } catch (err) {
                 console.error(err);
-                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${(currentTheme === 'dark' || currentTheme === 'green') ? 'text-red-400' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center ${isDarkOrGreen ? 'text-red-400' : (isLavender ? 'text-[#5C3B5C]' : isCavanWeb ? 'text-slate-600' : 'text-red-600')} font-bold">Errore durante il caricamento.</td></tr>`;
             } finally {
                 loadingMultiStatus.classList.add("hidden");
                 btn.disabled = false;
