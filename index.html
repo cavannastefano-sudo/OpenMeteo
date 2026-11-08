@@ -62,10 +62,10 @@
 
     <!-- Finestra Modale Zoom Giornaliero -->
     <div id="dayModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden overflow-y-auto p-4 flex items-center justify-center">
-        <div class="bg-slate-900 border border-white/20 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative space-y-4 text-white">
-            <button onclick="closeModal()" class="absolute top-5 right-5 text-blue-300 hover:text-white text-2xl font-bold">&times;</button>
+        <div id="modal-box" class="bg-slate-900 border border-white/20 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative space-y-4 text-white">
+            <button onclick="closeModal()" id="modal-close-btn" class="absolute top-5 right-5 text-blue-300 hover:text-white text-2xl font-bold">&times;</button>
             <h3 id="modalTitle" class="text-xl font-bold border-b border-white/10 pb-3 text-amber-400">Dettaglio Giorno</h3>
-            <div class="overflow-x-auto rounded-2xl border border-white/10">
+            <div id="modal-table-container" class="overflow-x-auto rounded-2xl border border-white/10">
                 <table class="w-full text-left text-sm" id="modalDetailTable">
                     <tbody class="divide-y divide-white/10">
                         <!-- Dettagli inseriti via JS -->
@@ -101,9 +101,22 @@
             const playStoreBtn = document.getElementById('playstore-btn');
             const footerCopy = document.getElementById('footer-copy');
 
+            // Riferimenti elementi Modale
+            const modalBox = document.getElementById('modal-box');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalTableContainer = document.getElementById('modal-table-container');
+
             body.classList.remove('dark-theme', 'green-theme');
             body.style.backgroundColor = '';
             body.style.color = '';
+
+            // Reset stili modale
+            modalBox.className = "";
+            modalBox.style = "";
+            modalCloseBtn.className = "absolute top-5 right-5 text-2xl font-bold";
+            modalTitle.className = "text-xl font-bold pb-3";
+            modalTableContainer.className = "overflow-x-auto rounded-2xl";
 
             if (themeName === 'dark') {
                 // Tema Scuro: Blu con scritte verdine (emerald-300)
@@ -112,6 +125,12 @@
                 footerAppText.className = "text-xs text-emerald-300";
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-emerald-300 group";
                 footerCopy.className = "text-emerald-300/80";
+
+                // Stile Modale Tema Scuro (Blu/Verdine)
+                modalBox.className = "bg-slate-900 border border-emerald-500/30 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative space-y-4 text-emerald-300";
+                modalCloseBtn.className += " text-emerald-300 hover:text-white";
+                modalTitle.className += " border-b border-emerald-500/20 text-amber-400";
+                modalTableContainer.className += " border border-emerald-500/20";
             } else if (themeName === 'green') {
                 // Tema Verde: Verde con scritte azzurrine (sky-200)
                 body.className = "bg-gradient-to-br from-emerald-900 via-teal-900 to-slate-900 min-h-screen text-sky-200 flex flex-col justify-between p-4 sm:p-8 green-theme";
@@ -119,12 +138,27 @@
                 footerAppText.className = "text-xs text-sky-200";
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 px-3.5 py-1.5 rounded-xl border border-white/20 transition shadow text-xs font-semibold text-sky-200 group";
                 footerCopy.className = "text-sky-200/80";
+
+                // Stile Modale Tema Verde (Verde/Azzurrine)
+                modalBox.className = "bg-teal-950 border border-sky-500/30 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative space-y-4 text-sky-200";
+                modalCloseBtn.className += " text-sky-200 hover:text-white";
+                modalTitle.className += " border-b border-sky-500/20 text-amber-400";
+                modalTableContainer.className += " border border-sky-500/20";
             } else if (themeName === 'light') {
                 body.className = "bg-white min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
                 metaTheme.setAttribute("content", "#ffffff");
                 footerAppText.className = "text-xs text-slate-600";
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-amber-100 hover:bg-amber-200 px-3.5 py-1.5 rounded-xl border border-amber-300 transition shadow text-xs font-semibold text-slate-800 group";
                 footerCopy.className = "text-slate-500";
+
+                // Stile Modale Tema Chiaro
+                modalBox.style.backgroundColor = "#fffde7";
+                modalBox.style.color = "#1e293b";
+                modalBox.style.border = "1px solid #fcd34d";
+                modalBox.className = "rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative space-y-4";
+                modalCloseBtn.className += " text-amber-700 hover:text-slate-900";
+                modalTitle.className += " border-b border-amber-300 text-amber-700";
+                modalTableContainer.className += " border border-amber-300";
             } else if (themeName === 'lavender') {
                 body.className = "min-h-screen flex flex-col justify-between p-4 sm:p-8";
                 body.style.backgroundColor = "#9D93AB";
@@ -133,12 +167,30 @@
                 footerAppText.className = "text-xs text-[#3C2A4D] font-medium";
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-[#F5F2EB] hover:bg-[#EBE7DF] px-3.5 py-1.5 rounded-xl border border-[#5C3B5C]/30 transition shadow text-xs font-semibold text-[#3C2A4D] group";
                 footerCopy.className = "text-[#3C2A4D]/80";
+
+                // Stile Modale Tema Lilla
+                modalBox.style.backgroundColor = "#F8FED7";
+                modalBox.style.color = "#5C3B5C";
+                modalBox.style.border = "1px solid rgba(92, 59, 92, 0.3)";
+                modalBox.className = "rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative space-y-4";
+                modalCloseBtn.className += " text-[#5C3B5C] hover:opacity-75";
+                modalTitle.className += " border-b border-[#5C3B5C]/20 text-[#5C3B5C]";
+                modalTableContainer.className += " border border-[#5C3B5C]/30";
             } else {
                 body.className = "bg-[#728890] min-h-screen text-slate-800 flex flex-col justify-between p-3 sm:p-8";
                 metaTheme.setAttribute("content", "#728890");
                 footerAppText.className = "text-xs text-slate-200";
                 playStoreBtn.className = "inline-flex items-center gap-2 bg-[#D8D9D0]/40 hover:bg-[#D8D9D0]/70 px-3.5 py-1.5 rounded-xl border border-slate-600/30 transition shadow text-xs font-semibold text-slate-900 group";
                 footerCopy.className = "text-slate-200/80";
+
+                // Stile Modale CavanWeb
+                modalBox.style.backgroundColor = "#8FBBD0";
+                modalBox.style.color = "#800040";
+                modalBox.style.border = "1px solid rgba(128,0,64,0.3)";
+                modalBox.className = "rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl relative space-y-4";
+                modalCloseBtn.className += " text-[#800040] hover:opacity-75";
+                modalTitle.className += " border-b border-[#800040]/30 text-[#800040]";
+                modalTableContainer.className += " border border-[#800040]/30";
             }
 
             renderLayout();
@@ -154,7 +206,7 @@
             let themeIcon = "fa-palette";
             let themeLabel = "Tema";
             if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
-            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro (Bianco)"; }
+            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro (Bianco"; }
             else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro (Blu)"; }
             else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde (Verde)"; }
             else if (currentTheme === 'lavender') { themeIcon = "fa-spa"; themeLabel = "Lilla"; }
@@ -174,7 +226,6 @@
 
             if (isDarkOrGreen) {
                 const isGreenTheme = (currentTheme === 'green');
-                // isGreenTheme -> scritte azzurrine (sky-200), dark -> scritte verdine (emerald-300)
                 const textColorClass = isGreenTheme ? 'text-sky-200' : 'text-emerald-300';
                 const textHoverColor = isGreenTheme ? 'text-sky-200' : 'text-emerald-300';
 
@@ -1106,14 +1157,14 @@
             document.getElementById("modalTitle").textContent = `Dettaglio Meteo Attuale - ${dateIT}`;
             const detailTbody = document.querySelector("#modalDetailTable tbody");
             detailTbody.innerHTML = `
-                <tr><th class="p-3 text-blue-300 w-1/2">Data</th><td class="p-3">${dateIT}</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Attuale</th><td class="p-3 text-rose-400 font-bold">${formatVal(current.temperature_2m)}°C${formatHourOnly(current.time)}</td></tr>
-                <tr><th class="p-3 text-blue-300">Percepita Attuale</th><td class="p-3 text-teal-300 font-bold">${formatVal(current.apparent_temperature)}°C${formatHourOnly(current.time)}</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Max / Min</th><td class="p-3">${formatVal(daily.temperature_2m_max[i])}°C / ${formatVal(daily.temperature_2m_min[i])}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Pressione (Attuale / Media)</th><td class="p-3">${formatVal(current.pressure_msl, 1)} hPa / ${formatVal(daily.pressure_msl_mean[i], 1)} hPa</td></tr>
-                <tr><th class="p-3 text-blue-300">Vento (Attuale / Max)</th><td class="p-3">${formatVal(current.wind_speed_10m)} km/h (${getWindDirection(current.wind_direction_10m)}) / ${formatVal(daily.wind_speed_10m_max[i])} km/h</td></tr>
-                <tr><th class="p-3 text-blue-300">Umidità (Attuale / Media)</th><td class="p-3">${formatVal(current.relative_humidity_2m)}% / ${formatVal(daily.relative_humidity_2m_mean[i])}%</td></tr>
-                <tr><th class="p-3 text-blue-300">Alba / Tramonto</th><td class="p-3">🌅 ${formatTimeWithSeconds(daily.sunrise[i])} | 🌇 ${formatTimeWithSeconds(daily.sunset[i])}</td></tr>
+                <tr><th class="p-3 w-1/2">Data</th><td class="p-3">${dateIT}</td></tr>
+                <tr><th class="p-3">Temperatura Attuale</th><td class="p-3 text-rose-500 font-bold">${formatVal(current.temperature_2m)}°C${formatHourOnly(current.time)}</td></tr>
+                <tr><th class="p-3">Percepita Attuale</th><td class="p-3 text-teal-500 font-bold">${formatVal(current.apparent_temperature)}°C${formatHourOnly(current.time)}</td></tr>
+                <tr><th class="p-3">Temperatura Max / Min</th><td class="p-3">${formatVal(daily.temperature_2m_max[i])}°C / ${formatVal(daily.temperature_2m_min[i])}°C</td></tr>
+                <tr><th class="p-3">Pressione (Attuale / Media)</th><td class="p-3">${formatVal(current.pressure_msl, 1)} hPa / ${formatVal(daily.pressure_msl_mean[i], 1)} hPa</td></tr>
+                <tr><th class="p-3">Vento (Attuale / Max)</th><td class="p-3">${formatVal(current.wind_speed_10m)} km/h (${getWindDirection(current.wind_direction_10m)}) / ${formatVal(daily.wind_speed_10m_max[i])} km/h</td></tr>
+                <tr><th class="p-3">Umidità (Attuale / Media)</th><td class="p-3">${formatVal(current.relative_humidity_2m)}% / ${formatVal(daily.relative_humidity_2m_mean[i])}%</td></tr>
+                <tr><th class="p-3">Alba / Tramonto</th><td class="p-3">🌅 ${formatTimeWithSeconds(daily.sunrise[i])} | 🌇 ${formatTimeWithSeconds(daily.sunset[i])}</td></tr>
             `;
             document.getElementById("dayModal").classList.remove("hidden");
         }
@@ -1124,15 +1175,15 @@
             document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${dateIT}`;
             const detailTbody = document.querySelector("#modalDetailTable tbody");
             detailTbody.innerHTML = `
-                <tr><th class="p-3 text-blue-300 w-1/2">Data</th><td class="p-3">${dateIT}</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Max</th><td class="p-3">${formatVal(cachedYearData.temperature_2m_max[index])}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Percepita</th><td class="p-3">${formatVal(cachedYearData.apparent_temperature_max[index])}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Min</th><td class="p-3">${formatVal(cachedYearData.temperature_2m_min[index])}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Pressione Media</th><td class="p-3">${formatVal(cachedYearData.pressure_msl_mean[index], 1)} hPa</td></tr>
-                <tr><th class="p-3 text-blue-300">Vento Massimo</th><td class="p-3">${formatVal(cachedYearData.wind_speed_10m_max[index])} km/h (${getWindDirection(cachedYearData.wind_direction_10m_dominant[index])})</td></tr>
-                <tr><th class="p-3 text-blue-300">Umidità Media</th><td class="p-3">${formatVal(cachedYearData.relative_humidity_2m_mean[index])}%</td></tr>
-                <tr><th class="p-3 text-blue-300">Pioggia / Neve</th><td class="p-3">${formatPrecipitation(cachedYearData.precipitation_sum[index], cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[index] : 0, cachedYearData.temperature_2m_min[index])}</td></tr>
-                <tr><th class="p-3 text-blue-300">Alba / Tramonto</th><td class="p-3">🌅 ${formatTimeWithSeconds(cachedYearData.sunrise[index])} | 🌇 ${formatTimeWithSeconds(cachedYearData.sunset[index])}</td></tr>
+                <tr><th class="p-3 w-1/2">Data</th><td class="p-3">${dateIT}</td></tr>
+                <tr><th class="p-3">Temperatura Max</th><td class="p-3">${formatVal(cachedYearData.temperature_2m_max[index])}°C</td></tr>
+                <tr><th class="p-3">Temperatura Percepita</th><td class="p-3">${formatVal(cachedYearData.apparent_temperature_max[index])}°C</td></tr>
+                <tr><th class="p-3">Temperatura Min</th><td class="p-3">${formatVal(cachedYearData.temperature_2m_min[index])}°C</td></tr>
+                <tr><th class="p-3">Pressione Media</th><td class="p-3">${formatVal(cachedYearData.pressure_msl_mean[index], 1)} hPa</td></tr>
+                <tr><th class="p-3">Vento Massimo</th><td class="p-3">${formatVal(cachedYearData.wind_speed_10m_max[index])} km/h (${getWindDirection(cachedYearData.wind_direction_10m_dominant[index])})</td></tr>
+                <tr><th class="p-3">Umidità Media</th><td class="p-3">${formatVal(cachedYearData.relative_humidity_2m_mean[index])}%</td></tr>
+                <tr><th class="p-3">Pioggia / Neve</th><td class="p-3">${formatPrecipitation(cachedYearData.precipitation_sum[index], cachedYearData.snowfall_sum ? cachedYearData.snowfall_sum[index] : 0, cachedYearData.temperature_2m_min[index])}</td></tr>
+                <tr><th class="p-3">Alba / Tramonto</th><td class="p-3">🌅 ${formatTimeWithSeconds(cachedYearData.sunrise[index])} | 🌇 ${formatTimeWithSeconds(cachedYearData.sunset[index])}</td></tr>
             `;
             document.getElementById("dayModal").classList.remove("hidden");
         }
@@ -1143,15 +1194,15 @@
             document.getElementById("modalTitle").textContent = `Dettaglio Meteo - ${row.dateIT}`;
             const detailTbody = document.querySelector("#modalDetailTable tbody");
             detailTbody.innerHTML = `
-                <tr><th class="p-3 text-blue-300 w-1/2">Data</th><td class="p-3">${row.dateIT}</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Max</th><td class="p-3">${formatVal(row.tMax)}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Percepita</th><td class="p-3">${formatVal(row.tApp)}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Temperatura Min</th><td class="p-3">${formatVal(row.tMin)}°C</td></tr>
-                <tr><th class="p-3 text-blue-300">Pressione Media</th><td class="p-3">${formatVal(row.press, 1)} hPa</td></tr>
-                <tr><th class="p-3 text-blue-300">Vento Massimo</th><td class="p-3">${formatVal(row.windSpd)} km/h (${getWindDirection(row.windDirDeg)})</td></tr>
-                <tr><th class="p-3 text-blue-300">Umidità Media</th><td class="p-3">${formatVal(row.hum)}%</td></tr>
-                <tr><th class="p-3 text-blue-300">Pioggia / Neve</th><td class="p-3">${formatPrecipitation(row.precip, row.snow, row.tMin)}</td></tr>
-                <tr><th class="p-3 text-blue-300">Alba / Tramonto</th><td class="p-3">🌅 ${row.sunrise} | 🌇 ${row.sunset}</td></tr>
+                <tr><th class="p-3 w-1/2">Data</th><td class="p-3">${row.dateIT}</td></tr>
+                <tr><th class="p-3">Temperatura Max</th><td class="p-3">${formatVal(row.tMax)}°C</td></tr>
+                <tr><th class="p-3">Temperatura Percepita</th><td class="p-3">${formatVal(row.tApp)}°C</td></tr>
+                <tr><th class="p-3">Temperatura Min</th><td class="p-3">${formatVal(row.tMin)}°C</td></tr>
+                <tr><th class="p-3">Pressione Media</th><td class="p-3">${formatVal(row.press, 1)} hPa</td></tr>
+                <tr><th class="p-3">Vento Massimo</th><td class="p-3">${formatVal(row.windSpd)} km/h (${getWindDirection(row.windDirDeg)})</td></tr>
+                <tr><th class="p-3">Umidità Media</th><td class="p-3">${formatVal(row.hum)}%</td></tr>
+                <tr><th class="p-3">Pioggia / Neve</th><td class="p-3">${formatPrecipitation(row.precip, row.snow, row.tMin)}</td></tr>
+                <tr><th class="p-3">Alba / Tramonto</th><td class="p-3">🌅 ${row.sunrise} | 🌇 ${row.sunset}</td></tr>
             `;
             document.getElementById("dayModal").classList.remove("hidden");
         }
