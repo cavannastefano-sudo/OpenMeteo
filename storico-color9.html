@@ -301,7 +301,7 @@
                 const isCavanWeb = (currentTheme === 'cavanweb');
                 const isLight = (currentTheme === 'light');
                 
-                // Gestione delle due tonalità di giallo per il tema chiaro e colori dedicati per gli altri temi
+                // Due tonalità di giallo per il tema chiaro e colori dedicati per gli altri temi
                 let cardBgClass = isCavanWeb ? "bg-[#D8D9D0] border-slate-400 text-slate-800" : isLight ? "bg-[#fffde7] border-amber-300 text-slate-800" : isLavender ? "" : "bg-[hsl(60,100%,94%)] border-amber-200 text-slate-800";
                 let secondaryCardBgClass = isLight ? "bg-[#fff9c4] border-amber-300 text-slate-800" : cardBgClass;
                 let dropdownBgClass = isCavanWeb ? "bg-[#8FBBD0] border-[#800040]/50" : isLight ? "bg-amber-100 border-amber-300" : isLavender ? "bg-[#F8FED7] border-[#5C3B5C]/30" : "bg-[hsl(60,100%,94%)] border-amber-200";
@@ -368,7 +368,7 @@
                         </h2>
                         <div class="w-full overflow-hidden rounded-2xl border ${isLavender ? 'border-[#5C3B5C]/30' : isCavanWeb ? 'border-slate-300' : isLight ? 'border-amber-300' : 'border-amber-300'}">
                             <table id="currentWeatherTable" class="w-full text-left border-collapse text-base" style="background-color: ${isCavanWeb ? '#D8D9D0' : isLight ? '#ffffff' : isLavender ? '#F8FED7' : '#fffde7'}; color: ${isLavender ? '#5C3B5C' : ''};">
-                                <tbody class="divide-y ${isLavender ? 'divide-[#5C3B5C]/20' : isCavanWeb ? 'divide-slate-300' : isLight ? 'divide-amber-200' : 'divide-amber-200'} font-medium">
+                                <tbody class="divide-y ${isLavender ? 'divide-[#5C3B5C]/20' : isCavanWeb ? 'divide-slate-300' : isLight ? 'divide-amber-100' : 'divide-amber-200'} font-medium">
                                     <tr><td colspan="2" class="p-4 text-center text-slate-500">Caricamento dati attuali in corso...</td></tr>
                                 </tbody>
                             </table>
