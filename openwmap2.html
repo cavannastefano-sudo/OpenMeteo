@@ -302,7 +302,7 @@
                     <form id="search-form" onsubmit="handleSearch(event)" class="flex gap-2">
                         <div class="relative flex-grow">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none ${subText}"><i class="fa-solid fa-magnifying-glass text-sm"></i></span>
-                            <input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca località..." class="w-full pl-10 pr-10 py-3 border rounded-2xl ${searchInputBg} focus:outline-none ${focusBorder} text-sm sm:text-base transition" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
+                            <input type="text" id="search-input" oninput="toggleClearButton()" placeholder="Cerca..." class="w-full pl-10 pr-10 py-3 border rounded-2xl ${searchInputBg} focus:outline-none ${focusBorder} text-sm sm:text-base transition" ${isLavender ? 'style="background-color: #F8FED7; color: #5C3B5C;"' : ''}>
                             <button type="button" id="clear-btn" onclick="clearSearchInput()" title="Svuota" class="absolute inset-y-0 right-0 pr-3.5 flex items-center ${subText} hover:opacity-100 transition hidden"><i class="fa-solid fa-circle-xmark text-base"></i></button>
                         </div>
                         <button type="submit" class="${btnBg} px-4 py-3 rounded-2xl font-semibold transition shadow-lg flex items-center justify-center gap-1.5 text-sm sm:text-base" ${lavenderButtonStyle}>Cerca</button>
