@@ -206,7 +206,7 @@
             let themeIcon = "fa-palette";
             let themeLabel = "Tema";
             if (currentTheme === 'cavanweb') { themeIcon = "fa-desktop"; themeLabel = "CavanWeb"; }
-            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro (Bianco"; }
+            else if (currentTheme === 'light') { themeIcon = "fa-sun"; themeLabel = "Chiaro (Bianco)"; }
             else if (currentTheme === 'dark') { themeIcon = "fa-moon"; themeLabel = "Scuro (Blu)"; }
             else if (currentTheme === 'green') { themeIcon = "fa-leaf"; themeLabel = "Verde (Verde)"; }
             else if (currentTheme === 'lavender') { themeIcon = "fa-spa"; themeLabel = "Lilla"; }
@@ -227,7 +227,6 @@
             if (isDarkOrGreen) {
                 const isGreenTheme = (currentTheme === 'green');
                 const textColorClass = isGreenTheme ? 'text-sky-200' : 'text-emerald-300';
-                const textHoverColor = isGreenTheme ? 'text-sky-200' : 'text-emerald-300';
 
                 headerContainer.className = "w-full max-w-6xl mx-auto mb-6 space-y-4 relative";
                 headerContainer.innerHTML = `
@@ -253,6 +252,7 @@
                                 <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-earth-americas text-amber-400 w-5 text-center"></i> <span>Mappa Interattiva</span></a>
                                 <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
                                 <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/lista.m3u/" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/10 text-sm font-semibold transition"><i class="fa-solid fa-tv text-amber-400 w-5 text-center"></i> <span>myIPTV</span></a>
                             </div>
                         </div>
                     </div>
@@ -397,6 +397,7 @@
                                 <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-earth-americas ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>Mappa Interattiva</span></a>
                                 <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-clock ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>SunClock24</span></a>
                                 <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-globe ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>Meteo Europa</span></a>
+                                <a href="https://cavannastefano-sudo.github.io/lista.m3u/" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl ${isCavanWeb ? 'hover:bg-[#728890]/40' : isLavender ? 'hover:bg-[#EBE7DF]' : 'hover:bg-amber-200/50'} text-slate-900 text-base font-semibold transition" ${isLavender ? 'style="color: #5C3B5C;"' : ''}><i class="fa-solid fa-tv ${isLavender ? 'text-[#5C3B5C]' : 'text-[#800040]'} w-5 text-center"></i> <span>myIPTV</span></a>
                             </div>
                         </div>
                     </div>
