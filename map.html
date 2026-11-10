@@ -60,6 +60,7 @@
                     <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-clock text-amber-400 w-5 text-center"></i> <span>SunClock24</span></a>
                     <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-globe text-amber-400 w-5 text-center"></i> <span>Meteo Europa</span></a>
                     <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-calendar-days text-amber-400 w-5 text-center"></i> <span>Archivio Storico</span></a>
+                    <a href="https://cavannastefano-sudo.github.io/lista.m3u/" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-tv text-amber-400 w-5 text-center"></i> <span>myIPTV</span></a>
                 </div>
             </div>
 
@@ -205,7 +206,7 @@
 
             let html = '';
             favorites.forEach(city => {
-                html += `<a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${city}'); localStorage.setItem('cavanweb_active_name', '${city}');" class="w-full text-left flex items-center justify-between px-3 py-2 rounded-xl hover:bg-black/5 text-sm font-semibold transition">
+                html += `<a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${city}'); localStorage.setItem('cavanweb_active_name', '${city}');" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-black/5 text-base font-semibold transition">
                     <span class="truncate"><i class="fa-solid fa-location-dot mr-2 text-xs"></i>${city}</span>
                     <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
                 </a>`;
