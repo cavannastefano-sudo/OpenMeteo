@@ -56,11 +56,11 @@
                     <div class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-400 border-b border-white/20 flex items-center gap-1.5" id="menu-fav-title"><i class="fa-solid fa-star"></i> Preferiti</div>
                     <div id="favorites-list" class="flex flex-col gap-1 max-h-40 overflow-y-auto py-1"><span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span></div>
                     <div class="border-t border-white/20 my-1" id="menu-divider"></div>
-                    <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-earth-americas text-current w-5 text-center"></i> <span>Mappa Interattiva</span></a>
-                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-clock text-current w-5 text-center"></i> <span>SunClock24</span></a>
-                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-globe text-current w-5 text-center"></i> <span>Meteo Europa</span></a>
-                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-calendar-days text-current w-5 text-center"></i> <span>Archivio Storico</span></a>
-                    <a href="https://cavannastefano-sudo.github.io/lista.m3u/" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-tv text-current w-5 text-center"></i> <span>myIPTV</span></a>
+                    <a href="map.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-earth-americas menu-icon w-5 text-center"></i> <span>Mappa Interattiva</span></a>
+                    <a href="https://cavannastefano-sudo.github.io/OrologioSolare/index.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-clock menu-icon w-5 text-center"></i> <span>SunClock24</span></a>
+                    <a href="https://www.blog.cavanweb.com/p/blog-page_31.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-globe menu-icon w-5 text-center"></i> <span>Meteo Europa</span></a>
+                    <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-calendar-days menu-icon w-5 text-center"></i> <span>Archivio Storico</span></a>
+                    <a href="https://cavannastefano-sudo.github.io/lista.m3u/" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-black/5 text-sm font-semibold transition"><i class="fa-solid fa-tv menu-icon w-5 text-center"></i> <span>myIPTV</span></a>
                 </div>
             </div>
 
@@ -198,15 +198,17 @@
             const favListContainer = document.getElementById('favorites-list');
             if (!favListContainer) return;
             const favorites = getFavorites();
+            const currentTheme = localStorage.getItem('cavanweb_theme') || 'cavanweb';
+            const textClass = currentTheme === 'light' ? 'text-[#808000]' : '';
 
             if (favorites.length === 0) {
-                favListContainer.innerHTML = `<span class="text-xs opacity-70 px-3 py-1 italic">Nessun preferito salvato</span>`;
+                favListContainer.innerHTML = `<span class="text-xs opacity-70 px-3 py-1 italic ${textClass}">Nessun preferito salvato</span>`;
                 return;
             }
 
             let html = '';
             favorites.forEach(city => {
-                html += `<a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${city}'); localStorage.setItem('cavanweb_active_name', '${city}');" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-black/5 text-base font-semibold transition">
+                html += `<a href="openwmap2.html" onclick="localStorage.setItem('selected_city', '${city}'); localStorage.setItem('cavanweb_active_name', '${city}');" class="w-full text-left flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-black/5 text-base font-semibold transition ${textClass}">
                     <span class="truncate"><i class="fa-solid fa-location-dot mr-2 text-xs"></i>${city}</span>
                     <i class="fa-solid fa-chevron-right text-xs opacity-50"></i>
                 </a>`;
@@ -263,6 +265,19 @@
             mapBanner.style.backgroundColor = '';
             mapBanner.style.color = '';
             mapBanner.style.border = '';
+
+            // Aggiorna colore icone menu in base al tema
+            const menuIcons = document.querySelectorAll('.menu-icon');
+            menuIcons.forEach(icon => {
+                icon.className = icon.className.replace(/text-(amber-400|\[#808000\]|current)/g, '');
+                if (themeName === 'dark' || themeName === 'green') {
+                    icon.classList.add('text-amber-400');
+                } else if (themeName === 'light') {
+                    icon.classList.add('text-[#808000]');
+                } else {
+                    icon.classList.add('text-current');
+                }
+            });
 
             if (themeName === 'dark') {
                 body.className = "bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 min-h-screen text-emerald-300 flex flex-col justify-between";
@@ -333,9 +348,15 @@
                 menuBtn.style.color = "#854d0e";
                 menuBtn.style.borderColor = "#facc15";
 
-                dropdownMenu.className += " bg-[#fffacd] border-amber-300 text-slate-800 backdrop-blur-none";
+                dropdownMenu.className += " bg-[#fffacd] border-amber-300 text-[#808000] backdrop-blur-none";
                 menuFavTitle.className = "px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#808000] border-b border-amber-300 flex items-center gap-1.5";
                 menuDivider.className = "border-t border-amber-300 my-1";
+
+                // Applica il colore verde oliva anche ai link del menu a tendina
+                const menuLinks = dropdownMenu.querySelectorAll('a');
+                menuLinks.forEach(link => {
+                    link.classList.add('text-[#808000]');
+                });
 
                 themeIcon.className = "fa-solid fa-sun";
                 themeLabel.textContent = "Chiaro";
