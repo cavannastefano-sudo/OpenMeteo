@@ -85,7 +85,29 @@
     <script>
         const API_KEY = "bd940445d9a0cc5d54dc2b7b498ba441";
 
-        // Definizione dei Layer di base
+        // Funzione di utilità per generare colori unici per i confini politici
+        function getPoliticalColor(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = (hash * 31) + name.charCodeAt(i); 
+            }
+            const hue = Math.abs(hash * 137.5) % 360; 
+            return `hsl(${hue}, 85%, 55%)`; 
+        }
+
+        // 1. Mappa Chiara Base (OpenStreetMap)
+        const chiaraLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        });
+
+        // 2. Mappa Topografica (OpenTopoMap)
+        const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap'
+        });
+
+        // 3. Mappe Esri Dark e Light già presenti
         const darkLayer = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 16,
             attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
@@ -96,17 +118,7 @@
             attribution: 'Esri, HERE, Garmin, © OpenStreetMap contributors'
         });
 
-        const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxZoom: 17,
-            attribution: 'Map data: © OpenStreetMap contributors, SRTM | Map style: © OpenTopoMap (CC-BY-SA)'
-        });
-
-        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        });
-
-        // Layer delle Situazioni Meteorologiche di OpenWeatherMap con Opacità Massima (1.0)
+        // Livelli meteo sovrapponibili di OpenWeatherMap (Opacità Massima 1.0)
         const tempLayer = L.tileLayer(`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
             maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
@@ -120,19 +132,22 @@
         });
 
         const pressureLayer = L.tileLayer(`https://tile.openweathermap.org/map/pressure_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
-            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
+            maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenTopoMap'
         });
 
         const cloudsLayer = L.tileLayer(`https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=${API_KEY}`, {
             maxZoom: 19, opacity: 1.0, attribution: 'Map data © OpenWeatherMap'
         });
 
-        // Recupera la scelta precedente della mappa di base (default: dark)
-        const savedLayerType = localStorage.getItem('preferred_map_layer') || 'dark';
-        let defaultLayer = darkLayer;
-        if (savedLayerType === 'light') defaultLayer = lightLayer;
+        // Layer GeoJSON politico (inizialmente vuoto, viene popolato se scelto)
+        let geojsonPoliticalLayer = null;
+
+        // Recupera la scelta precedente della mappa di base (default: Mappa Chiara Politica)
+        const savedLayerType = localStorage.getItem('sunclock_map_layer') || 'chiara';
+        let defaultLayer = chiaraLayer;
         if (savedLayerType === 'topo') defaultLayer = topoLayer;
-        if (savedLayerType === 'osm') defaultLayer = osmLayer;
+        if (savedLayerType === 'dark') defaultLayer = darkLayer;
+        if (savedLayerType === 'light') defaultLayer = lightLayer;
 
         // Inizializzazione Mappa centrata sull'Europa/Italia
         const map = L.map('map', {
@@ -141,12 +156,12 @@
             layers: [defaultLayer]
         });
 
-        // Mappe di base
+        // Mappe di base aggiornate con la Mappa Chiara Politica come prima scelta
         const baseMaps = {
-            "🌙 Esri Dark (Scura)": darkLayer,
-            "☀️ Esri Light (Chiara)": lightLayer,
+            "🗺️ Mappa Chiara Politica": chiaraLayer,
             "⛰️ OpenTopoMap": topoLayer,
-            "🗺️ OpenStreetMap": osmLayer
+            "🌙 Esri Dark (Scura)": darkLayer,
+            "☀️ Esri Light (Chiara)": lightLayer
         };
 
         // Livelli sovrapponibili con checkbox
@@ -161,16 +176,51 @@
         // Aggiunge il selettore in alto a destra
         L.control.layers(baseMaps, overlayMaps, { position: 'topright' }).addTo(map);
 
-        // Salva la preferenza della mappa di base scelta dall'utente
+        // Caricamento dei confini GeoJSON politici per la Mappa Chiara
+        fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+            .then(res => res.json())
+            .then(data => {
+                geojsonPoliticalLayer = L.geoJSON(data, {
+                    style: (feature) => ({
+                        fillColor: getPoliticalColor(feature.properties.ADMIN || feature.properties.name || "Sconosciuto"),
+                        weight: 1,
+                        opacity: 0.8,    
+                        color: '#333',
+                        fillOpacity: 0.55    
+                    }),
+                    onEachFeature: (feature, layer) => {
+                        layer.on('click', (e) => {
+                            L.DomEvent.stopPropagation(e);
+                            getWeatherByCoords(e.latlng.lat, e.latlng.lng);
+                        });
+                    }
+                });
+
+                // Se all'avvio il layer attivo è la Mappa Chiara, aggiunge subito i confini politici
+                if (map.hasLayer(chiaraLayer)) {
+                    geojsonPoliticalLayer.addTo(map);
+                }
+            })
+            .catch(err => console.error("Errore caricamento confini politici:", err));
+
+        // Gestione cambio mappa di base e salvataggio preferenza in localStorage
         map.on('baselayerchange', function (e) {
-            if (e.name.includes("Dark")) {
-                localStorage.setItem('preferred_map_layer', 'dark');
-            } else if (e.name.includes("Light")) {
-                localStorage.setItem('preferred_map_layer', 'light');
-            } else if (e.name.includes("Topo")) {
-                localStorage.setItem('preferred_map_layer', 'topo');
+            if (e.name.includes("Politica")) {
+                localStorage.setItem('sunclock_map_layer', 'chiara');
+                if (geojsonPoliticalLayer && !map.hasLayer(geojsonPoliticalLayer)) {
+                    geojsonPoliticalLayer.addTo(map);
+                }
             } else {
-                localStorage.setItem('preferred_map_layer', 'osm');
+                if (geojsonPoliticalLayer && map.hasLayer(geojsonPoliticalLayer)) {
+                    map.removeLayer(geojsonPoliticalLayer);
+                }
+                if (e.name.includes("Topo")) {
+                    localStorage.setItem('sunclock_map_layer', 'topo');
+                } else if (e.name.includes("Dark")) {
+                    localStorage.setItem('sunclock_map_layer', 'dark');
+                } else if (e.name.includes("Light")) {
+                    localStorage.setItem('sunclock_map_layer', 'light');
+                }
             }
         });
 
